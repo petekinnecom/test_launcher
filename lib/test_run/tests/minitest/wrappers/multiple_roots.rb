@@ -1,0 +1,23 @@
+require "test_run/utils/path"
+
+module TestRun
+  module Tests
+    module Minitest
+      module Wrappers
+        class MultipleRoots
+
+          attr_reader :roots
+
+          def initialize(files)
+            @roots = files.map {|f| SingleFile.new(f)}.group_by {|f| f.app_root}.map {|root, _files| SingleRoot.new(_files)}
+          end
+
+          def to_command
+            roots.map(&:to_command).join("; cd -; \n\n")
+          end
+
+        end
+      end
+    end
+  end
+end

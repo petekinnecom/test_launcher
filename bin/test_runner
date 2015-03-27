@@ -1,0 +1,35 @@
+#!/usr/bin/env ruby
+
+require "thor"
+require "test_run/tests/minitest/finder"
+require "test_run/tests/minitest/consolidator"
+require "test_run/shell/runner"
+
+class CLI < Thor
+  
+  desc "find", <<-DESC
+    Find tests and run them. By trying to match an individual test or the name of a test file(s).
+  DESC
+
+  def find(input)
+    if input == '--help'
+      puts "use 'test_runner --help find' to see the help"
+      exit
+    end
+
+    shell = TestRun::Shell::Runner.new(
+      log_path: '/tmp/test_run.log',
+      working_directory: '.',
+      verbose: options[:verbose],
+    )
+
+   find_results = TestRun::Tests::Minitest::Finder.find(input, shell, options)
+
+   shell.exec TestRun::Tests::Minitest::Consolidator.consolidate(find_results)
+
+  end
+
+  default_task :find
+end
+
+CLI.start(ARGV)
