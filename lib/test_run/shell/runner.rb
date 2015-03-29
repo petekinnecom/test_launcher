@@ -11,10 +11,9 @@ module TestRun
       attr_accessor :working_directory, :log_path, :queue
       private :working_directory, :log_path, :queue
 
-      def initialize(log_path:, working_directory:, verbose: false)
+      def initialize(log_path:, working_directory:)
         @working_directory = working_directory
         @log_path = log_path
-        @verbose = verbose
 
         %x{echo "" > #{log_path}}
         Dir.chdir(%x[ git rev-parse --show-toplevel ].chomp)
@@ -38,10 +37,14 @@ module TestRun
       end
 
       def notify(msg)
-        return if @verbose
-
         log msg.to_s
         print "#{yellow(msg.to_s)}\n"
+      end
+
+      def confirm?(question)
+        warn "#{question} [Yn]"
+        answer = STDIN.gets.strip.downcase
+        return answer != 'n'
       end
 
       private
@@ -51,7 +54,6 @@ module TestRun
       end
 
       def handle_output_for(cmd)
-        puts cmd if @verbose
         log(cmd)
       end
 

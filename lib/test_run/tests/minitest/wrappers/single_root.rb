@@ -6,11 +6,16 @@ module TestRun
       module Wrappers
         class SingleRoot
 
-          attr_reader :files
-          private :files
+          attr_reader :files, :shell
 
-          def initialize(files)
+          def initialize(files, shell)
+            @shell = shell
             @files = files.map {|f| f.is_a?(SingleFile) ? f : SingleFile.new(f)}
+          end
+
+          def should_run?
+            # keep working here!
+            true
           end
 
           def to_command

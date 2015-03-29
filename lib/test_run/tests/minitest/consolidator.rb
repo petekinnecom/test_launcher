@@ -7,10 +7,10 @@ require "test_run/tests/minitest/wrappers/multiple_files"
 module TestRun
   module Tests
     module Minitest
-      class Consolidator < Struct.new(:find_results)
+      class Consolidator < Struct.new(:find_results, :shell)
 
-        def self.consolidate(find_results)
-          new(find_results).consolidate
+        def self.consolidate(*args)
+          new(*args).consolidate
         end
 
         def consolidate
@@ -20,11 +20,11 @@ module TestRun
           end
 
           if one_result?
-            Wrappers::SingleTest.new(find_results.first).to_command
+            Wrappers::SingleTest.new(find_results.first)
           elsif one_test_file?
-            Wrappers::SingleFile.new(find_results.first[:file]).to_command
+            Wrappers::SingleFile.new(find_results.first[:file])
           else
-            Wrappers::MultipleFiles.wrap(find_results.map {|r| r[:file] }).to_command
+            Wrappers::MultipleFiles.wrap(find_results.map {|r| r[:file] }, shell)
           end
         end
 

@@ -7,8 +7,8 @@ module TestRun
       module Wrappers
         module MultipleFiles
 
-          def self.wrap(files)
-            wrapper = MultipleRoots.new(files)
+          def self.wrap(files, shell)
+            wrapper = MultipleRoots.new(files, shell)
 
             if wrapper.roots.size > 1
               wrapper

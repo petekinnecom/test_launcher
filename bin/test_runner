@@ -6,7 +6,7 @@ require "test_run/tests/minitest/consolidator"
 require "test_run/shell/runner"
 
 class CLI < Thor
-  
+
   desc "find", <<-DESC
     Find tests and run them. By trying to match an individual test or the name of a test file(s).
   DESC
@@ -20,13 +20,16 @@ class CLI < Thor
     shell = TestRun::Shell::Runner.new(
       log_path: '/tmp/test_run.log',
       working_directory: '.',
-      verbose: options[:verbose],
+
     )
 
    find_results = TestRun::Tests::Minitest::Finder.find(input, shell, options)
 
-   shell.exec TestRun::Tests::Minitest::Consolidator.consolidate(find_results)
+   test_wrapper = TestRun::Tests::Minitest::Consolidator.consolidate(find_results, shell)
 
+   if test_wrapper.should_run?
+     shell.exec test_wrapper.to_command
+   end
   end
 
   default_task :find

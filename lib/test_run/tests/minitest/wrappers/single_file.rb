@@ -23,6 +23,9 @@ module TestRun
             File.join(path)
           end
 
+          def should_run?
+            true
+          end
         end
       end
     end
