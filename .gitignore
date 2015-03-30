@@ -13,3 +13,4 @@
 *.a
 mkmf.log
 notes.txt
+*.gem
