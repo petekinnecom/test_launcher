@@ -14,7 +14,6 @@ module TestRun
           end
 
           def should_run?
-            # keep working here!
             true
           end
 

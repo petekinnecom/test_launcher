@@ -11,7 +11,8 @@ module TestRun
           end
 
           def app_root
-            exploded_path = Utils::Path.split(file)
+            relative_file_path = file.sub(Dir.pwd, '')
+            exploded_path = Utils::Path.split(relative_file_path)
 
             path = exploded_path[0...exploded_path.rindex("test")]
             File.join(path)
