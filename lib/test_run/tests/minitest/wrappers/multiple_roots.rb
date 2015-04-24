@@ -14,7 +14,7 @@ module TestRun
           end
 
           def to_command
-            roots.map(&:to_command).join("; cd -; \n\n")
+            roots.map(&:to_command).join("; cd -;\n\n")
           end
         end
       end
