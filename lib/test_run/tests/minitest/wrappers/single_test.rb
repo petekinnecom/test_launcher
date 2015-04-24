@@ -30,11 +30,6 @@ module TestRun
             path = exploded_path[exploded_path.rindex("test")..-1]
             File.join(path)
           end
-
-          def should_run?
-            true
-          end
-
         end
       end
     end

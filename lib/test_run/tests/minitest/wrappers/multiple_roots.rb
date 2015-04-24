@@ -16,11 +16,6 @@ module TestRun
           def to_command
             roots.map(&:to_command).join("; cd -; \n\n")
           end
-
-          def should_run?
-            shell.confirm?("Found #{roots.inject(0) {|sum, root| sum + root.files.size }} test files in #{roots.size} apps/engines.  Run them all?")
-          end
-
         end
       end
     end
