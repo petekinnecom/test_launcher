@@ -3,11 +3,10 @@ require "test_run/searchers/git_searcher"
 module TestRun
   module Tests
     module Minitest
-      class Finder < Struct.new(:query, :shell, :searcher, :options)
+      class Finder < Struct.new(:query, :searcher)
 
-        def self.find(query, shell, options)
-          searcher = Searchers::GitSearcher.new(shell)
-          new(query, shell, searcher, options).find
+        def self.find(query, searcher)
+          new(query, searcher).find
         end
 
         def find
@@ -25,7 +24,8 @@ module TestRun
         private
 
         def tests_found_by_absolute_path
-          [ {file: query} ]
+          relative_file_path = query.sub(Dir.pwd, '').sub(/^\//, '')
+          [ {file: relative_file_path} ]
         end
 
         def tests_found_by_name

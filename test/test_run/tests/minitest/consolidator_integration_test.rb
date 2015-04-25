@@ -4,8 +4,7 @@ require "test_run/tests/minitest/consolidator"
 module TestRun
   module Tests
     module Minitest
-
-      class ConsolidatorTest < TestCase
+      class ConsolidatorIntegrationTest < TestCase
 
         def test_single_test_method__no_sub_dir
           search_results = [
