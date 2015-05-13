@@ -1,9 +1,9 @@
-require "test_run/utils/path"
+require "test_launcher/utils/path"
 
-require "test_run/tests/minitest/wrappers/single_test"
-require "test_run/tests/minitest/wrappers/single_file"
-require "test_run/tests/minitest/wrappers/multiple_files"
-require "test_run/utils/pluralize"
+require "test_launcher/tests/minitest/wrappers/single_test"
+require "test_launcher/tests/minitest/wrappers/single_file"
+require "test_launcher/tests/minitest/wrappers/multiple_files"
+require "test_launcher/utils/pluralize"
 
 module TestLauncher
   module Tests

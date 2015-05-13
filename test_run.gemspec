@@ -1,10 +1,10 @@
 # coding: utf-8
 lib = File.expand_path('../lib', __FILE__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'test_run/version'
+require 'test_launcher/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "test_run"
+  spec.name          = "test_launcher"
   spec.version       = TestLauncher::VERSION
   spec.authors       = ["Pete Kinnecom"]
   spec.email         = ["pete.kinnecom@appfolio.com"]

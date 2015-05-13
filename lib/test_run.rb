@@ -1,4 +1,4 @@
-require "test_run/version"
+require "test_launcher/version"
 
 module TestLauncher
 end

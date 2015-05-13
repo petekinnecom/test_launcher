@@ -1,4 +1,4 @@
-require "test_run/utils/path"
+require "test_launcher/utils/path"
 
 module TestLauncher
   module Tests

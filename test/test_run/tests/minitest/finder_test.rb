@@ -1,5 +1,5 @@
 require "test_helper"
-require "test_run/tests/minitest/finder"
+require "test_launcher/tests/minitest/finder"
 
 module TestLauncher
   module Tests

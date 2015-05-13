@@ -1,5 +1,5 @@
 require "test_helper"
-require "test_run/tests/minitest/consolidator"
+require "test_launcher/tests/minitest/consolidator"
 
 module TestLauncher
   module Tests
@@ -10,12 +10,12 @@ module TestLauncher
           search_results = [
             {
               file: "test/dir/file_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
           ]
 
           consolidator = Consolidator.new(search_results, dummy_shell, false)
-          assert_equal "cd . && ruby -I test test/dir/file_test.rb --name=/test_run/", consolidator.consolidate.to_command
+          assert_equal "cd . && ruby -I test test/dir/file_test.rb --name=/test_launcher/", consolidator.consolidate.to_command
           assert_notified "Found 1 test method in 1 file."
         end
 
@@ -23,12 +23,12 @@ module TestLauncher
           search_results = [
             {
               file: "engines/lawnmower/test/dir/file_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             }
           ]
 
           consolidator = Consolidator.new(search_results, dummy_shell, false)
-          assert_equal "cd ./engines/lawnmower && ruby -I test test/dir/file_test.rb --name=/test_run/", consolidator.consolidate.to_command
+          assert_equal "cd ./engines/lawnmower && ruby -I test test/dir/file_test.rb --name=/test_launcher/", consolidator.consolidate.to_command
           assert_notified "Found 1 test method in 1 file."
         end
 
@@ -36,21 +36,21 @@ module TestLauncher
           search_results = [
             {
               file: "test/dir/file_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
             {
               file: "test/dir/file_test.rb",
-              line: "def test_run_again",
+              line: "def test_launcher_again",
             },
             {
               file: "test/dir/file_test.rb",
-              line: "def test_run_some_more",
+              line: "def test_launcher_some_more",
             },
           ]
 
           consolidator = Consolidator.new(search_results, dummy_shell, false)
 
-          assert_equal "cd . && ruby -I test test/dir/file_test.rb --name=/test_run/", consolidator.consolidate.to_command
+          assert_equal "cd . && ruby -I test test/dir/file_test.rb --name=/test_launcher/", consolidator.consolidate.to_command
           assert_notified "Found 3 test methods in 1 file."
         end
 
@@ -58,11 +58,11 @@ module TestLauncher
           search_results = [
             {
               file: "test/dir/file_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
             {
               file: "test/other_dir/different_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
           ]
 
@@ -71,7 +71,7 @@ module TestLauncher
           File.expects(:mtime).with("test/dir/file_test.rb").returns(Time.new(2014, 01, 01))
           File.expects(:mtime).with("test/other_dir/different_test.rb").returns(Time.new(2013, 01, 01))
 
-          assert_equal "cd . && ruby -I test test/dir/file_test.rb --name=/test_run/", consolidator.consolidate.to_command
+          assert_equal "cd . && ruby -I test test/dir/file_test.rb --name=/test_launcher/", consolidator.consolidate.to_command
           assert_notified "Found 2 test methods in 2 files."
         end
 
@@ -79,11 +79,11 @@ module TestLauncher
           search_results = [
             {
               file: "test/dir/file_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
             {
               file: "test/other_dir/different_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
           ]
 
@@ -97,11 +97,11 @@ module TestLauncher
           search_results = [
             {
               file: "engine1/test/dir/file_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
             {
               file: "engine2/root2/test/other_dir/different_test.rb",
-              line: "def test_run",
+              line: "def test_launcher",
             },
           ]
 

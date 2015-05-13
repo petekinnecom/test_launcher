@@ -1,4 +1,4 @@
-require "test_run/searchers/git_searcher"
+require "test_launcher/searchers/git_searcher"
 
 module TestLauncher
   module Tests

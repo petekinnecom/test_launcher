@@ -1,5 +1,5 @@
-require "test_run/tests/minitest/wrappers/single_root"
-require "test_run/tests/minitest/wrappers/multiple_roots"
+require "test_launcher/tests/minitest/wrappers/single_root"
+require "test_launcher/tests/minitest/wrappers/multiple_roots"
 
 module TestLauncher
   module Tests
