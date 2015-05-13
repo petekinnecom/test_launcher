@@ -1,4 +1,4 @@
-# TestRun
+# TestLauncher
 
 TODO: Write a gem description
 

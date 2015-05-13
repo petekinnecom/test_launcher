@@ -5,7 +5,7 @@ require "test_run/tests/minitest/wrappers/single_file"
 require "test_run/tests/minitest/wrappers/multiple_files"
 require "test_run/utils/pluralize"
 
-module TestRun
+module TestLauncher
   module Tests
     module Minitest
       class Consolidator < Struct.new(:search_results, :shell, :run_all)

@@ -1,6 +1,6 @@
 require "test_run/utils/path"
 
-module TestRun
+module TestLauncher
   module Tests
     module Minitest
       module Wrappers

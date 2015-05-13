@@ -1,4 +1,4 @@
-module TestRun
+module TestLauncher
   module Utils
     module Pluralize
       def pluralize(count, singular)

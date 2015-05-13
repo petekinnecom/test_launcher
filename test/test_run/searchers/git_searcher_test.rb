@@ -1,7 +1,7 @@
 require "test_helper"
 require "test_run/searchers/git_searcher"
 
-module TestRun
+module TestLauncher
   module Searchers
     class MockShell
       def run(cmd)

@@ -1,7 +1,7 @@
 require "test_helper"
 require "test_run/tests/minitest/finder"
 
-module TestRun
+module TestLauncher
   module Tests
     module Minitest
       class FinderTest < TestCase

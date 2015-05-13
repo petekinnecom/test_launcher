@@ -1,7 +1,7 @@
 require "test_run/shell/color"
 require "test_run/utils/path"
 
-module TestRun
+module TestLauncher
   module Shell
     class Runner
       include Color

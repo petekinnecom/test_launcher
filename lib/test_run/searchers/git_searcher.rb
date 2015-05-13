@@ -1,4 +1,4 @@
-module TestRun
+module TestLauncher
   module Searchers
     class GitSearcher < Struct.new(:shell)
 

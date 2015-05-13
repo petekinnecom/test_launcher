@@ -1,7 +1,7 @@
 require "test_run/tests/minitest/wrappers/single_root"
 require "test_run/tests/minitest/wrappers/multiple_roots"
 
-module TestRun
+module TestLauncher
   module Tests
     module Minitest
       module Wrappers

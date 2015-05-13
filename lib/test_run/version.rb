@@ -1,3 +1,3 @@
-module TestRun
+module TestLauncher
   VERSION = "0.0.3"
 end

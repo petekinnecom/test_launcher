@@ -1,6 +1,6 @@
 require "pathname"
 
-module TestRun
+module TestLauncher
   module Utils
     module Path
 

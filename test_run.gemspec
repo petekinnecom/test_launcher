@@ -5,7 +5,7 @@ require 'test_run/version'
 
 Gem::Specification.new do |spec|
   spec.name          = "test_run"
-  spec.version       = TestRun::VERSION
+  spec.version       = TestLauncher::VERSION
   spec.authors       = ["Pete Kinnecom"]
   spec.email         = ["pete.kinnecom@appfolio.com"]
   spec.summary       = %q{Easily run tests}

@@ -1,4 +1,4 @@
-module TestRun
+module TestLauncher
   module Shell
     module Color
       CODES = {
