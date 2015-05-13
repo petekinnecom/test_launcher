@@ -1,6 +1,6 @@
 #Test Launcher -->
 
-Test Launcher takes some input and tries to figure out what test you want to run. It makes running tests on the command line much easier.
+Test Launcher takes some input and tries to figure out what test you want to run. It makes running tests on the command line much easier.  Test Launcher works with Minitest and probably TestUnit.  RSpec isn't supported.  If you use RSpec and you think this would be handy, let me know!
 
 Let's suppose you want to run the test `test_name` in your `blog_post_test.rb`.  
 
@@ -104,3 +104,4 @@ t thing_test
 ```
 
 You don't have to run Test Launcher from the root of your project either.  It will figure things out.
+
