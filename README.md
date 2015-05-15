@@ -65,7 +65,7 @@ test_launcher find test_name_to_find
 For me, that's way too much to type, so I recommend adding an alias to your `.bash_profile` like so:
 
 ```
-alias t="test_launcher find"
+alias t='test_launcher find'
 ```
 
 Now you can just type `t` instead of `test_launcher find`.  Much nicer!
