@@ -21,7 +21,7 @@ module TestLauncher
 
       def run(cmd, dir: working_directory, &block)
         command = "cd #{Utils::Path.relative_join(dir)} && #{cmd}"
-        handle_output_for(command)
+        log(command)
 
         shell_out(command).split("\n")
       end
@@ -32,29 +32,24 @@ module TestLauncher
       end
 
       def warn(msg)
-        log msg.to_s
-        print "#{red(msg.to_s)}\n"
+        log msg
+        print "#{red(msg)}\n"
       end
 
       def notify(msg)
-        log msg.to_s
-        print "#{yellow(msg.to_s)}\n"
+        log msg
+        print "#{yellow(msg)}\n"
       end
 
       def confirm?(question)
         warn "#{question} [Yn]"
-        answer = STDIN.gets.strip.downcase
-        return answer != 'n'
+        STDIN.gets.strip.downcase != 'n'
       end
 
       private
 
       def log(msg)
-        %x{echo "#{msg.to_s}" >> #{log_path}}
-      end
-
-      def handle_output_for(cmd)
-        log(cmd)
+        %x{echo "#{msg}" >> #{log_path}}
       end
 
       def shell_out(command)
