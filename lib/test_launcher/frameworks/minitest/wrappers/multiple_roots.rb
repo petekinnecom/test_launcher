@@ -8,9 +8,8 @@ module TestLauncher
 
           attr_reader :roots, :shell
 
-          def initialize(files, shell)
-            @shell = shell
-            @roots = files.map {|f| SingleFile.new(f)}.group_by {|f| f.app_root}.map {|root, _files| SingleRoot.new(_files, shell)}
+          def initialize(files)
+            @roots = files.map {|f| SingleFile.new(f)}.group_by {|f| f.app_root}.map {|root, _files| SingleRoot.new(_files)}
           end
 
           def to_s

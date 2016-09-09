@@ -6,7 +6,7 @@ require "test_launcher/frameworks/minitest/wrappers/multiple_files"
 require "test_launcher/utils/pluralize"
 
 module TestLauncher
-  class Consolidator < Struct.new(:search_results, :shell, :run_all)
+  class Consolidator < Struct.new(:search_results, :shell, :runner, :run_all)
     include Utils::Pluralize
 
     def self.consolidate(*args)
@@ -21,24 +21,24 @@ module TestLauncher
 
       if methods_found? && one_result?
         shell.notify "Found #{methods_count_phrase} in #{file_count_phrase}."
-        Frameworks::Minitest::Wrappers::SingleTest.new(search_results.first)
+        runner.single_example(search_results.first)
       elsif methods_found? && same_file?
         shell.notify "Multiple test methods match in 1 file."
-        Frameworks::Minitest::Wrappers::SingleFile.new(search_results.first[:file])
+        raise "unsupported"
       elsif methods_found? && run_last_edited?
         shell.notify "Found #{methods_count_phrase} in #{file_count_phrase}."
         shell.notify "Running most recently edited. Run with '--all' to run all the tests."
-        Frameworks::Minitest::Wrappers::SingleTest.new(last_edited)
+        runner.single_example(last_edited)
       elsif files_found? && same_file?
         shell.notify "Found #{file_count_phrase}."
-        Frameworks::Minitest::Wrappers::SingleFile.new(search_results.first[:file])
+        runner.single_file(search_results.first[:file])
       elsif files_found? && run_last_edited?
         shell.notify "Found #{file_count_phrase}."
         shell.notify "Running most recently edited. Run with '--all' to run all the tests."
-        Frameworks::Minitest::Wrappers::SingleFile.new(last_edited[:file])
+        runner.single_file(last_edited[:file])
       else
         shell.notify "Found #{file_count_phrase}."
-        Frameworks::Minitest::Wrappers::MultipleFiles.wrap(search_results.map {|r| r[:file] }, shell)
+        runner.multiple_files(search_results.map {|r| r[:file] })
       end
     end
 

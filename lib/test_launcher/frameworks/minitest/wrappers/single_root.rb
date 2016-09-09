@@ -6,10 +6,9 @@ module TestLauncher
       module Wrappers
         class SingleRoot
 
-          attr_reader :files, :shell
+          attr_reader :files
 
-          def initialize(files, shell)
-            @shell = shell
+          def initialize(files)
             @files = files.map {|f| f.is_a?(SingleFile) ? f : SingleFile.new(f)}
           end
 
