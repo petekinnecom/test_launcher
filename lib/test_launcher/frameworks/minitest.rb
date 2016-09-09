@@ -1,5 +1,3 @@
-require "test_launcher/frameworks/minitest/consolidator"
-
 module TestLauncher
   module Frameworks
     module Minitest

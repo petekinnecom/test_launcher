@@ -3,8 +3,8 @@ require "test_launcher/version"
 require "test_launcher/shell/runner"
 require "test_launcher/searchers/git_searcher"
 require "test_launcher/example_finder"
+require "test_launcher/consolidator"
 require "test_launcher/frameworks"
-
 
 module TestLauncher
   def self.launch(input, run_all: false)
