@@ -1,4 +1,3 @@
-require "test_launcher/frameworks/minitest/example_finder"
 require "test_launcher/frameworks/minitest/consolidator"
 
 module TestLauncher
