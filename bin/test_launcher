@@ -2,8 +2,8 @@
 
 require "thor"
 require "test_launcher/searchers/git_searcher"
-require "test_launcher/tests/minitest/finder"
-require "test_launcher/tests/minitest/consolidator"
+require "test_launcher/frameworks/minitest/finder"
+require "test_launcher/frameworks/minitest/consolidator"
 require "test_launcher/shell/runner"
 
 class CLI < Thor
@@ -26,9 +26,9 @@ class CLI < Thor
     )
 
     searcher = TestLauncher::Searchers::GitSearcher.new(shell)
-    search_results = TestLauncher::Tests::Minitest::Finder.find(input, searcher)
+    search_results = TestLauncher::Frameworks::Minitest::Finder.find(input, searcher)
 
-    test_wrapper = TestLauncher::Tests::Minitest::Consolidator.consolidate(search_results, shell, options[:all])
+    test_wrapper = TestLauncher::Frameworks::Minitest::Consolidator.consolidate(search_results, shell, options[:all])
 
     shell.exec test_wrapper.to_command
   end

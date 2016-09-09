@@ -1,21 +1,13 @@
 require "test_launcher/utils/path"
 
 module TestLauncher
-  module Tests
+  module Frameworks
     module Minitest
       module Wrappers
-        class SingleTest
-
-          attr_reader :file, :name
-          private :file, :name
-
-          def initialize(file:, line:)
-            @file = file
-            @name = line[/\s*def\s+(.*)/, 1]
-          end
+        class SingleFile < Struct.new(:file)
 
           def to_command
-            %{cd #{app_root} && ruby -I test #{relative_test_path} --name=/#{name}/}
+            %{cd #{File.join(app_root)} && ruby -I test #{File.join(relative_test_path)}}
           end
 
           def app_root

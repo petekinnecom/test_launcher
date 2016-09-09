@@ -1,8 +1,8 @@
 require "test_helper"
-require "test_launcher/tests/minitest/finder"
+require "test_launcher/frameworks/minitest/finder"
 
 module TestLauncher
-  module Tests
+  module Frameworks
     module Minitest
       class FinderTest < TestCase
 

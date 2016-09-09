@@ -1,12 +1,12 @@
 require "test_launcher/utils/path"
 
-require "test_launcher/tests/minitest/wrappers/single_test"
-require "test_launcher/tests/minitest/wrappers/single_file"
-require "test_launcher/tests/minitest/wrappers/multiple_files"
+require "test_launcher/frameworks/minitest/wrappers/single_test"
+require "test_launcher/frameworks/minitest/wrappers/single_file"
+require "test_launcher/frameworks/minitest/wrappers/multiple_files"
 require "test_launcher/utils/pluralize"
 
 module TestLauncher
-  module Tests
+  module Frameworks
     module Minitest
       class Consolidator < Struct.new(:search_results, :shell, :run_all)
         include Utils::Pluralize

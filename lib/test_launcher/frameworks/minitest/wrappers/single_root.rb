@@ -1,7 +1,7 @@
 require "test_launcher/utils/path"
 
 module TestLauncher
-  module Tests
+  module Frameworks
     module Minitest
       module Wrappers
         class SingleRoot

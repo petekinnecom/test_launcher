@@ -1,7 +1,7 @@
 require "test_launcher/searchers/git_searcher"
 
 module TestLauncher
-  module Tests
+  module Frameworks
     module Minitest
       class Finder < Struct.new(:query, :searcher)
 
