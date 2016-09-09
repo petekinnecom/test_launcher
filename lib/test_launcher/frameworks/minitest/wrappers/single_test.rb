@@ -14,7 +14,7 @@ module TestLauncher
             @name = line[/\s*def\s+(.*)/, 1]
           end
 
-          def to_command
+          def to_s
             %{cd #{app_root} && ruby -I test #{relative_test_path} --name=/#{name}/}
           end
 

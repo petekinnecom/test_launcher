@@ -6,7 +6,7 @@ module TestLauncher
       module Wrappers
         class SingleFile < Struct.new(:file)
 
-          def to_command
+          def to_s
             %{cd #{File.join(app_root)} && ruby -I test #{File.join(relative_test_path)}}
           end
 

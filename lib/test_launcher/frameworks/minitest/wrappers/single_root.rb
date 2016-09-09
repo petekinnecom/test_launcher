@@ -13,7 +13,7 @@ module TestLauncher
             @files = files.map {|f| f.is_a?(SingleFile) ? f : SingleFile.new(f)}
           end
 
-          def to_command
+          def to_s
             %{cd #{app_root} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + "/" + file) }' #{files.map(&:relative_test_path).join(" ")}}
           end
 
