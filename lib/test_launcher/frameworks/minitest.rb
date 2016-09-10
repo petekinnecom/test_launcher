@@ -3,7 +3,7 @@ require "test_launcher/frameworks/base"
 module TestLauncher
   module Frameworks
     module Minitest
-      class Runner < RunnerBase
+      class Runner < Base::Runner
         def single_example(result)
           method_name = result.line[/\s*def\s+(.*)\s*/, 1]
           %{cd #{result.app_root} && ruby -I test #{result.relative_test_path} --name=/#{method_name}/}

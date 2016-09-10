@@ -1,6 +1,5 @@
 require "test_launcher/version"
 
-require "test_launcher/runner_base"
 require "test_launcher/shell/runner"
 require "test_launcher/search/git_searcher"
 require "test_launcher/example_finder"
