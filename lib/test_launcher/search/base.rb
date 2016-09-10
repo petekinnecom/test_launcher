@@ -35,7 +35,7 @@ module TestLauncher
         return [] unless query.match(/^\//)
 
         relative_file_path = query.sub(Dir.pwd, '').sub(/^\//, '')
-        [ Search::Result.new(file: relative_file_path) ]
+        [ build_result(file: relative_file_path) ]
       end
 
       def examples_found_by_name
@@ -43,16 +43,20 @@ module TestLauncher
       end
 
       def files_found_by_file_name
-        @files_found_by_file_name ||= searcher.find_files(query).select { |f| f.match(file_name_regex) }.map {|f| Search::Result.new(file: f) }
+        @files_found_by_file_name ||= searcher.find_files(query).select { |f| f.match(file_name_regex) }.map {|f| build_result(file: f) }
       end
 
       def files_found_by_full_regex
         # we ignore the matched line since we don't know what to do with it
-        @files_found_by_full_regex ||= full_regex_search(query).map {|t| Search::Result.new(file: t.file) }
+        @files_found_by_full_regex ||= full_regex_search(query).map {|t| build_result(file: t.file) }
       end
 
       def full_regex_search(regex)
-        searcher.grep(regex, file_pattern: file_name_pattern).map {|r| Search::Result.new(file: r[:file], line: r[:line])}
+        searcher.grep(regex, file_pattern: file_name_pattern).map {|r| build_result(file: r[:file], line: r[:line])}
+      end
+
+      def build_result(file:, line: nil)
+        Result.new(file: file, line: line, test_root_folder_name: test_root_folder_name)
       end
 
       def file_name_regex
@@ -64,6 +68,10 @@ module TestLauncher
       end
 
       def regex_pattern
+        raise NotImplementedError
+      end
+
+      def test_root_folder_name
         raise NotImplementedError
       end
     end

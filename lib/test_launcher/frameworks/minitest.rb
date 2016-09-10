@@ -28,6 +28,10 @@ module TestLauncher
         def regex_pattern
           "^\s*def .*#{query}.*"
         end
+
+        def test_root_folder_name
+          "test"
+        end
       end
     end
   end
