@@ -36,12 +36,12 @@ module TestLauncher
 
     def test__single_file
       TestLauncher.launch("class_1_test")
-      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_1_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb", Shell::Runner.recall_exec
     end
 
     def test__multiple_files
       TestLauncher.launch("Root1""DummyTest""Class") # don't trigger the find in *this* file
-      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_2_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_2_test.rb", Shell::Runner.recall_exec
     end
 
     def test__multiple_files__all
@@ -57,7 +57,7 @@ module TestLauncher
 
     def test__regex
       TestLauncher.launch("Root1""DummyTest""Class1""Test") # don't trigger the find in *this* file
-      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_1_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb", Shell::Runner.recall_exec
     end
   end
 end

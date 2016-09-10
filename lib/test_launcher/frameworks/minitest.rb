@@ -1,21 +1,20 @@
+require "test_launcher/search_results_base"
+require "test_launcher/runner_base"
+
 module TestLauncher
   module Frameworks
     module Minitest
-      class Runner < Struct.new(:shell)
+      class Runner < RunnerBase
         def single_example(result)
-          Wrappers::SingleTest.new(result).to_s
+          method_name = result.line[/\s*def\s+(.*)\s*/, 1]
+          %{cd #{result.app_root} && ruby -I test #{result.relative_test_path} --name=/#{method_name}/}
         end
 
-        def single_file(result)
-          Wrappers::SingleFile.new(result).to_s
-        end
-
-        def multiple_files(results)
-          Wrappers::MultipleFiles.wrap(results).to_s
+        def one_or_more_files(results)
+          %{cd #{results.first.app_root} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + "/" + file) }' #{results.map(&:relative_test_path).join(" ")}}
         end
       end
 
-      require "test_launcher/search_results_base"
       class SearchResults < SearchResultsBase
         private
 

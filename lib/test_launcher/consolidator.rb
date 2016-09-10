@@ -1,8 +1,4 @@
 require "test_launcher/utils/path"
-
-require "test_launcher/frameworks/minitest/wrappers/single_test"
-require "test_launcher/frameworks/minitest/wrappers/single_file"
-require "test_launcher/frameworks/minitest/wrappers/multiple_files"
 require "test_launcher/utils/pluralize"
 
 module TestLauncher
@@ -19,26 +15,26 @@ module TestLauncher
         exit
       end
 
-      if methods_found? && one_result?
+      if one_example?
         shell.notify "Found #{methods_count_phrase} in #{file_count_phrase}."
         runner.single_example(search_results.first)
-      elsif methods_found? && same_file?
+      elsif examples_found? && same_file?
         shell.notify "Multiple test methods match in 1 file."
         raise "unsupported"
-      elsif methods_found? && run_last_edited?
+      elsif examples_found? && run_last_edited?
         shell.notify "Found #{methods_count_phrase} in #{file_count_phrase}."
         shell.notify "Running most recently edited. Run with '--all' to run all the tests."
         runner.single_example(last_edited)
       elsif files_found? && same_file?
         shell.notify "Found #{file_count_phrase}."
-        runner.single_file(search_results.first[:file])
+        runner.single_file(search_results.first)
       elsif files_found? && run_last_edited?
         shell.notify "Found #{file_count_phrase}."
         shell.notify "Running most recently edited. Run with '--all' to run all the tests."
-        runner.single_file(last_edited[:file])
+        runner.single_file(last_edited)
       else
         shell.notify "Found #{file_count_phrase}."
-        runner.multiple_files(search_results.map {|r| r[:file] })
+        runner.multiple_files(search_results)
       end
     end
 
@@ -46,16 +42,16 @@ module TestLauncher
       file_count == 1
     end
 
-    def one_result?
-      same_file? && search_results.first[:line]
+    def one_example?
+      search_results.one_example?
     end
 
-    def methods_found?
-      !! search_results.first[:line]
+    def examples_found?
+      search_results.examples_found?
     end
 
     def files_found?
-      ! methods_found?
+      ! examples_found?
     end
 
     def run_last_edited?
@@ -63,11 +59,11 @@ module TestLauncher
     end
 
     def last_edited
-      search_results.sort_by {|r| File.mtime(r[:file])}.last
+      search_results.last_edited
     end
 
     def file_count
-      search_results.group_by {|f| f[:file]}.size
+      search_results.file_count
     end
 
     def methods_count_phrase

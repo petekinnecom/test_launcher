@@ -18,7 +18,7 @@ module TestLauncher
     framework = Frameworks.current_framework
 
     search_results = framework::SearchResults.new(input, searcher).prioritized_results
-    runner = framework::Runner.new(shell)
+    runner = framework::Runner.new
 
     command = Consolidator.consolidate(search_results, shell, runner, run_all)
     shell.exec command
