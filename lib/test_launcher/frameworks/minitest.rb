@@ -1,5 +1,4 @@
-require "test_launcher/search_results_base"
-require "test_launcher/runner_base"
+require "test_launcher/frameworks/base"
 
 module TestLauncher
   module Frameworks
@@ -15,7 +14,7 @@ module TestLauncher
         end
       end
 
-      class SearchResults < SearchResultsBase
+      class SearchResults < Base::SearchResults
         private
 
         def file_name_regex

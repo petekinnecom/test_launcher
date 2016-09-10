@@ -1,3 +1,4 @@
+require "test_launcher/frameworks/base"
 require "test_launcher/frameworks/minitest"
 
 
