@@ -7,7 +7,7 @@ module TestLauncher
       end
 
       def grep(regex, file_pattern: '*')
-        results = shell.run("git grep --untracked '#{regex}' -- '#{file_pattern}'")
+        results = shell.run("git grep --untracked --extended-regexp '#{regex}' -- '#{file_pattern}'")
         results.map do |result|
           interpret_grep_result(result)
         end

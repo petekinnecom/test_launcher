@@ -23,6 +23,16 @@ module TestLauncher
       assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_1_spec.rb --example 'file_name_1 example_name_1'", Shell::Runner.recall_exec
     end
 
+    def test__single_context
+      TestLauncher.launch("file_name_1 con""text_1")
+      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_1_spec.rb --example 'file_name_1 context_1'", Shell::Runner.recall_exec
+    end
+
+    def test__single_describe
+      TestLauncher.launch("Root1DummyTes""tClass1")
+      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_1_spec.rb --example 'Root1DummyTes""tClass1'", Shell::Runner.recall_exec
+    end
+
     def test__multiple_methods__same_file
       skip "existing bug"
       TestLauncher.launch("file_name_1")
@@ -40,8 +50,8 @@ module TestLauncher
     end
 
     def test__multiple_files
-      TestLauncher.launch("Root1""DummyTest""Class") # don't trigger the find in *this* file
-      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_2_spec.rb", Shell::Runner.recall_exec
+      TestLauncher.launch("Root1") # don't trigger the find in *this* file
+      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_2_spec.rb --example 'Root1DummyTestClass2'", Shell::Runner.recall_exec
     end
 
     def test__multiple_files__all
@@ -56,8 +66,8 @@ module TestLauncher
     end
 
     def test__regex
-      TestLauncher.launch("Root1""DummyTest""Class1") # don't trigger the find in *this* file
-      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_1_spec.rb", Shell::Runner.recall_exec
+      TestLauncher.launch("a_test_that_u""ses") # don't trigger the find in *this* file
+      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_2_spec.rb", Shell::Runner.recall_exec
     end
   end
 end

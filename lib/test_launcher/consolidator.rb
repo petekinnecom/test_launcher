@@ -34,7 +34,7 @@ module TestLauncher
         runner.single_file(last_edited)
       else
         shell.notify "Found #{file_count_phrase}."
-        runner.multiple_files(search_results)
+        runner.multiple_files(search_results.uniq {|sr| sr.file})
       end
     end
 

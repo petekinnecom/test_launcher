@@ -5,7 +5,7 @@ module TestLauncher
     module RSpec
       class Runner < Base::Runner
         def single_example(result)
-          method_name = result.line[/\s*it\s+(?:"|')(.*)(?:"|')\s+do\s*/, 1]
+          method_name = result.line[/\s*(?:it|context|(?:RSpec\.)?describe)\s+(?:"|')?([^'"]*)(?:"|')?\s+do\s*/, 1]
           %{cd #{result.app_root} && rspec #{result.relative_test_path} --example '#{method_name}'}
         end
 
@@ -26,7 +26,7 @@ module TestLauncher
         end
 
         def regex_pattern
-          "^\s*it .*#{query}.* do.*"
+          "^\s*(it|context|(RSpec.)?describe) .*#{query}.* do.*"
         end
 
         def test_root_folder_name
