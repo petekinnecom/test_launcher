@@ -9,6 +9,7 @@ class CLI < Thor
     Find tests and run them. By trying to match an individual test or the name of a test file(s).
   DESC
   option :all, type: :boolean, desc: %{Run all tests found!}, default: false
+  option :framework, type: :string, desc: %{The testing framework being used. Valid options: 'minitest', 'rspec', 'guess'}, default: "guess"
 
   def find(input)
     if input == '--help'
@@ -16,7 +17,7 @@ class CLI < Thor
       exit
     end
 
-    TestLauncher.launch(input, run_all: options[:all])
+    TestLauncher.launch(input, options)
   end
 
   default_task :find

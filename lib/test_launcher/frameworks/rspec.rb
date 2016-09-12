@@ -3,6 +3,11 @@ require "test_launcher/frameworks/base"
 module TestLauncher
   module Frameworks
     module RSpec
+
+      def self.active?
+        ! Dir.glob("**/*_spec.rb").empty?
+      end
+
       class Runner < Base::Runner
         def single_example(result)
           method_name = result.line[/\s*(?:it|context|(?:RSpec\.)?describe)\s+(?:"|')?([^'"]*)(?:"|')?\s+do\s*/, 1]

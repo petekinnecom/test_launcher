@@ -1,6 +1,7 @@
 $LOAD_PATH.unshift(File.join(File.split(File.dirname(__FILE__))[0], 'lib'))
 require "minitest/autorun"
 require "mocha/mini_test"
+require "pry"
 
 require "test_launcher"
 

@@ -3,6 +3,11 @@ require "test_launcher/frameworks/base"
 module TestLauncher
   module Frameworks
     module Minitest
+
+      def self.active?
+        ! Dir.glob("**/*_test.rb").empty?
+      end
+
       class Runner < Base::Runner
         def single_example(result)
           method_name = result.line[/\s*def\s+(.*)\s*/, 1]
