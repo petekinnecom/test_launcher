@@ -1,3 +1,5 @@
+require "test_launcher/utils/path"
+
 module TestLauncher
   module Search
     class Result

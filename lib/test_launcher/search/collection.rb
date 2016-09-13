@@ -1,3 +1,5 @@
+require "delegate"
+
 module TestLauncher
   module Search
     class Collection < SimpleDelegator
