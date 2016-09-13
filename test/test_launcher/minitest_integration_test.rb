@@ -45,12 +45,12 @@ module TestLauncher
     end
 
     def test__multiple_files__all
-      TestLauncher.launch("Root1""DummyTest""Class", all: true, framework: "minitest") # don't trigger the find in *this* file
+      TestLauncher.launch("Root1""DummyTest""Class", run_all: true, framework: "minitest") # don't trigger the find in *this* file
       assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb test/class_2_test.rb", Shell::Runner.recall_exec
     end
 
     def test__multiple_files__different_roots__all
-      TestLauncher.launch("DummyTest""Class", all: true, framework: "minitest") # don't trigger the find in *this* file
+      TestLauncher.launch("DummyTest""Class", run_all: true, framework: "minitest") # don't trigger the find in *this* file
       expected = "cd ./test/test_launcher/fixtures/minitest && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb test/class_2_test.rb; cd -;\n\ncd ./test/test_launcher/fixtures/minitest/test/different_root && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/different_root_test.rb"
       assert_equal expected, Shell::Runner.recall_exec
     end

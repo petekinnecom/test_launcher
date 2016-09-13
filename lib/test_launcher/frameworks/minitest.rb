@@ -5,7 +5,7 @@ module TestLauncher
     module Minitest
 
       def self.active?
-        ! Dir.glob("**/*_test.rb").empty?
+        ! Dir.glob("**/test/**/*_test.rb").empty?
       end
 
       class Runner < Base::Runner

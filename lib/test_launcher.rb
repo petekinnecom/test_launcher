@@ -7,7 +7,7 @@ require "test_launcher/frameworks"
 
 
 module TestLauncher
-  def self.launch(input, framework: "guess", all: false)
+  def self.launch(input, framework: "guess", run_all: false)
     shell = Shell::Runner.new(
       log_path: '/tmp/test_launcher.log',
       working_directory: '.',
@@ -19,7 +19,7 @@ module TestLauncher
     search_results = framework::SearchResults.new(input, searcher).prioritized_results
     runner = framework::Runner.new
 
-    command = Consolidator.consolidate(search_results, shell, runner, all)
+    command = Consolidator.consolidate(search_results, shell, runner, run_all)
     shell.exec command
   end
 end

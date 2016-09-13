@@ -17,7 +17,7 @@ class CLI < Thor
       exit
     end
 
-    TestLauncher.launch(input, options)
+    TestLauncher.launch(input, run_all: options[:all], framework: options[:framework])
   end
 
   default_task :find

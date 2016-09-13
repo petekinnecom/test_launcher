@@ -1,3 +1,5 @@
+require "shellwords"
+
 require "test_launcher/frameworks/base"
 
 module TestLauncher
@@ -10,8 +12,8 @@ module TestLauncher
 
       class Runner < Base::Runner
         def single_example(result)
-          method_name = result.line[/\s*(?:it|context|(?:RSpec\.)?describe)\s+(?:"|')?([^'"]*)(?:"|')?\s+do\s*/, 1]
-          %{cd #{result.app_root} && rspec #{result.relative_test_path} --example '#{method_name}'}
+          method_name = result.line[/\s*(?:it|context|(?:RSpec\.)?describe)\s+(?:"|')?(.*?)(?:"|')?\s+do\s*/, 1]
+          %{cd #{result.app_root} && rspec #{result.relative_test_path} --example #{Shellwords.escape(method_name)}}
         end
 
         def one_or_more_files(results)
