@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+
+gem uninstall -Ix test_launcher && gem build test_launcher.gemspec && gem install test_launcher-0.1.0.gem
