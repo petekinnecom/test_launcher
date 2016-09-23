@@ -41,18 +41,6 @@ module TestLauncher
       end
 
       class TestCase < Base::TestCase
-        def self.from_search(file:, line:)
-          if line
-            example_name = line[/\s*(?:it|context|(?:RSpec\.)?describe)\s+(?:"|')?(.*?)(?:"|')?\s+do\s*/, 1]
-            new(
-              file: file,
-              example: example_name
-            )
-          else
-            new(file: file)
-          end
-        end
-
         def test_root_folder_name
           "spec"
         end

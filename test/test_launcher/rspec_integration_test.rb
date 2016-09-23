@@ -20,7 +20,7 @@ module TestLauncher
 
     def test__single_method
       TestLauncher.launch("file_name_1 example_name_""1", framework: "rspec")
-      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_1_spec.rb --example file_name_1\\ example_name_1\\ \\'\\\\\\\"\\ ", Shell::Runner.recall_exec
+      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_1_spec.rb --example file_name_1\\ example_name_1", Shell::Runner.recall_exec
     end
 
     def test__single_context
@@ -34,7 +34,6 @@ module TestLauncher
     end
 
     def test__multiple_methods__same_file
-      skip "existing bug"
       TestLauncher.launch("file_name_1", framework: "rspec")
       assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_1_spec.rb --example file_name_1", Shell::Runner.recall_exec
     end
@@ -51,7 +50,7 @@ module TestLauncher
 
     def test__multiple_files
       TestLauncher.launch("Root1", framework: "rspec") # don't trigger the find in *this* file
-      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_2_spec.rb --example Root1""Du""mmyTestClass2", Shell::Runner.recall_exec
+      assert_equal "cd ./test/test_launcher/fixtures/rspec && rspec spec/class_2_spec.rb --example Roo""t1", Shell::Runner.recall_exec
     end
 
     def test__multiple_files__all

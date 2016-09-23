@@ -39,17 +39,6 @@ module TestLauncher
       end
 
       class TestCase < Base::TestCase
-        def self.from_search(file:, line:)
-          if line
-            new(
-              file: file,
-              example: line[/\s*def\s+(.*)\s*/, 1]
-            )
-          else
-            new(file: file)
-          end
-        end
-
         def test_root_folder_name
           "test"
         end

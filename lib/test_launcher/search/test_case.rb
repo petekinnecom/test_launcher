@@ -5,8 +5,8 @@ module TestLauncher
     class TestCase
       attr_reader :file, :example
 
-      def self.from_search(file:, line: nil)
-        raise NotImplementedError
+      def self.from_search(file:, query: nil)
+        new(file: file, example: query)
       end
 
       def initialize(file:, example: nil)

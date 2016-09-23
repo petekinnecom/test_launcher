@@ -20,18 +20,17 @@ module TestLauncher
 
     def test__single_method
       TestLauncher.launch("file_name_1__method_name_1", framework: "minitest")
-      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_1_test.rb --name=/test__file_name_1__method_name_1/", Shell::Runner.recall_exec
+      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_1_test.rb --name=/file_name_1__method_name_1/", Shell::Runner.recall_exec
     end
 
     def test__multiple_methods__same_file
-      skip "existing bug"
       TestLauncher.launch("file_name_1", framework: "minitest")
       assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_1_test.rb --name=/file_name_1/", Shell::Runner.recall_exec
     end
 
     def test__multiple_methods__different_files
       TestLauncher.launch("multiple_files__same_method", framework: "minitest")
-      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_2_test.rb --name=/test__multiple_files__same_method/", Shell::Runner.recall_exec
+      assert_equal "cd ./test/test_launcher/fixtures/minitest && ruby -I test test/class_2_test.rb --name=/multiple_files__same_method/", Shell::Runner.recall_exec
     end
 
     def test__single_file

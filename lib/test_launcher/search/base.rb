@@ -52,11 +52,11 @@ module TestLauncher
       end
 
       def full_regex_search(regex)
-        searcher.grep(regex, file_pattern: file_name_pattern).map {|r| build_result(file: r[:file], line: r[:line])}
+        searcher.grep(regex, file_pattern: file_name_pattern).map {|r| build_result(file: r[:file], query: query)}
       end
 
-      def build_result(file:, line: nil)
-        test_case_class.from_search(file: file, line: line)
+      def build_result(file:, query: nil)
+        test_case_class.from_search(file: file, query: query)
       end
 
       def file_name_regex

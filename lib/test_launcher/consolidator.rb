@@ -20,7 +20,7 @@ module TestLauncher
         runner.single_example(search_results.first)
       elsif examples_found? && same_file?
         shell.notify "Multiple test methods match in 1 file."
-        raise "unsupported"
+        runner.single_example(search_results.first)
       elsif examples_found? && run_last_edited?
         shell.notify "Found #{methods_count_phrase} in #{file_count_phrase}."
         shell.notify "Running most recently edited. Run with '--all' to run all the tests."
