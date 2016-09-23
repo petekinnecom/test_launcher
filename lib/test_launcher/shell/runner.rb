@@ -8,18 +8,16 @@ module TestLauncher
 
       CommandFailureError = Class.new(StandardError)
 
-      attr_accessor :working_directory, :log_path, :queue
-      private :working_directory, :log_path, :queue
+      attr_accessor :log_path, :queue
+      private :log_path, :queue
 
-      def initialize(log_path:, working_directory:)
-        @working_directory = working_directory
+      def initialize(log_path:)
         @log_path = log_path
 
         %x{echo "" > #{log_path}}
-        Dir.chdir(%x[ git rev-parse --show-toplevel ].chomp)
       end
-
-      def run(cmd, dir: working_directory, &block)
+      
+      def run(cmd, dir: ".")
         command = "cd #{dir} && #{cmd}"
         log(command)
 
