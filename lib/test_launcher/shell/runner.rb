@@ -15,6 +15,7 @@ module TestLauncher
         @log_path = log_path
 
         %x{echo "" > #{log_path}}
+        Dir.chdir(%x[ git rev-parse --show-toplevel ].chomp)
       end
 
       def run(cmd, dir: ".")
