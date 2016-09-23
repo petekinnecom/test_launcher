@@ -8,10 +8,7 @@ require "test_launcher/frameworks"
 
 module TestLauncher
   def self.launch(input, framework: "guess", run_all: false)
-    shell = Shell::Runner.new(
-      log_path: '/tmp/test_launcher.log',
-      working_directory: '.',
-    )
+    shell = Shell::Runner.new(log_path: '/tmp/test_launcher.log')
 
     searcher = Searchers::GitSearcher.new(shell)
     framework = Frameworks.guess_framework(framework)
