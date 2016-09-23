@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["pete.kinnecom@appfolio.com"]
   spec.summary       = %q{Easily run tests}
   spec.description   = %q{no really}
-  spec.homepage      = ""
+  spec.homepage      = "http://github.com/petekinnecom/test_launcher"
   spec.license       = "MIT"
 
   spec.files         = `git ls-files -z`.split("\x0")
