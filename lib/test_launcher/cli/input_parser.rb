@@ -2,6 +2,8 @@ require "optparse"
 # This could use some love
 
 class InputParser
+  ParseError = Class.new(RuntimeError)
+
   BANNER = <<-DESC
 Find tests and run them by trying to match an individual test or the name of a test file(s).
 
@@ -15,6 +17,11 @@ Usage: `test_launcher "search string" [--all]`
     @query = args
     @options = {}
     option_parser.parse!(args)
+  rescue OptionParser::ParseError
+    puts "Invalid arguments"
+    puts "----"
+    puts option_parser
+    exit
   end
 
   def query
