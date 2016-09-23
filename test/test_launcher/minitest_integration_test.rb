@@ -38,6 +38,11 @@ module TestLauncher
       assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb", Shell::Runner.recall_exec
     end
 
+    def test__uses_spring
+      TestLauncher.launch("different_roo""t_test", framework: "minitest") # don't trigger the find in *this* file
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest/test/different_root")} && bin/spring testunit test/different_root_test.rb", Shell::Runner.recall_exec
+    end
+
     def test__multiple_files
       TestLauncher.launch("Root1""Dum""myTest""Class", framework: "minitest") # don't trigger the find in *this* file
       assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_2_test.rb", Shell::Runner.recall_exec
@@ -50,7 +55,7 @@ module TestLauncher
 
     def test__multiple_files__different_roots__all
       TestLauncher.launch("DummyTest""Class", run_all: true, framework: "minitest") # don't trigger the find in *this* file
-      expected = "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb test/class_2_test.rb; cd -;\n\ncd #{system_path("test/test_launcher/fixtures/minites")}t/test/different_root && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/different_root_test.rb"
+      expected = "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb test/class_2_test.rb; cd -;\n\ncd #{system_path("test/test_launcher/fixtures/minitest/test/different_root")} && bin/spring testunit test/different_root_test.rb"
       assert_equal expected, Shell::Runner.recall_exec
     end
 
