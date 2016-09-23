@@ -1,19 +1,18 @@
 require "test_helper"
 require "test_launcher/rubymine/launcher"
-require "test_launcher/shell/runner"
 
 module TestLauncher
   class RubymineTest < TestCase
     def test_launch__run__file
       args = "/Users/username/some_app/bin/spring testunit /Users/username/some_app/engines/some_engine/test/does_something_test.rb"
-      expected_command = "cd /Users/username/some_app/engines/some_engine && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/does_something_test.rb"
+      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/does_something_test.rb"
 
       assert_executes expected_command, args
     end
 
     def test_launch__run__example
       args = "/Users/username/some_app/bin/spring testunit /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
-      expected_command = "cd /Users/username/some_app/engines/some_engine && ruby -I test test/does_something_test.rb --name='some_test_name'"
+      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test test/does_something_test.rb --name='some_test_name'"
 
       assert_executes expected_command, args
     end
