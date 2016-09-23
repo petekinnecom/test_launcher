@@ -40,6 +40,11 @@ module TestLauncher
         print "#{yellow(msg)}\n"
       end
 
+      def puts(msg)
+        log msg
+        print "#{msg}\n"
+      end
+
       def confirm?(question)
         warn "#{question} [Yn]"
         STDIN.gets.strip.downcase != 'n'
