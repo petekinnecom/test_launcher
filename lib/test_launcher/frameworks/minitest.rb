@@ -10,8 +10,7 @@ module TestLauncher
 
       class Runner < Base::Runner
         def single_example(result)
-          method_name = result.line[/\s*def\s+(.*)\s*/, 1]
-          %{cd #{result.app_root} && ruby -I test #{result.relative_test_path} --name=/#{method_name}/}
+          %{cd #{result.app_root} && ruby -I test #{result.relative_test_path} --name=/#{result.example}/}
         end
 
         def one_or_more_files(results)
@@ -32,6 +31,23 @@ module TestLauncher
 
         def regex_pattern
           "^\s*def .*#{query}.*"
+        end
+
+        def test_case_class
+          TestCase
+        end
+      end
+
+      class TestCase < Base::TestCase
+        def self.from_search(file:, line:)
+          if line
+            new(
+              file: file,
+              example: line[/\s*def\s+(.*)\s*/, 1]
+            )
+          else
+            new(file: file)
+          end
         end
 
         def test_root_folder_name

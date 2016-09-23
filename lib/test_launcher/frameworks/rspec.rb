@@ -12,8 +12,7 @@ module TestLauncher
 
       class Runner < Base::Runner
         def single_example(result)
-          method_name = result.line[/\s*(?:it|context|(?:RSpec\.)?describe)\s+(?:"|')?(.*?)(?:"|')?\s+do\s*/, 1]
-          %{cd #{result.app_root} && rspec #{result.relative_test_path} --example #{Shellwords.escape(method_name)}}
+          %{cd #{result.app_root} && rspec #{result.relative_test_path} --example #{Shellwords.escape(result.example)}}
         end
 
         def one_or_more_files(results)
@@ -34,6 +33,24 @@ module TestLauncher
 
         def regex_pattern
           "^\s*(it|context|(RSpec.)?describe) .*#{query}.* do.*"
+        end
+
+        def test_case_class
+          TestCase
+        end
+      end
+
+      class TestCase < Base::TestCase
+        def self.from_search(file:, line:)
+          if line
+            example_name = line[/\s*(?:it|context|(?:RSpec\.)?describe)\s+(?:"|')?(.*?)(?:"|')?\s+do\s*/, 1]
+            new(
+              file: file,
+              example: example_name
+            )
+          else
+            new(file: file)
+          end
         end
 
         def test_root_folder_name

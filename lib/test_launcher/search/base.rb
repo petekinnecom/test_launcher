@@ -1,4 +1,4 @@
-require "test_launcher/search/result"
+require "test_launcher/search/test_case"
 require "test_launcher/search/collection"
 
 module TestLauncher
@@ -56,7 +56,7 @@ module TestLauncher
       end
 
       def build_result(file:, line: nil)
-        Result.new(file: file, line: line, test_root_folder_name: test_root_folder_name)
+        test_case_class.from_search(file: file, line: line)
       end
 
       def file_name_regex
@@ -71,7 +71,7 @@ module TestLauncher
         raise NotImplementedError
       end
 
-      def test_root_folder_name
+      def test_case_class
         raise NotImplementedError
       end
     end

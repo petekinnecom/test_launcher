@@ -37,6 +37,16 @@ module TestLauncher
             .join("; cd -;\n\n")
         end
       end
+
+      class TestCase < Search::TestCase
+        def self.from_search(file:, line: nil)
+          raise NotImplementedError
+        end
+
+        def test_root_folder_name
+          raise NotImplementedError
+        end
+      end
     end
   end
 end

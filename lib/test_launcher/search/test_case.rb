@@ -2,18 +2,20 @@ require "test_launcher/utils/path"
 
 module TestLauncher
   module Search
-    class Result
-      attr_reader :file, :line, :test_root_folder_name
+    class TestCase
+      attr_reader :file, :example
 
-      def initialize(file:, line: nil, test_root_folder_name:)
+      def self.from_search(file:, line: nil)
+        raise NotImplementedError
+      end
+
+      def initialize(file:, example: nil)
         @file = file
-        @line = line
+        @example = example
+      end
 
-        # This is not ideal.
-        # What is some other way for this to work?
-        # Needs to be configure by the specific framework
-        # but it's a bummer to pass it through the SearchResults class
-        @test_root_folder_name = test_root_folder_name
+      def is_example?
+        !example.nil?
       end
 
       def mtime
@@ -31,6 +33,10 @@ module TestLauncher
         exploded_path = Utils::Path.split(file)
         path = exploded_path[exploded_path.rindex(test_root_folder_name)..-1]
         File.join(path)
+      end
+
+      def test_root_folder_name
+        raise NotImplementedError
       end
     end
   end

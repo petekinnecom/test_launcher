@@ -14,7 +14,7 @@ module TestLauncher
       end
 
       def examples_found?
-        results.any?(&:line)
+        results.any?(&:is_example?)
       end
 
       def last_edited
