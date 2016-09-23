@@ -10,4 +10,8 @@ class Root1DummyTestClass1Test
   def test__multiple_files__same_method
 
   end
+
+  def helper_method
+
+  end
 end

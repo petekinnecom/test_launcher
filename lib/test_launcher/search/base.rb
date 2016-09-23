@@ -39,7 +39,7 @@ module TestLauncher
       end
 
       def examples_found_by_name
-        @examples_found_by_name ||= full_regex_search(regex_pattern)
+        @examples_found_by_name ||= full_regex_search(regex_pattern).map {|r| build_result(file: r[:file], query: query)}
       end
 
       def files_found_by_file_name
@@ -48,11 +48,11 @@ module TestLauncher
 
       def files_found_by_full_regex
         # we ignore the matched line since we don't know what to do with it
-        @files_found_by_full_regex ||= full_regex_search(query).map {|t| build_result(file: t.file) }
+        @files_found_by_full_regex ||= full_regex_search(query).map {|r| build_result(file: r[:file]) }
       end
 
       def full_regex_search(regex)
-        searcher.grep(regex, file_pattern: file_name_pattern).map {|r| build_result(file: r[:file], query: query)}
+        searcher.grep(regex, file_pattern: file_name_pattern)
       end
 
       def build_result(file:, query: nil)
