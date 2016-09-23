@@ -59,6 +59,11 @@ module TestLauncher
       assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb", Shell::Runner.recall_exec
     end
 
+    def test__regex__does_not_test_helper__methods
+      TestLauncher.launch("helper_meth""od", framework: "minitest") # don't trigger the find in *this* file
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb", Shell::Runner.recall_exec
+    end
+
     private
 
     def system_path(relative_dir)

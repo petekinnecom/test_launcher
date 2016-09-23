@@ -38,7 +38,7 @@ module TestLauncher
         end
 
         def regex_pattern
-          "^\s*def .*#{query}.*"
+          "^\s*def test_.*#{query.sub(/^test_/, "")}.*"
         end
 
         def test_case_class
