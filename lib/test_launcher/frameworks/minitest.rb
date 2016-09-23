@@ -50,11 +50,11 @@ module TestLauncher
 
         def runner
           if spring_enabled?
-            "bin/spring testunit"
+            "spring testunit"
           elsif is_example?
-            "ruby -I test"
+            "bundle exec ruby -I test"
           else
-            "ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}'"
+            "bundle exec ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}'"
           end
         end
 
