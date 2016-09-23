@@ -13,18 +13,14 @@ module TestLauncher
         if args.any? {|a| a.match("ruby-debug-ide")}
           test_dir = File.join(test_case.app_root, "test")
 
-          shell.puts "----"
-          shell.puts "Using test_launcher to debug"
-          shell.puts "Pushing #{test_dir} to $LOAD_PATH"
-          shell.puts "----"
+          shell.puts "test_launcher: RubyMine is debugging"
+          shell.puts "test_launcher: Pushing #{test_dir} to $LOAD_PATH"
 
           $LOAD_PATH.unshift(test_dir)
           load($0 = args.shift)
         else
-          shell.puts "----"
-          shell.puts "Using test_launcher to run:"
+          shell.puts "test_launcher: hijacking and running:"
           shell.puts command
-          shell.puts "----"
 
           shell.exec command
         end
