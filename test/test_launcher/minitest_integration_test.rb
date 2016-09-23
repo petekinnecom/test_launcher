@@ -35,28 +35,28 @@ module TestLauncher
 
     def test__single_file
       TestLauncher.launch("class_1_test", framework: "minitest")
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb", Shell::Runner.recall_exec
     end
 
     def test__multiple_files
       TestLauncher.launch("Root1""Dum""myTest""Class", framework: "minitest") # don't trigger the find in *this* file
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_2_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_2_test.rb", Shell::Runner.recall_exec
     end
 
     def test__multiple_files__all
       TestLauncher.launch("Root1""DummyTest""Class", run_all: true, framework: "minitest") # don't trigger the find in *this* file
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb test/class_2_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb test/class_2_test.rb", Shell::Runner.recall_exec
     end
 
     def test__multiple_files__different_roots__all
       TestLauncher.launch("DummyTest""Class", run_all: true, framework: "minitest") # don't trigger the find in *this* file
-      expected = "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb test/class_2_test.rb; cd -;\n\ncd #{system_path("test/test_launcher/fixtures/minites")}t/test/different_root && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/different_root_test.rb"
+      expected = "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb test/class_2_test.rb; cd -;\n\ncd #{system_path("test/test_launcher/fixtures/minites")}t/test/different_root && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/different_root_test.rb"
       assert_equal expected, Shell::Runner.recall_exec
     end
 
     def test__regex
       TestLauncher.launch("Root1""DummyTest""Class1""Test", framework: "minitest") # don't trigger the find in *this* file
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + \"/\" + file) }' test/class_1_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb", Shell::Runner.recall_exec
     end
 
     private

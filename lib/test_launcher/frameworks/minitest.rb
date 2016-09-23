@@ -22,7 +22,7 @@ module TestLauncher
         end
 
         def one_or_more_files(results)
-          %{cd #{results.first.app_root} && ruby -I test -e 'ARGV.each { |file| require(Dir.pwd + "/" + file) }' #{results.map(&:relative_test_path).join(" ")}}
+          %{cd #{results.first.app_root} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' #{results.map(&:relative_test_path).join(" ")}}
         end
       end
 

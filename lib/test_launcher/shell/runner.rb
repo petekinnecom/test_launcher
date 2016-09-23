@@ -16,7 +16,7 @@ module TestLauncher
 
         %x{echo "" > #{log_path}}
       end
-      
+
       def run(cmd, dir: ".")
         command = "cd #{dir} && #{cmd}"
         log(command)
