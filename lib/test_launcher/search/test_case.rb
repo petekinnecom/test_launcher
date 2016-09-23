@@ -32,6 +32,14 @@ module TestLauncher
         File.join(path)
       end
 
+      def spring_enabled?
+        File.exist?(File.join(app_root, "bin/spring"))
+      end
+
+      def runner
+        raise NotImplementedError
+      end
+
       def test_root_folder_name
         raise NotImplementedError
       end

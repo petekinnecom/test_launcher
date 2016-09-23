@@ -18,11 +18,11 @@ module TestLauncher
               "--name=/#{result.example}/"
             end
 
-          %{cd #{result.app_root} && ruby -I test #{result.relative_test_path} #{name}}
+          %{cd #{result.app_root} && #{result.runner} #{result.relative_test_path} #{name}}
         end
 
         def one_or_more_files(results)
-          %{cd #{results.first.app_root} && ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' #{results.map(&:relative_test_path).join(" ")}}
+          %{cd #{results.first.app_root} && #{results.first.runner} #{results.map(&:relative_test_path).join(" ")}}
         end
       end
 
@@ -47,6 +47,17 @@ module TestLauncher
       end
 
       class TestCase < Base::TestCase
+
+        def runner
+          if spring_enabled?
+            "bin/spring testunit"
+          elsif is_example?
+            "ruby -I test"
+          else
+            "ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}'"
+          end
+        end
+
         def test_root_folder_name
           "test"
         end
