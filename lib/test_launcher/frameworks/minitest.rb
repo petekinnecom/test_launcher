@@ -9,8 +9,16 @@ module TestLauncher
       end
 
       class Runner < Base::Runner
-        def single_example(result)
-          %{cd #{result.app_root} && ruby -I test #{result.relative_test_path} --name=/#{result.example}/}
+        def single_example(result, exact_match: false)
+
+          name =
+            if exact_match
+              "--name='#{result.example}'"
+            else
+              "--name=/#{result.example}/"
+            end
+
+          %{cd #{result.app_root} && ruby -I test #{result.relative_test_path} #{name}}
         end
 
         def one_or_more_files(results)
