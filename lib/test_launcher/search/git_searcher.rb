@@ -3,7 +3,7 @@ module TestLauncher
     class GitSearcher < Struct.new(:shell)
 
       def find_files(pattern)
-        shell.run("git ls-files '*#{pattern}*'")
+        shell.run("git ls-files '*#{pattern}*'").map {|f| system_path(f)}
       end
 
       def grep(regex, file_pattern: '*')
@@ -29,9 +29,17 @@ module TestLauncher
         line = splits.join(':').strip
 
         {
-          :file => file,
+          :file => system_path(file),
           :line => line,
         }
+      end
+
+      def system_path(file)
+        File.join(root_path, file)
+      end
+
+      def root_path
+        @root_path ||= %x[ git rev-parse --show-toplevel ].chomp
       end
     end
   end

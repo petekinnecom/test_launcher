@@ -20,7 +20,7 @@ module TestLauncher
       end
 
       def run(cmd, dir: working_directory, &block)
-        command = "cd #{Utils::Path.relative_join(dir)} && #{cmd}"
+        command = "cd #{dir} && #{cmd}"
         log(command)
 
         shell_out(command).split("\n")
