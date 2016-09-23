@@ -1,26 +1,7 @@
 #!/usr/bin/env ruby
 
-require "thor"
+require "test_launcher/cli/input_parser"
 require "test_launcher"
 
-class CLI < Thor
-
-  desc "find", <<-DESC
-    Find tests and run them. By trying to match an individual test or the name of a test file(s).
-  DESC
-  option :all, type: :boolean, desc: %{Run all tests found!}, default: false
-  option :framework, type: :string, desc: %{The testing framework being used. Valid options: 'minitest', 'rspec', 'guess'}, default: "guess"
-
-  def find(input)
-    if input == '--help'
-      `test_launcher --help find`
-      exit
-    end
-
-    TestLauncher.launch(input, run_all: options[:all], framework: options[:framework])
-  end
-
-  default_task :find
-end
-
-CLI.start(ARGV)
+input = InputParser.new(ARGV)
+TestLauncher.launch(input.query, run_all: input.options[:run_all], framework: input.options[:framework])
