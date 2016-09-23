@@ -33,7 +33,12 @@ module TestLauncher
       end
 
       def spring_enabled?
-        File.exist?(File.join(app_root, "bin/spring"))
+        [
+          "bin/spring",
+          "bin/testunit"
+        ].any? {|f|
+          File.exist?(File.join(app_root, f))
+        }
       end
 
       def runner
