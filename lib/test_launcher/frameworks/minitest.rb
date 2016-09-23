@@ -13,7 +13,7 @@ module TestLauncher
 
           name =
             if exact_match
-              "--name='#{result.example}'"
+              "--name=#{result.example}"
             else
               "--name=/#{result.example}/"
             end
