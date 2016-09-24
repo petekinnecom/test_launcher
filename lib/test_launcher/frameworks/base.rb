@@ -5,7 +5,7 @@ require "test_launcher/frameworks/implementation/consolidator"
 module TestLauncher
   module Frameworks
     module Base
-      class SearchResults < Implementation::Locator
+      class Locator < Implementation::Locator
         def file_name_regex
           # for ruby to match on file names
           raise NotImplementedError

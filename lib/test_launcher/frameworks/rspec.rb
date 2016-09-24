@@ -20,7 +20,7 @@ module TestLauncher
         end
       end
 
-      class SearchResults < Base::SearchResults
+      class Locator < Base::Locator
         private
 
         def file_name_regex
