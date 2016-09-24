@@ -1,3 +1,5 @@
+require "pathname"
+
 module TestLauncher
   module Frameworks
     module Implementation
