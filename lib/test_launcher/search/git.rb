@@ -1,6 +1,6 @@
 module TestLauncher
   module Searchers
-    class GitSearcher < Struct.new(:shell)
+    class Git < Struct.new(:shell)
 
       def find_files(pattern)
         shell.run("git ls-files '*#{pattern}*'").map {|f| system_path(f)}

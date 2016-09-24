@@ -1,18 +1,23 @@
-require "test_launcher/search/base"
+require "test_launcher/frameworks/implementation/locator"
+require "test_launcher/frameworks/implementation/test_case"
+require "test_launcher/frameworks/implementation/consolidator"
 
 module TestLauncher
   module Frameworks
     module Base
-      class SearchResults < Search::Base
+      class SearchResults < Implementation::Locator
         def file_name_regex
+          # for ruby to match on file names
           raise NotImplementedError
         end
 
         def file_name_pattern
+          # for bash to match on file names
           raise NotImplementedError
         end
 
         def regex_pattern
+          # to match on examples
           raise NotImplementedError
         end
       end
@@ -38,8 +43,9 @@ module TestLauncher
         end
       end
 
-      class TestCase < Search::TestCase
+      class TestCase < Implementation::TestCase
         def test_root_folder_name
+          # directory where tests are found
           raise NotImplementedError
         end
       end

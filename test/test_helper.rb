@@ -23,23 +23,6 @@ class TestCase < Minitest::Test
     end
   end
 
-  def assert_notified(string)
-    unless dummy_shell.recall(:notify).flatten.include?(string)
-      flunk <<-FLUNK
-      could not find: "#{string}"
-      shell.notify called with:
-      #{dummy_shell.recall(:notify)}
-      FLUNK
-    end
-  end
-
-  def assert_paragraphs_equal(expected, actual)
-    expecteds = expected.split("\n").map {|l| l.to_s.strip}
-    actuals = actual.split("\n").map {|l| l.to_s.strip}
-
-    assert_equal expecteds, actuals
-  end
-
   private
 
   def dummy_shell

@@ -30,9 +30,9 @@ module TestLauncher
 
       def command
         if test_case.is_example?
-          TestLauncher::Frameworks::Minitest::Runner.new.single_example(test_case, exact_match: true)
+          Frameworks::Minitest::Runner.new.single_example(test_case, exact_match: true)
         else
-          TestLauncher::Frameworks::Minitest::Runner.new.single_file(test_case)
+          Frameworks::Minitest::Runner.new.single_file(test_case)
         end
       end
 

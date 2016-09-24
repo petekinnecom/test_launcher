@@ -1,5 +1,4 @@
 require "test_launcher/shell/color"
-require "test_launcher/utils/path"
 
 module TestLauncher
   module Shell
