@@ -5,25 +5,25 @@ require "test_launcher/frameworks/rspec"
 module TestLauncher
   module Frameworks
     def self.locate(framework_name:, input:, run_all:, shell:, searcher:)
-      framework = guess_framework(framework_name)
-      search_results = framework::Locator.new(input, searcher).prioritized_results
-      runner = framework::Runner.new
+      frameworks = guess_frameworks(framework_name)
 
-      Implementation::Consolidator.consolidate(search_results, shell, runner, run_all)
+      frameworks.each do |framework|
+        search_results = framework::Locator.new(input, searcher).prioritized_results
+        runner = framework::Runner.new
+
+        command = Implementation::Consolidator.consolidate(search_results, shell, runner, run_all)
+
+        return command if command
+      end
     end
 
-    def self.guess_framework(framework_name)
+    def self.guess_frameworks(framework_name)
       if framework_name == "rspec"
-        RSpec
+        [RSpec]
       elsif framework_name == "minitest"
-        Minitest
+        [Minitest]
       else
-        # TODO:
-
-        # guessing is broken
-        # many projects will have files of both types.  Try both in that case?
-
-        [Minitest, RSpec].find(&:active?)
+        [Minitest, RSpec].select(&:active?)
       end
     end
   end
