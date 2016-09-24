@@ -2,6 +2,10 @@ module TestLauncher
   module Searchers
     class Git
 
+      def self.valid?
+
+      end
+
       def initialize(shell)
         @shell = shell
         Dir.chdir(root_path)
@@ -45,6 +49,11 @@ module TestLauncher
 
       def root_path
         @root_path ||= %x[ git rev-parse --show-toplevel ].chomp
+
+        if $? != 0
+          shell.warn "test_launcher must be used in a git repository"
+          exit
+        end
       end
 
       def shell
