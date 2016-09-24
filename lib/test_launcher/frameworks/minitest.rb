@@ -34,7 +34,7 @@ module TestLauncher
         end
 
         def file_name_pattern
-          '*_test.rb'
+          "*_test.rb"
         end
 
         def regex_pattern

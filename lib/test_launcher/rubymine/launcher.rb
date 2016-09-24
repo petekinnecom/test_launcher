@@ -11,7 +11,7 @@ module TestLauncher
 
       def launch
         if args.any? {|a| a.match("ruby-debug-ide")}
-          test_dir = File.join(test_case.app_root, "test")
+          test_dir = File.join(test_case.test_root)
 
           shell.puts "test_launcher: RubyMine is debugging"
           shell.puts "test_launcher: Pushing #{test_dir} to $LOAD_PATH"
@@ -32,7 +32,7 @@ module TestLauncher
         if test_case.is_example?
           TestLauncher::Frameworks::Minitest::Runner.new.single_example(test_case, exact_match: true)
         else
-          TestLauncher::Frameworks::Minitest::Runner.new.one_or_more_files([test_case])
+          TestLauncher::Frameworks::Minitest::Runner.new.single_file(test_case)
         end
       end
 
