@@ -17,6 +17,10 @@ module TestLauncher
       run_all: run_all
     )
 
-    shell.exec command
+    if command
+      shell.exec command
+    else
+      shell.warn "No tests found."
+    end
   end
 end

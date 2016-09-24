@@ -9,11 +9,8 @@ module TestLauncher
 
         def consolidate
           if search_results.empty?
-            shell.warn "Could not find any tests."
-            exit
-          end
-
-          if one_example?
+            nil
+          elsif one_example?
             shell.notify "Found #{methods_count_phrase} in #{file_count_phrase}."
             runner.single_example(search_results.first)
           elsif examples_found? && same_file?
