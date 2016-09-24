@@ -19,12 +19,16 @@ module TestLauncher
       end
 
       def mtime
-        File.mtime(file)
+        @mtime ||= File.mtime(file)
       end
 
       def app_root
         path = exploded_path[0...exploded_path.rindex(test_root_folder_name)]
         File.join("/", path)
+      end
+
+      def test_root
+        File.join(app_root, test_root_folder_name)
       end
 
       def relative_test_path
