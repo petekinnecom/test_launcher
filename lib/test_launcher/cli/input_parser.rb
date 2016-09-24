@@ -1,3 +1,4 @@
+require "test_launcher/version"
 require "optparse"
 # This could use some love
 
@@ -10,6 +11,8 @@ Find tests and run them by trying to match an individual test or the name of a t
 See full README: https://github.com/petekinnecom/test_launcher
 
 Usage: `test_launcher "search string" [--all]`
+
+VERSION: #{TestLauncher::VERSION}
 
   DESC
 
@@ -51,6 +54,11 @@ Usage: `test_launcher "search string" [--all]`
 
       opts.on("-h", "--help", "Prints this help") do
         puts opts
+        exit
+      end
+
+      opts.on("-v", "--version", "Display the version info") do
+        puts TestLauncher::VERSION
         exit
       end
 
