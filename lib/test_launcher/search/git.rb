@@ -1,6 +1,11 @@
 module TestLauncher
   module Searchers
-    class Git < Struct.new(:shell)
+    class Git
+
+      def initialize(shell)
+        @shell = shell
+        Dir.chdir(root_path)
+      end
 
       def find_files(pattern)
         shell.run("git ls-files '*#{pattern}*'").map {|f| system_path(f)}
@@ -40,6 +45,10 @@ module TestLauncher
 
       def root_path
         @root_path ||= %x[ git rev-parse --show-toplevel ].chomp
+      end
+
+      def shell
+        @shell
       end
     end
   end
