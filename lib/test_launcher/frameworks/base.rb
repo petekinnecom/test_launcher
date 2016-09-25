@@ -23,22 +23,22 @@ module TestLauncher
       end
 
       class Runner
-        def single_example(result)
+        def single_example(test_case)
           raise NotImplementedError
         end
 
-        def one_or_more_files(results)
+        def one_or_more_files(test_cases)
           raise NotImplementedError
         end
 
-        def single_file(result)
-          one_or_more_files([result])
+        def single_file(test_case)
+          one_or_more_files([test_case])
         end
 
         def multiple_files(collection)
           collection
             .group_by(&:app_root)
-            .map { |_root, results| one_or_more_files(results) }
+            .map { |_root, test_cases| one_or_more_files(test_cases) }
             .join("; cd -;\n\n")
         end
       end
