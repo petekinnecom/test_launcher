@@ -9,20 +9,20 @@ module TestLauncher
       end
 
       class Runner < Base::Runner
-        def single_example(result, exact_match: false)
+        def single_example(test_case, exact_match: false)
 
           name =
             if exact_match
-              "--name=#{result.example}"
+              "--name=#{test_case.example}"
             else
-              "--name=/#{result.example}/"
+              "--name=/#{test_case.example}/"
             end
 
-          %{cd #{result.app_root} && #{result.runner} #{result.relative_test_path} #{name}}
+          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.relative_test_path} #{name}}
         end
 
-        def one_or_more_files(results)
-          %{cd #{results.first.app_root} && #{results.first.runner} #{results.map(&:relative_test_path).join(" ")}}
+        def one_or_more_files(test_cases)
+          %{cd #{test_cases.first.app_root} && #{test_cases.first.runner} #{test_cases.map(&:relative_test_path).join(" ")}}
         end
       end
 

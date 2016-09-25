@@ -11,12 +11,12 @@ module TestLauncher
       end
 
       class Runner < Base::Runner
-        def single_example(result)
-          %{cd #{result.app_root} && rspec #{result.relative_test_path} --example #{Shellwords.escape(result.example)}}
+        def single_example(test_case)
+          %{cd #{test_case.app_root} && rspec #{test_case.relative_test_path} --example #{Shellwords.escape(test_case.example)}}
         end
 
-        def one_or_more_files(results)
-          %{cd #{results.first.app_root} && rspec #{results.map(&:relative_test_path).join(" ")}}
+        def one_or_more_files(test_cases)
+          %{cd #{test_cases.first.app_root} && rspec #{test_cases.map(&:relative_test_path).join(" ")}}
         end
       end
 
