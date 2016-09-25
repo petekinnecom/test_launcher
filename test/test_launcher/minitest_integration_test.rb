@@ -2,22 +2,6 @@ require "test_helper"
 
 module TestLauncher
   class MinitestIntegrationTest < TestCase
-
-    class Shell::Runner
-      def exec(cmd)
-        raise "execed twice" if defined?(@exec)
-        @@exec = cmd
-      end
-
-      def notify(*)
-        # silence logs during test
-      end
-
-      def self.recall_exec
-        @@exec.to_s
-      end
-    end
-
     def test__single_method
       TestLauncher.launch("file_name_1__method_name_1", framework: "minitest")
       assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test test/class_1_test.rb --name=/file_name_1__method_name_1/", Shell::Runner.recall_exec
@@ -67,6 +51,11 @@ module TestLauncher
     def test__regex__does_not_test_helper__methods
       TestLauncher.launch("helper_meth""od", framework: "minitest") # don't trigger the find in *this* file
       assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb", Shell::Runner.recall_exec
+    end
+
+    def test__not_found
+      TestLauncher.launch("not_found""thing", framework: "minitest")
+      assert_equal nil, Shell::Runner.recall_exec
     end
 
     private

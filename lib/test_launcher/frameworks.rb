@@ -15,6 +15,8 @@ module TestLauncher
 
         return command if command
       end
+
+      nil
     end
 
     def self.guess_frameworks(framework_name)
