@@ -2,22 +2,6 @@ require "test_helper"
 
 module TestLauncher
   class RspecIntegrationTest < TestCase
-
-    class Shell::Runner
-      def exec(cmd)
-        raise "execed twice" if defined?(@exec)
-        @@exec = cmd
-      end
-
-      def notify(*)
-        # silence logs during test
-      end
-
-      def self.recall_exec
-        @@exec.to_s
-      end
-    end
-
     def test__single_method
       TestLauncher.launch("file_name_1 example_name_""1", framework: "rspec")
       assert_equal "cd #{system_path("test/test_launcher/fixtures/rspec")} && rspec spec/class_1_spec.rb --example file_name_1\\ example_name_1", Shell::Runner.recall_exec
@@ -67,6 +51,11 @@ module TestLauncher
     def test__regex
       TestLauncher.launch("a_test_that_u""ses", framework: "rspec") # don't trigger the find in *this* file
       assert_equal "cd #{system_path("test/test_launcher/fixtures/rspec")} && rspec spec/class_2_spec.rb", Shell::Runner.recall_exec
+    end
+
+    def test__not_found
+      TestLauncher.launch("not_found""thing", framework: "minitest")
+      assert_equal nil, Shell::Runner.recall_exec
     end
 
     private

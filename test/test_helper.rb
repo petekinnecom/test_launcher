@@ -5,7 +5,36 @@ require "pry"
 
 require "test_launcher"
 
+class TestLauncher::Shell::Runner
+  def exec(cmd)
+    raise "execed twice" if defined?(@exec)
+    @@exec = cmd
+  end
+
+  def notify(*)
+    # silence logs during test
+  end
+
+  def warn(*)
+    # silence logs during test
+  end
+
+  def self.recall_exec
+    return unless @@exec
+    @@exec.to_s
+  end
+
+  def self.reset
+    @@exec = nil
+  end
+end
+
 class TestCase < Minitest::Test
+
+  def setup
+    TestLauncher::Shell::Runner.reset
+  end
+
   class DummyShell
 
     def method_missing(method, *args)

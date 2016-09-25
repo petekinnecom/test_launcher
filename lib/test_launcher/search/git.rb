@@ -48,11 +48,11 @@ module TestLauncher
       end
 
       def root_path
-        @root_path ||= %x[ git rev-parse --show-toplevel ].chomp
-
-        if $? != 0
-          shell.warn "test_launcher must be used in a git repository"
-          exit
+        @root_path ||= %x[ git rev-parse --show-toplevel ].chomp.tap do
+          if $? != 0
+            shell.warn "test_launcher must be used in a git repository"
+            exit
+          end
         end
       end
 
