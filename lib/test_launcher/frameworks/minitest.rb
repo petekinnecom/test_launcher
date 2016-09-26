@@ -50,7 +50,7 @@ module TestLauncher
 
         def runner
           if spring_enabled?
-            "spring testunit"
+            "bundle exec spring testunit"
           elsif is_example?
             "bundle exec ruby -I test"
           else
