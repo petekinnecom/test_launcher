@@ -1,4 +1,5 @@
 require "test_launcher/shell/color"
+require "bundler"
 
 module TestLauncher
   module Shell
@@ -24,7 +25,7 @@ module TestLauncher
 
       def exec(cmd)
         notify cmd
-        Kernel.exec cmd
+        Bundler.clean_exec(cmd)
       end
 
       def warn(msg)

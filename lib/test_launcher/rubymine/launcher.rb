@@ -11,13 +11,11 @@ module TestLauncher
 
       def launch
         if args.any? {|a| a.match("ruby-debug-ide")}
-          test_dir = File.join(test_case.test_root)
+          shell.puts "test_launcher: hijacking and debugging"
 
-          shell.puts "test_launcher: RubyMine is debugging"
-          shell.puts "test_launcher: Pushing #{test_dir} to $LOAD_PATH"
-
-          $LOAD_PATH.unshift(test_dir)
-          load($0 = args.shift)
+          debug_command = "cd #{test_case.app_root} && ruby -I test #{args.join(" ")}"
+          shell.puts debug_command
+          shell.exec debug_command
         else
           shell.puts "test_launcher: hijacking and running:"
           shell.puts command
