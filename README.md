@@ -75,6 +75,7 @@ test_launcher springified_test
 #=> cd /path/to/app && spring testunit test/springified_test.rb
 ```
 
+Test Launcher will not use spring if the `DISABLE_SPRING=1` environment variable is set.
 
 #Installation
 

@@ -38,6 +38,8 @@ module TestLauncher
         end
 
         def spring_enabled?
+          return false if ENV['DISABLE_SPRING']
+
           [
             "bin/spring",
             "bin/testunit"
