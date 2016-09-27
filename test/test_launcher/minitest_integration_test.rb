@@ -24,7 +24,7 @@ module TestLauncher
 
     def test__uses_spring
       TestLauncher.launch("different_roo""t_test", framework: "minitest") # don't trigger the find in *this* file
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest/test/different_root")} && spring testunit test/different_root_test.rb", Shell::Runner.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest/test/different_root")} && bundle exec spring testunit test/different_root_test.rb", Shell::Runner.recall_exec
     end
 
     def test__multiple_files
@@ -39,7 +39,7 @@ module TestLauncher
 
     def test__multiple_files__different_roots__all
       TestLauncher.launch("DummyTest""Class", run_all: true, framework: "minitest") # don't trigger the find in *this* file
-      expected = "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb test/class_2_test.rb; cd -;\n\ncd #{system_path("test/test_launcher/fixtures/minitest/test/different_root")} && spring testunit test/different_root_test.rb"
+      expected = "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}' test/class_1_test.rb test/class_2_test.rb; cd -;\n\ncd #{system_path("test/test_launcher/fixtures/minitest/test/different_root")} && bundle exec spring testunit test/different_root_test.rb"
       assert_equal expected, Shell::Runner.recall_exec
     end
 
