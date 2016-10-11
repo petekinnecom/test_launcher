@@ -26,10 +26,9 @@ module TestLauncher
         private
 
         def files_found_by_absolute_path
-          return [] unless query.match(/^\//)
+          return [] unless File.exist?(query)
 
-          relative_file_path = query.sub(Dir.pwd, '').sub(/^\//, '')
-          [ build_result(file: relative_file_path) ]
+          [ build_result(file: query) ]
         end
 
         def examples_found_by_name
