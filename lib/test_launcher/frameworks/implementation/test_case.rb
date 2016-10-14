@@ -32,11 +32,6 @@ module TestLauncher
           File.join(app_root, test_root_folder_name)
         end
 
-        def relative_test_path
-          path = exploded_path[exploded_path.rindex(test_root_folder_name)..-1]
-          File.join(path)
-        end
-
         def spring_enabled?
           return false if ENV['DISABLE_SPRING']
 

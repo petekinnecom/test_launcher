@@ -18,11 +18,11 @@ module TestLauncher
               "--name=/#{test_case.example}/"
             end
 
-          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.relative_test_path} #{name}}
+          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} #{name}}
         end
 
         def one_or_more_files(test_cases)
-          %{cd #{test_cases.first.app_root} && #{test_cases.first.runner} #{test_cases.map(&:relative_test_path).join(" ")}}
+          %{cd #{test_cases.first.app_root} && #{test_cases.first.runner} #{test_cases.map(&:file).join(" ")}}
         end
       end
 
@@ -54,7 +54,7 @@ module TestLauncher
           elsif is_example?
             "bundle exec ruby -I test"
           else
-            "bundle exec ruby -I test -e 'ARGV.each {|f| require(File.join(Dir.pwd, f))}'"
+            "bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}'"
           end
         end
 
