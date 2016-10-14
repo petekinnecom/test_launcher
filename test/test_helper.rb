@@ -54,6 +54,10 @@ class TestCase < Minitest::Test
 
   private
 
+  def system_path(relative_dir)
+    File.join(Dir.pwd, relative_dir)
+  end
+
   def dummy_shell
     @dummy_shell ||= DummyShell.new
   end
