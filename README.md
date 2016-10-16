@@ -53,6 +53,13 @@ test_launcher /Users/username/code/my_repo/test/models/blog_post_test.rb
 #=> ruby -I test test/models/blog_post_test.rb
 ```
 
+But can it run two files for you?
+```
+test_launcher blog_post_test.rb comment_test.rb
+
+#=> ruby -I test -e 'ARGV.each {|f| require(f)}' test/models/blog_post_test.rb test/models/comment_test.rb
+```
+
 ### Inline Gems
 
 Test Launcher will automatically move to the correct subdirectory in order to run the tests.  For example, if `thing_test.rb` is within your inline_gem, you can run:
