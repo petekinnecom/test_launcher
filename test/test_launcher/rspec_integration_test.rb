@@ -32,13 +32,18 @@ module TestLauncher
       assert_equal "cd #{system_path("test/test_launcher/fixtures/rspec")} && rspec #{system_path("test/test_launcher/fixtures/rspec/spec/class_1_spec.rb")}", Shell::Runner.recall_exec
     end
 
-    def test__multiple_files
+    def test__multiple_files__found
       TestLauncher.launch("Root1", framework: "rspec") # don't trigger the find in *this* file
       assert_equal "cd #{system_path("test/test_launcher/fixtures/rspec")} && rspec #{system_path("test/test_launcher/fixtures/rspec/spec/class_2_spec.rb")} --example Roo""t1", Shell::Runner.recall_exec
     end
 
-    def test__multiple_files__all
+    def test__multiple_files__found__all
       TestLauncher.launch("Root1""DummyTest""Class", run_all: true, framework: "rspec") # don't trigger the find in *this* file
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/rspec")} && rspec #{system_path("test/test_launcher/fixtures/rspec/spec/class_1_spec.rb")} #{system_path("test/test_launcher/fixtures/rspec/spec/class_2_spec.rb")}", Shell::Runner.recall_exec
+    end
+
+    def test__multiple_file_paths
+      TestLauncher.launch("class_1_spec.rb class_2_spec.rb", framework: "rspec") # don't trigger the find in *this* file
       assert_equal "cd #{system_path("test/test_launcher/fixtures/rspec")} && rspec #{system_path("test/test_launcher/fixtures/rspec/spec/class_1_spec.rb")} #{system_path("test/test_launcher/fixtures/rspec/spec/class_2_spec.rb")}", Shell::Runner.recall_exec
     end
 

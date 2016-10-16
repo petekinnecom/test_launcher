@@ -32,7 +32,7 @@ module TestLauncher
         end
 
         def regex_pattern
-          "^\s*(it|context|(RSpec.)?describe) .*#{query}.* do.*"
+          "^\s*(it|context|(RSpec.)?describe) .*#{request.query}.* do.*"
         end
 
         def test_case_class
