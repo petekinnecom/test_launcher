@@ -32,8 +32,6 @@ VERSION: #{TestLauncher::VERSION}
         if @query.size == 0
           puts option_parser
           exit
-        elsif @query.size > 1
-          puts "Concatenating args to single string. (see https://github.com/petekinnecom/test_launcher)"
         end
 
         @query.join(" ")

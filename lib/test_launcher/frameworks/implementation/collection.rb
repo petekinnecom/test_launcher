@@ -6,6 +6,11 @@ module TestLauncher
       class Collection < SimpleDelegator
         alias :results :__getobj__
 
+        def initialize(results:, run_all:)
+          super(results)
+          @run_all = run_all
+        end
+
         def file_count
           results.group_by(&:file).size
         end
@@ -20,6 +25,10 @@ module TestLauncher
 
         def last_edited
           results.sort_by(&:mtime).last
+        end
+
+        def run_all?
+          @run_all
         end
       end
     end

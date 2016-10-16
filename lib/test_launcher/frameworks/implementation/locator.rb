@@ -4,14 +4,10 @@ require "test_launcher/frameworks/implementation/collection"
 module TestLauncher
   module Frameworks
     module Implementation
-      class Locator < Struct.new(:query, :searcher)
-        private :query, :searcher
+      class Locator < Struct.new(:request, :searcher)
+        private :request, :searcher
 
         def prioritized_results
-          Collection.new(_prioritized_results)
-        end
-
-        def _prioritized_results
           return files_found_by_absolute_path unless files_found_by_absolute_path.empty?
 
           return examples_found_by_name unless examples_found_by_name.empty?
@@ -26,22 +22,42 @@ module TestLauncher
         private
 
         def files_found_by_absolute_path
-          return [] unless File.exist?(query)
+          potential_file_paths = request.query.split(" ")
+          return [] unless potential_file_paths.all? {|fp| File.exist?(fp)}
 
-          [ build_result(file: query) ]
+          Collection.new(
+            results:  potential_file_paths.map {|fp| build_result(file: fp)},
+            run_all: true
+          )
         end
 
         def examples_found_by_name
-          @examples_found_by_name ||= full_regex_search(regex_pattern).map {|r| build_result(file: r[:file], query: query)}
+          @examples_found_by_name ||= Collection.new(
+            results: full_regex_search(regex_pattern).map {|r| build_result(file: r[:file], query: request.query)},
+            run_all: request.run_all
+          )
         end
 
         def files_found_by_file_name
-          @files_found_by_file_name ||= searcher.find_files(query).select { |f| f.match(file_name_regex) }.map {|f| build_result(file: f) }
+          @files_found_by_file_name ||= begin
+            potential_file_paths = request.query.split(" ")
+            split_query_results = potential_file_paths.map {|fp| searcher.find_files(fp).select {|f| f.match(file_name_regex) } }
+
+            return [] if split_query_results.any?(&:empty?)
+
+            Collection.new(
+              results: split_query_results.flatten.map {|f| build_result(file: f) },
+              run_all: true,
+            )
+          end
         end
 
         def files_found_by_full_regex
           # we ignore the matched line since we don't know what to do with it
-          @files_found_by_full_regex ||= full_regex_search(query).map {|r| build_result(file: r[:file]) }
+          @files_found_by_full_regex ||= Collection.new(
+            results: full_regex_search(request.query).map {|r| build_result(file: r[:file]) },
+            run_all: request.run_all
+          )
         end
 
         def full_regex_search(regex)

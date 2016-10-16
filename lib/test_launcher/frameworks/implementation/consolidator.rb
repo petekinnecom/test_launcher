@@ -1,7 +1,7 @@
 module TestLauncher
   module Frameworks
     module Implementation
-      class Consolidator < Struct.new(:search_results, :shell, :runner, :run_all)
+      class Consolidator < Struct.new(:search_results, :shell, :runner)
 
         def self.consolidate(*args)
           new(*args).consolidate
@@ -50,7 +50,7 @@ module TestLauncher
         end
 
         def run_last_edited?
-          ! run_all
+          ! search_results.run_all?
         end
 
         def last_edited
