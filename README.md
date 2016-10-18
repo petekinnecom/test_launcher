@@ -84,6 +84,14 @@ test_launcher springified_test
 
 Test Launcher will not use spring if the `DISABLE_SPRING=1` environment variable is set.
 
+### Running all tests you've changed:
+
+This will find all `*_test.rb` files in your status and pass them to test_launcher to be run.  Use this before you commit so you don't accidentally commit a test you've broken.
+
+```
+git status | grep -Eo "([A-z\/]+_test.rb)" | xargs test_launcher
+```
+
 #Installation
 
 To install:
