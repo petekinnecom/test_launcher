@@ -86,11 +86,18 @@ Test Launcher will not use spring if the `DISABLE_SPRING=1` environment variable
 
 ### Running all tests you've changed:
 
-This will find all `*_test.rb` files in your status and pass them to test_launcher to be run.  Use this before you commit so you don't accidentally commit a test you've broken.
+This will find all uncommitted `*_test.rb` files  and pass them to test_launcher to be run.  Use this before you commit so you don't accidentally commit a test you've broken.
 
 ```
-git status | grep -Eo "([A-z\/]+_test.rb)" | xargs test_launcher
+git diff --name-only --diff-filter=ACMTUXB | grep _test.rb | xargs test_launcher
 ```
+
+If you've already committed your changes, but want to double check before you push, diff your changes with origin/master:
+
+```
+git diff --name-only --diff-filter=ACMTUXB origin/master | grep _test.rb | xargs test_launcher
+```
+(see https://git-scm.com/docs/git-diff)
 
 #Installation
 
