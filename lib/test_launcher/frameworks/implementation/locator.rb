@@ -22,8 +22,12 @@ module TestLauncher
         private
 
         def files_found_by_absolute_path
+          # TODO:
+          # failure case: test_launcher a/b/c_test.rb a/b/d_test.rb => both files exist, but not absolute path.
+          # this method should just be merged with the other one?
+
           potential_file_paths = request.query.split(" ")
-          return [] unless potential_file_paths.all? {|fp| File.exist?(fp)}
+          return [] unless potential_file_paths.all? {|fp| File.exist?(fp) && fp.match(/^\//)}
 
           Collection.new(
             results:  potential_file_paths.map {|fp| build_result(file: fp)},

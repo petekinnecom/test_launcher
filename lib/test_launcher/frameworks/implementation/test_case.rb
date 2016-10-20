@@ -46,6 +46,7 @@ module TestLauncher
         end
 
         def spring_enabled?
+          # TODO: move ENV reference to options hash
           return false if ENV['DISABLE_SPRING']
 
           [
