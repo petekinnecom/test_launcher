@@ -1,6 +1,10 @@
+require "test_launcher/base_error"
+
 module TestLauncher
   module Search
     class Git
+      NotInRepoError = Class.new(BaseError)
+
       class Interface
         attr_reader :shell
 
@@ -19,8 +23,7 @@ module TestLauncher
         def root_path
           shell.run("git rev-parse --show-toplevel").first.tap do
             if $? != 0
-              shell.warn "test_launcher must be used in a git repository"
-              exit
+              raise NotInRepoError, "test_launcher must be used in a git repository"
             end
           end
         end

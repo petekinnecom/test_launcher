@@ -1,5 +1,6 @@
 require "test_launcher/version"
 
+require "test_launcher/base_error"
 require "test_launcher/shell/runner"
 require "test_launcher/search/git"
 require "test_launcher/frameworks"
@@ -22,5 +23,7 @@ module TestLauncher
     else
       shell.warn "No tests found."
     end
+  rescue BaseError => e
+    shell.warn(e)
   end
 end
