@@ -1,17 +1,45 @@
 module TestLauncher
-  module Searchers
+  module Search
     class Git
-      def initialize(shell)
-        @shell = shell
-        Dir.chdir(root_path)
+      class Interface
+        attr_reader :shell
+
+        def initialize(shell)
+          @shell = shell
+        end
+
+        def ls_files(pattern)
+          shell.run("git ls-files '*#{pattern}*'")
+        end
+
+        def grep(regex, file_pattern)
+          shell.run("git grep --untracked --extended-regexp '#{regex}' -- '#{file_pattern}'")
+        end
+
+        def root_path
+          shell.run("git rev-parse --show-toplevel").first.tap do
+            if $? != 0
+              shell.warn "test_launcher must be used in a git repository"
+              exit
+            end
+          end
+        end
+      end
+
+      attr_reader :interface
+
+      def initialize(shell, interface=Interface.new(shell))
+        @interface = interface
+        Dir.chdir(root_path) # MOVE ME!
       end
 
       def find_files(pattern)
-        shell.run("git ls-files '*#{pattern}*'").map {|f| system_path(f)}
+        relative_pattern = strip_system_path(pattern)
+        interface.ls_files(relative_pattern).map {|f| system_path(f)}
       end
 
       def grep(regex, file_pattern: '*')
-        results = shell.run("git grep --untracked --extended-regexp '#{regex}' -- '#{file_pattern}'")
+        results = interface.grep(regex, file_pattern)
         results.map do |result|
           interpret_grep_result(result)
         end
@@ -42,13 +70,12 @@ module TestLauncher
         File.join(root_path, file)
       end
 
+      def strip_system_path(file)
+        file.sub(/^#{root_path}\//, '')
+      end
+
       def root_path
-        @root_path ||= %x[ git rev-parse --show-toplevel ].chomp.tap do
-          if $? != 0
-            shell.warn "test_launcher must be used in a git repository"
-            exit
-          end
-        end
+        @root_path ||= interface.root_path
       end
 
       def shell
