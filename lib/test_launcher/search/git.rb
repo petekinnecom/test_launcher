@@ -1,11 +1,6 @@
 module TestLauncher
   module Searchers
     class Git
-
-      def self.valid?
-
-      end
-
       def initialize(shell)
         @shell = shell
         Dir.chdir(root_path)
