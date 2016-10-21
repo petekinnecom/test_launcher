@@ -24,20 +24,20 @@ module TestLauncher
         end
 
         def app_root
-          # TODO: untested - If we have more than one /test/ folder in the path, we search for a Gemfile or gemspec
-          if exploded_path.select { test_root_folder_name }.size > 1
-            exploded_path.each_with_index do |folder_name, i|
-              next unless folder_name == test_root_folder_name
+          if exploded_path.select { |folder| folder == test_root_folder_name }.size > 1
+            candidates = exploded_path
 
-              root_path = File.join("/", exploded_path[0...i])
-              if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec/}
-                return root_path
+            while !candidates.empty?
+              if candidates.last == test_root_folder_name
+                root_path = File.join("/", candidates[0..-2])
+                return root_path if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec/}
               end
+
+              candidates.pop
             end
           end
 
-          # default to our best guess
-          path = exploded_path[0...exploded_path.rindex(test_root_folder_name)]
+          path = exploded_path[0...exploded_path.index(test_root_folder_name)]
           File.join("/", path)
         end
 
