@@ -1,5 +1,7 @@
-require "test_launcher/version"
 require "optparse"
+
+require "test_launcher/version"
+require "test_launcher/request"
 
 module TestLauncher
   module CLI
@@ -28,13 +30,18 @@ VERSION: #{TestLauncher::VERSION}
         exit
       end
 
-      def query
+      def request
         if @query.size == 0
           puts option_parser
           exit
         end
 
-        @query.join(" ")
+        Request.new(
+          query: @query.join(" "),
+          run_all: @options[:run_all],
+          disable_spring: ENV["DISABLE_SPRING"],
+          framework: @options[:framework]
+        )
       end
 
       def options

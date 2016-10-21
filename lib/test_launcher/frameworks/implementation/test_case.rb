@@ -4,15 +4,16 @@ module TestLauncher
   module Frameworks
     module Implementation
       class TestCase
-        attr_reader :file, :example
+        attr_reader :file, :example, :request
 
-        def self.from_search(file:, query: nil)
-          new(file: file, example: query)
+        def self.from_search(file:, query:, request:)
+          new(file: file, example: query, request: request)
         end
 
-        def initialize(file:, example: nil)
+        def initialize(file:, example: nil, request:)
           @file = file
           @example = example
+          @request = request
         end
 
         def is_example?
@@ -43,18 +44,6 @@ module TestLauncher
 
         def test_root
           File.join(app_root, test_root_dir_name)
-        end
-
-        def spring_enabled?
-          # TODO: move ENV reference to options hash
-          return false if ENV['DISABLE_SPRING']
-
-          [
-            "bin/spring",
-            "bin/testunit"
-          ].any? {|f|
-            File.exist?(File.join(app_root, f))
-          }
         end
 
         def runner

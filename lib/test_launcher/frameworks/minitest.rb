@@ -61,6 +61,19 @@ module TestLauncher
         def test_root_dir_name
           "test"
         end
+
+        def spring_enabled?
+          # TODO: move ENV reference to options hash
+          return false if request.disable_spring?
+
+          [
+            "bin/spring",
+            "bin/testunit"
+          ].any? {|f|
+            File.exist?(File.join(app_root, f))
+          }
+        end
+
       end
     end
   end

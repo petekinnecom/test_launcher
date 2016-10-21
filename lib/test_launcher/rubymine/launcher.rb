@@ -1,12 +1,24 @@
+require "test_launcher/request"
 require "test_launcher/frameworks/minitest"
 require "test_launcher/shell/runner"
 
 module TestLauncher
   module Rubymine
+    class MinimalRequest
+      def initialize(disable_spring:)
+        @disable_spring = disable_spring
+      end
+
+      def disable_spring?
+        @disable_spring
+      end
+    end
+
     class Launcher
-      def initialize(args:, shell:)
+      def initialize(args:, shell:, request:)
         @args = args
         @shell = shell
+        @request = request
       end
 
       def launch
@@ -36,10 +48,17 @@ module TestLauncher
 
       def test_case
         @test_case ||=
-          if args[-1].match('--name=')
-            Frameworks::Minitest::TestCase.new(file: args[-2], example: args[-1][/--name=(.*)/, 1])
+          if args[-1].match("--name=")
+            Frameworks::Minitest::TestCase.new(
+              file: args[-2],
+              example: args[-1][/--name=(.*)/, 1],
+              request: request
+            )
           else
-            Frameworks::Minitest::TestCase.new(file: args[-1])
+            Frameworks::Minitest::TestCase.new(
+              file: args[-1],
+              request: request
+            )
           end
       end
 
@@ -49,6 +68,10 @@ module TestLauncher
 
       def shell
         @shell
+      end
+
+      def request
+        @request
       end
     end
   end

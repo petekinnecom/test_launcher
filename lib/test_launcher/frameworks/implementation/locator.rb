@@ -37,8 +37,8 @@ module TestLauncher
               end
 
               Collection.new(
-                results:  found_files.flatten.map {|fp| build_result(file: fp)},
-                run_all: request.run_all || potential_file_paths.size > 1
+                results: found_files.flatten.map {|fp| build_result(file: fp)},
+                run_all: request.run_all? || potential_file_paths.size > 1
               )
             else
               []
@@ -49,7 +49,7 @@ module TestLauncher
         def examples_found_by_name
           @examples_found_by_name ||= Collection.new(
             results: full_regex_search(regex_pattern).map {|r| build_result(file: r[:file], query: request.query)},
-            run_all: request.run_all
+            run_all: request.run_all?
           )
         end
 
@@ -71,7 +71,7 @@ module TestLauncher
           # we ignore the matched line since we don't know what to do with it
           @files_found_by_full_regex ||= Collection.new(
             results: full_regex_search(request.query).map {|r| build_result(file: r[:file]) },
-            run_all: request.run_all
+            run_all: request.run_all?
           )
         end
 
@@ -80,7 +80,7 @@ module TestLauncher
         end
 
         def build_result(file:, query: nil)
-          test_case_class.from_search(file: file, query: query)
+          test_case_class.from_search(file: file, query: query, request: request)
         end
 
         def file_name_regex

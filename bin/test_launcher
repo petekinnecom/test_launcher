@@ -3,10 +3,6 @@
 require "test_launcher/cli/input_parser"
 require "test_launcher"
 
-input = TestLauncher::CLI::InputParser.new(ARGV)
+cli = TestLauncher::CLI::InputParser.new(ARGV)
 
-TestLauncher.launch(
-  input.query,
-  run_all: input.options[:run_all],
-  framework: input.options[:framework]
-)
+TestLauncher.launch(cli.request)

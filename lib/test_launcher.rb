@@ -6,16 +6,14 @@ require "test_launcher/search/git"
 require "test_launcher/frameworks"
 
 module TestLauncher
-  def self.launch(input, framework: "guess", run_all: false)
-    shell = Shell::Runner.new(log_path: '/tmp/test_launcher.log')
+  def self.launch(request)
+    shell = Shell::Runner.new(log_path: "/tmp/test_launcher.log")
     searcher = Search::Git.new(shell)
 
     command = Frameworks.locate(
-      framework_name: framework,
+      request: request,
       shell: shell,
-      searcher: searcher,
-      input: input,
-      run_all: run_all
+      searcher: searcher
     )
 
     if command
