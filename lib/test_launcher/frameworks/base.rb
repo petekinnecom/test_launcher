@@ -44,7 +44,7 @@ module TestLauncher
       end
 
       class TestCase < Implementation::TestCase
-        def test_root_folder_name
+        def test_root_dir_name
           # directory where tests are found
           raise NotImplementedError
         end

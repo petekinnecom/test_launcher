@@ -41,7 +41,7 @@ module TestLauncher
       end
 
       class TestCase < Base::TestCase
-        def test_root_folder_name
+        def test_root_dir_name
           "spec"
         end
       end
