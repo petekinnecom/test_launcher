@@ -24,11 +24,11 @@ module TestLauncher
         end
 
         def app_root
-          if exploded_path.select { |folder| folder == test_root_folder_name }.size > 1
+          if exploded_path.select { |dir| dir == test_root_dir_name }.size > 1
             candidates = exploded_path
 
             while !candidates.empty?
-              if candidates.last == test_root_folder_name
+              if candidates.last == test_root_dir_name
                 root_path = File.join("/", candidates[0..-2])
                 return root_path if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec/}
               end
@@ -37,12 +37,12 @@ module TestLauncher
             end
           end
 
-          path = exploded_path[0...exploded_path.index(test_root_folder_name)]
+          path = exploded_path[0...exploded_path.index(test_root_dir_name)]
           File.join("/", path)
         end
 
         def test_root
-          File.join(app_root, test_root_folder_name)
+          File.join(app_root, test_root_dir_name)
         end
 
         def spring_enabled?
@@ -61,7 +61,7 @@ module TestLauncher
           raise NotImplementedError
         end
 
-        def test_root_folder_name
+        def test_root_dir_name
           raise NotImplementedError
         end
 

@@ -58,7 +58,7 @@ module TestLauncher
           end
         end
 
-        def test_root_folder_name
+        def test_root_dir_name
           "test"
         end
       end
