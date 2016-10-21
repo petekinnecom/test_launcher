@@ -1,10 +1,16 @@
-require 'test_helper'
+require "test_helper"
+require "test_launcher/frameworks/implementation/test_case"
+
 
 module TestLauncher
   module Frameworks
     module Implementation
-      class DummyTestCaseTest < ::TestCase
+      class TestCaseTest < ::TestCase
         class DummyTestCase < Implementation::TestCase
+          def initialize(file:)
+            super(file: file, request: nil)
+          end
+
           def test_root_dir_name
             "test"
           end

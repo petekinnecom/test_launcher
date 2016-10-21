@@ -1,4 +1,6 @@
-require 'test_helper'
+require "test_helper"
+require "test_launcher/frameworks/implementation/test_case"
+require "test_launcher/frameworks/implementation/locator"
 
 module TestLauncher
   module Frameworks
@@ -31,7 +33,7 @@ module TestLauncher
             expects(:find_files).never
           }
 
-          request = stub(query: "file_not_matching_regex.js", run_all: false)
+          request = stub(query: "file_not_matching_regex.js", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -47,7 +49,7 @@ module TestLauncher
             expects(:find_files).never
           }
 
-          request = stub(query: "matching_test.rb non_matching.js", run_all: false)
+          request = stub(query: "matching_test.rb non_matching.js", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -62,7 +64,7 @@ module TestLauncher
             expects(:find_files).with("matching_test.rb").returns(["/path/to/matching_test.rb"])
           }
 
-          request = stub(query: "matching_test.rb ", run_all: false)
+          request = stub(query: "matching_test.rb ", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -77,7 +79,7 @@ module TestLauncher
             expects(:find_files).with("matching_test.rb").returns(["/path1/to/matching_test.rb", "/path2/to/matching_test.rb"])
           }
 
-          request = stub(query: "matching_test.rb ", run_all: false)
+          request = stub(query: "matching_test.rb ", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -93,7 +95,7 @@ module TestLauncher
             expects(:find_files).with("matching_2_test.rb").returns(["/path1/to/matching_2_test.rb", "/path2/to/matching_2_test.rb"])
           }
 
-          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all: false)
+          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -115,7 +117,7 @@ module TestLauncher
             expects(:find_files).with("matching_1_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
             expects(:find_files).with("matching_2_test.rb").returns([])
           }
-          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all: false)
+          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -129,7 +131,7 @@ module TestLauncher
             expects(:find_files).with("matching_1_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
             expects(:find_files).with("matching_2_test.rb").returns(["/path1/to/matching_2_test.rb", "/path2/to/matching_2_test.rb"])
           }
-          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all: false)
+          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -140,7 +142,7 @@ module TestLauncher
           searcher = mock {
             expects(:find_files).with("matching_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
           }
-          request = stub(query: "matching_test.rb", run_all: false)
+          request = stub(query: "matching_test.rb", run_all?: false)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -152,7 +154,7 @@ module TestLauncher
             expects(:find_files).with("matching_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
           }
 
-          request = stub(query: "matching_test.rb", run_all: true)
+          request = stub(query: "matching_test.rb", run_all?: true)
 
           locator = DummyLocator.new(request, searcher)
 

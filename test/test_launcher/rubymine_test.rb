@@ -34,15 +34,17 @@ module TestLauncher
     private
 
     def assert_executes(expected_command, args)
+      dummy_request = mock { stubs(:disable_spring?).returns(true) }
+
       launcher = Rubymine::Launcher.new(
         args: args.split(" "),
-        shell: dummy_shell
+        shell: dummy_shell,
+        request: dummy_request
       )
 
       launcher.launch
       assert_equal 1, dummy_shell.recall(:exec).size
       assert_equal [[expected_command]], dummy_shell.recall(:exec)
-
     end
   end
 end
