@@ -15,7 +15,7 @@ module TestLauncher
 
           return examples_found_by_name unless examples_found_by_name.empty?
 
-          return files_found_by_file_name unless files_found_by_file_name.empty?
+          return files_found_by_file_name_regex unless files_found_by_file_name_regex.empty?
 
           return files_found_by_full_regex unless files_found_by_full_regex.empty?
 
@@ -33,7 +33,7 @@ module TestLauncher
 
               found_files = potential_file_paths.map {|fp| searcher.find_files(fp) }
               if found_files.any?(&:empty?)
-                raise UnsupportedSearchError, "Add a helpful message here: one path was a file, the other was not, we don't know what to do :("
+                raise UnsupportedSearchError, file_term_failure_message
               end
 
               Collection.new(
@@ -53,8 +53,8 @@ module TestLauncher
           )
         end
 
-        def files_found_by_file_name
-          @files_found_by_file_name ||= begin
+        def files_found_by_file_name_regex
+          @files_found_by_file_name_regex ||= begin
             potential_file_paths = request.query.split(" ")
             split_query_results = potential_file_paths.map {|fp| searcher.find_files(fp).select {|f| f.match(file_name_regex) } }
 
@@ -97,6 +97,20 @@ module TestLauncher
 
         def test_case_class
           raise NotImplementedError
+        end
+
+        def file_term_failure_message
+          <<-MSG
+At least one of your search terms was identified as a file.
+
+At least one of your *other* search terms was identified to not be a file.
+
+This is a case that is not currently supported.
+
+It is possible that one of the test files you wish to run is not currently known to git (e.g. it is ignored or unstaged)
+
+If that's not the case, let me know what you're trying to do by filing an issue at http://github.com/petekinnecom/test_launcher/issues
+          MSG
         end
       end
     end
