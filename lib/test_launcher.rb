@@ -7,7 +7,7 @@ require "test_launcher/frameworks"
 module TestLauncher
   def self.launch(input, framework: "guess", run_all: false)
     shell = Shell::Runner.new(log_path: '/tmp/test_launcher.log')
-    searcher = Searchers::Git.new(shell)
+    searcher = Search::Git.new(shell)
 
     command = Frameworks.locate(
       framework_name: framework,

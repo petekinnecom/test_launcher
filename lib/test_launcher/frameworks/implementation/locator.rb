@@ -4,11 +4,13 @@ require "test_launcher/frameworks/implementation/collection"
 module TestLauncher
   module Frameworks
     module Implementation
+      UnsupportedSearchError = Class.new(StandardError)
+
       class Locator < Struct.new(:request, :searcher)
         private :request, :searcher
 
         def prioritized_results
-          return files_found_by_absolute_path unless files_found_by_absolute_path.empty?
+          return files_found_by_path unless files_found_by_path.empty?
 
           return examples_found_by_name unless examples_found_by_name.empty?
 
@@ -21,18 +23,26 @@ module TestLauncher
 
         private
 
-        def files_found_by_absolute_path
-          # TODO:
-          # failure case: test_launcher a/b/c_test.rb a/b/d_test.rb => both files exist, but not absolute path.
-          # this method should just be merged with the other one?
+        def files_found_by_path
+          # TODO: this needs some love
 
-          potential_file_paths = request.query.split(" ")
-          return [] unless potential_file_paths.all? {|fp| File.exist?(fp) && fp.match(/^\//)}
+          @files_found_by_path ||= begin
+            potential_file_paths = request.query.split(" ")
+            if potential_file_paths.all? {|fp| fp.match(file_name_regex)}
 
-          Collection.new(
-            results:  potential_file_paths.map {|fp| build_result(file: fp)},
-            run_all: true
-          )
+              found_files = potential_file_paths.map {|fp| searcher.find_files(fp) }
+              if found_files.any?(&:empty?)
+                raise UnsupportedSearchError, "Add a helpful message here: one path was a file, the other was not, we don't know what to do :("
+              end
+
+              Collection.new(
+                results:  found_files.flatten.map {|fp| build_result(file: fp)},
+                run_all: request.run_all || potential_file_paths.size > 1
+              )
+            else
+              []
+            end
+          end
         end
 
         def examples_found_by_name
