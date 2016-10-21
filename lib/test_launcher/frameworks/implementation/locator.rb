@@ -1,10 +1,11 @@
+require "test_launcher/base_error"
 require "test_launcher/frameworks/implementation/test_case"
 require "test_launcher/frameworks/implementation/collection"
 
 module TestLauncher
   module Frameworks
     module Implementation
-      UnsupportedSearchError = Class.new(StandardError)
+      UnsupportedSearchError = Class.new(BaseError)
 
       class Locator < Struct.new(:request, :searcher)
         private :request, :searcher
