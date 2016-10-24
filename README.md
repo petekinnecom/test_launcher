@@ -1,10 +1,12 @@
 #Test Launcher -->
 
-Test Launcher takes some input and tries to figure out what test you want to run. It makes running tests on the command line much easier.  Test Launcher works with Minitest.  RSpec support is in its infancy.  You should try it and let me know!
+Test Launcher takes some input and tries to figure out what test you want to run. It makes running tests on the command line much easier.  Test Launcher always outputs the command that it has decided to run so that you can verify that it is running the test you want it to run.
+
+Test Launcher works with Minitest.  RSpec support is in its infancy.  You should try it and let me know!
 
 ### Usage
 
-Let's suppose you want to run the test `test_name` in your `blog_post_test.rb`.  
+Let's suppose you want to run the test `test_name` in your `blog_post_test.rb`.
 
 Without Test Launcher, you might type this:
 
@@ -107,7 +109,7 @@ To install:
 gem install test_launcher
 ```
 
-Under the hood it uses git to search for files and to grep, so it will only work in git repositories. 
+Under the hood it uses git to search for files and to grep, so it will only work in git repositories.
 
 
 #Setup
@@ -185,7 +187,7 @@ By default, RVM installs a hook to remove the need to run `bundle exec`.  When y
 
 Test Launcher is not installed in your bundle.  This means that the time that Bundler spends resolving your Gemfile to check if there's a test\_launcher executable in your bundle is wasted.  For most projects, the amount of time this takes is probably unnoticeable.
 
-On projects with lots of dependencies, this wasted time can be significant.  
+On projects with lots of dependencies, this wasted time can be significant.
 
 For example, in a large project, we get a nice improvement:
 
