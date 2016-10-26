@@ -101,6 +101,24 @@ git diff --name-only --diff-filter=ACMTUXB origin/master | grep _test.rb | xargs
 ```
 (see https://git-scm.com/docs/git-diff)
 
+
+```
+function tdiff()
+{
+  git diff --name-only --diff-filter=ACMTUXB $@ | grep _test.rb | xargs test_launcher
+}
+
+# Now you can:
+
+tdiff
+
+# or
+
+tdiff origin/master
+```
+
+Super fun!
+
 #Installation
 
 To install:
