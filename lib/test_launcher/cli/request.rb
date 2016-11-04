@@ -4,11 +4,12 @@ require "test_launcher/frameworks/rspec"
 module TestLauncher
   module CLI
     class Request
-      def initialize(query:, framework: "guess", run_all: false, disable_spring: false)
+      def initialize(query:, framework: "guess", run_all: false, disable_spring: false, example_name: nil)
         @query = query
         @framework = framework
         @run_all = run_all
         @disable_spring = disable_spring
+        @example_name = example_name
       end
 
       def query
@@ -21,6 +22,10 @@ module TestLauncher
 
       def disable_spring?
         @disable_spring
+      end
+
+      def example_name
+        @example_name
       end
 
       def frameworks

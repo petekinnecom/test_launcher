@@ -19,8 +19,9 @@ VERSION: #{TestLauncher::VERSION}
 
       DESC
 
-      def initialize(args)
+      def initialize(args, env)
         @query = args
+        @env = env
         @options = {}
         option_parser.parse!(args)
       rescue OptionParser::ParseError
@@ -38,9 +39,10 @@ VERSION: #{TestLauncher::VERSION}
 
         Request.new(
           query: @query.join(" "),
-          run_all: @options[:run_all],
-          disable_spring: ENV["DISABLE_SPRING"],
-          framework: @options[:framework]
+          run_all: !!@options[:run_all],
+          disable_spring: !!@env["DISABLE_SPRING"],
+          framework: @options[:framework],
+          example_name: @options[:name]
         )
       end
 
@@ -70,6 +72,10 @@ VERSION: #{TestLauncher::VERSION}
 
           opts.on("-f", "--framework framework", "The testing framework being used. Valid options: ['minitest', 'rspec', 'guess']. Defaults to 'guess'") do |framework|
             options[:framework] = framework
+          end
+
+          opts.on("-n", "--name name", "Minitest name of testcase to run") do |name|
+            options[:name] = name
           end
         end
       end

@@ -5,6 +5,7 @@ module TestLauncher
     module Minitest
 
       def self.active?
+        # Do not do this outside of the shell.
         ! Dir.glob("**/test/**/*_test.rb").empty?
       end
 

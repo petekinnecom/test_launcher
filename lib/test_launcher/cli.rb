@@ -4,8 +4,8 @@ require "test_launcher"
 
 module TestLauncher
   module CLI
-    def self.launch(argv)
-      request = TestLauncher::CLI::InputParser.new(argv).request
+    def self.launch(argv, env)
+      request = TestLauncher::CLI::InputParser.new(argv, env).request
 
       shell = Shell::Runner.new(log_path: "/tmp/test_launcher.log")
       searcher = Search::Git.new(shell)
