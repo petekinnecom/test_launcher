@@ -49,7 +49,7 @@ class TestCase < Minitest::Test
     end
 
     def recall(method)
-      instance_variable_get(:"@#{method}")
+      instance_variable_get(:"@#{method}") || []
     end
   end
 
