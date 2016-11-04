@@ -12,7 +12,7 @@ module TestLauncher
             nil
           elsif one_example?
             shell.notify "Found #{methods_count_phrase} in #{file_count_phrase}."
-            runner.single_example(search_results.first)
+            runner.single_example(search_results.first, exact_match: true)
           elsif examples_found? && same_file?
             shell.notify "Multiple test methods match in 1 file."
             runner.single_example(search_results.first)

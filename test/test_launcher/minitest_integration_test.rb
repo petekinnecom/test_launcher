@@ -1,4 +1,5 @@
 require "test_helper"
+require "test_helpers/integration_helper"
 
 module TestLauncher
   class MinitestIntegrationTest < TestCase
