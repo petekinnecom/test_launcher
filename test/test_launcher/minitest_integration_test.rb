@@ -1,5 +1,5 @@
 require "test_helper"
-require "test_launcher/request"
+require "test_launcher/cli/request"
 
 module TestLauncher
   class MinitestIntegrationTest < TestCase
@@ -71,7 +71,7 @@ module TestLauncher
     end
 
     def launch(query, run_all: false)
-      request = Request.new(
+      request = CLI::Request.new(
         query: query,
         run_all: run_all,
         framework: "minitest"
@@ -79,6 +79,5 @@ module TestLauncher
 
       TestLauncher.launch(request)
     end
-
   end
 end
