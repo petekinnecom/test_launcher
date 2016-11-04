@@ -32,7 +32,7 @@ module TestLauncher
             potential_file_paths = request.query.split(" ")
             if potential_file_paths.all? {|fp| fp.match(file_name_regex)}
 
-              found_files = potential_file_paths.map {|fp| searcher.find_files(fp) }
+              found_files = potential_file_paths.map {|fp| searcher.find_files(fp).select {|fp| fp.match(file_name_regex)} }
               if found_files.any?(&:empty?)
                 raise file_term_error
               end
