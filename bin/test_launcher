@@ -1,8 +1,5 @@
 #!/usr/bin/env ruby
 
-require "test_launcher/cli/input_parser"
-require "test_launcher"
+require "test_launcher/cli"
 
-cli = TestLauncher::CLI::InputParser.new(ARGV)
-
-TestLauncher.launch(cli.request)
+TestLauncher::CLI.launch(ARGV)
