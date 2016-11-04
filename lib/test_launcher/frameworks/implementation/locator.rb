@@ -6,6 +6,7 @@ module TestLauncher
   module Frameworks
     module Implementation
       UnsupportedSearchError = Class.new(BaseError)
+      UnfoundFileError = Class.new(BaseError)
 
       class Locator < Struct.new(:request, :searcher)
         private :request, :searcher
@@ -33,11 +34,12 @@ module TestLauncher
 
               found_files = potential_file_paths.map {|fp| searcher.find_files(fp) }
               if found_files.any?(&:empty?)
-                raise UnsupportedSearchError, file_term_failure_message
+                raise file_term_error
               end
 
+              # TODO: we put in the example_name here in case it's a pass through call... bad bad bad
               Collection.new(
-                results: found_files.flatten.map {|fp| build_result(file: fp)},
+                results: found_files.flatten.map {|fp| build_result(file: fp, query: request.example_name)},
                 run_all: request.run_all? || potential_file_paths.size > 1
               )
             else
@@ -99,8 +101,11 @@ module TestLauncher
           raise NotImplementedError
         end
 
-        def file_term_failure_message
-          <<-MSG
+        def file_term_error
+          if request.example_name
+             UnfoundFileError.new("The specified test file could not be found.")
+          else
+            UnsupportedSearchError.new <<-MSG
 At least one of your search terms was identified as a file.
 
 At least one of your *other* search terms was identified to not be a file.
@@ -110,7 +115,8 @@ This is a case that is not currently supported.
 It is possible that one of the test files you wish to run is not currently known to git (e.g. it is ignored or unstaged)
 
 If that's not the case, let me know what you're trying to do by filing an issue at http://github.com/petekinnecom/test_launcher/issues
-          MSG
+            MSG
+          end
         end
       end
     end
