@@ -20,7 +20,7 @@ module TestLauncher
       end
 
       class Runner < Base::Runner
-        def single_example(test_case)
+        def single_example(test_case, **_)
           %{cd #{test_case.app_root} && rspec #{test_case.file} --example #{Shellwords.escape(test_case.example)}}
         end
 

@@ -7,7 +7,7 @@ module TestLauncher
 
     def test__single_method
       launch("file_name_1__method_name_1", framework: "minitest")
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test #{system_path("test/test_launcher/fixtures/minitest/test/class_1_test.rb")} --name=/file_name_1__method_name_1/", Shell::Runner.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test #{system_path("test/test_launcher/fixtures/minitest/test/class_1_test.rb")} --name=file_name_1__method_name_1", Shell::Runner.recall_exec
     end
 
     def test__multiple_methods__same_file

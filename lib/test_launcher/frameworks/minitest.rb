@@ -4,27 +4,11 @@ require "test_launcher/frameworks/implementation/collection"
 module TestLauncher
   module Frameworks
     module Minitest
-
       #TODO: consolidate with RSpec?
       def self.commandify(request:, shell:, searcher:)
         return unless active?
 
-        search_results =
-          if request.example_name
-            # the user has specified an exact test to run, we will trust them
-            Implementation::Collection.new(
-              results: [
-                TestCase.new(
-                  file: request.query,
-                  example: request.example_name,
-                  request: request
-                )
-              ],
-              run_all: false
-            )
-          else
-            Locator.new(request, searcher).prioritized_results
-          end
+        search_results = Locator.new(request, searcher).prioritized_results
 
         runner = Runner.new
 

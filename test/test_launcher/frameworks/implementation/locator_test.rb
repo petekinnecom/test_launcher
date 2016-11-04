@@ -64,7 +64,7 @@ module TestLauncher
             expects(:find_files).with("matching_test.rb").returns(["/path/to/matching_test.rb"])
           }
 
-          request = stub(query: "matching_test.rb ", run_all?: false)
+          request = stub(query: "matching_test.rb ", run_all?: false, example_name: nil)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -72,6 +72,23 @@ module TestLauncher
 
           result = locator.prioritized_results.first
           assert_equal "/path/to/matching_test.rb", result.file
+          assert_equal nil, result.example
+        end
+
+        def test_prioritized_results__files_found_by_path__specifies_example_name_if_present
+          searcher = mock {
+            expects(:find_files).with("matching_test.rb").returns(["/path/to/matching_test.rb"])
+          }
+
+          request = stub(query: "matching_test.rb ", run_all?: false, example_name: "example_name")
+
+          locator = DummyLocator.new(request, searcher)
+
+          assert_equal 1, locator.prioritized_results.file_count
+
+          result = locator.prioritized_results.first
+          assert_equal "/path/to/matching_test.rb", result.file
+          assert_equal "example_name", result.example
         end
 
         def test_prioritized_results__files_found_by_path__uses_searcher_if_all_files_match_regex__multiple_results
@@ -79,7 +96,7 @@ module TestLauncher
             expects(:find_files).with("matching_test.rb").returns(["/path1/to/matching_test.rb", "/path2/to/matching_test.rb"])
           }
 
-          request = stub(query: "matching_test.rb ", run_all?: false)
+          request = stub(query: "matching_test.rb ", run_all?: false, example_name: nil)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -95,7 +112,7 @@ module TestLauncher
             expects(:find_files).with("matching_2_test.rb").returns(["/path1/to/matching_2_test.rb", "/path2/to/matching_2_test.rb"])
           }
 
-          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false)
+          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false, example_name: nil)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -117,7 +134,7 @@ module TestLauncher
             expects(:find_files).with("matching_1_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
             expects(:find_files).with("matching_2_test.rb").returns([])
           }
-          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false)
+          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false, example_name: nil)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -131,7 +148,7 @@ module TestLauncher
             expects(:find_files).with("matching_1_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
             expects(:find_files).with("matching_2_test.rb").returns(["/path1/to/matching_2_test.rb", "/path2/to/matching_2_test.rb"])
           }
-          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false)
+          request = stub(query: "matching_1_test.rb matching_2_test.rb", run_all?: false, example_name: nil)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -142,7 +159,7 @@ module TestLauncher
           searcher = mock {
             expects(:find_files).with("matching_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
           }
-          request = stub(query: "matching_test.rb", run_all?: false)
+          request = stub(query: "matching_test.rb", run_all?: false, example_name: nil)
 
           locator = DummyLocator.new(request, searcher)
 
@@ -154,7 +171,7 @@ module TestLauncher
             expects(:find_files).with("matching_test.rb").returns(["/path1/to/matching_1_test.rb", "/path2/to/matching_1_test.rb"])
           }
 
-          request = stub(query: "matching_test.rb", run_all?: true)
+          request = stub(query: "matching_test.rb", run_all?: true, example_name: nil)
 
           locator = DummyLocator.new(request, searcher)
 
