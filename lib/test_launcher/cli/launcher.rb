@@ -1,17 +1,17 @@
 require "test_launcher/base_error"
-require "test_launcher/shell/runner"
-require "test_launcher/search/git"
 require "test_launcher/frameworks"
 
 module TestLauncher
   module CLI
     module Launcher
       def self.launch(shell:, searcher:, request:)
-        command = Frameworks.locate(
-          request: request,
-          shell: shell,
-          searcher: searcher
-        )
+        command = request.frameworks.map { |framework|
+          framework.commandify(
+            request: request,
+            shell: shell,
+            searcher: searcher
+          )
+        }.compact.first
 
         if command
           shell.exec command

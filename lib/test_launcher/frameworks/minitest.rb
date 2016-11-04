@@ -4,6 +4,15 @@ module TestLauncher
   module Frameworks
     module Minitest
 
+      #TODO: consolidate with RSpec?
+      def self.commandify(request:, shell:, searcher:)
+        return unless active?
+        search_results = Locator.new(request, searcher).prioritized_results
+        runner = Runner.new
+
+        Implementation::Consolidator.consolidate(search_results, shell, runner)
+      end
+
       def self.active?
         # Do not do this outside of the shell.
         ! Dir.glob("**/test/**/*_test.rb").empty?

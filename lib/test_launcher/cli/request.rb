@@ -34,7 +34,7 @@ module TestLauncher
         elsif @framework == "minitest"
           [Frameworks::Minitest]
         else
-          [Frameworks::Minitest, Frameworks::RSpec].select(&:active?)
+          [Frameworks::Minitest, Frameworks::RSpec]
         end
       end
     end
