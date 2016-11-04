@@ -1,19 +1,8 @@
-require "test_launcher/request"
 require "test_launcher/frameworks/minitest"
 require "test_launcher/shell/runner"
 
 module TestLauncher
   module Rubymine
-    class MinimalRequest
-      def initialize(disable_spring:)
-        @disable_spring = disable_spring
-      end
-
-      def disable_spring?
-        @disable_spring
-      end
-    end
-
     class Launcher
       def initialize(args:, shell:, request:)
         @args = args

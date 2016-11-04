@@ -1,6 +1,6 @@
-require "test_launcher/rubymine/launcher"
 require "test_launcher/shell/runner"
-require "test_launcher/request"
+require "test_launcher/rubymine/launcher"
+require "test_launcher/rubymine/request"
 
 # To allow us to simply specify our run configuration as:
 #
@@ -20,15 +20,22 @@ require "test_launcher/request"
 # So we throw them in the same bucket and let the launcher figure it
 # out.  It doesn't matter since we will `exec` a new command anyway.
 
-dummy_request = TestLauncher::Request.new(
-  query: nil,
-  framework: nil,
-  run_all: false,
-  disable_spring: ENV["DISABLE_SPRING"]
-)
+module TestLauncher
+  module Rubymine
+    def self.launch
+      shell = TestLauncher::Shell::Runner.new(log_path: "/dev/null")
 
-TestLauncher::Rubymine::Launcher.new(
-  args: [$0].concat(ARGV),
-  shell: TestLauncher::Shell::Runner.new(log_path: "/dev/null"),
-  request: dummy_request
-).launch
+      request = Request.new(
+        disable_spring: ENV["DISABLE_SPRING"]
+      )
+
+      Launcher.new(
+        args: [$0].concat(ARGV),
+        shell: shell,
+        request: request
+      ).launch
+    end
+  end
+end
+
+TestLauncher::Rubymine.launch
