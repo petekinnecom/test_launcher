@@ -11,7 +11,7 @@ module TestLauncher
       attr_accessor :log_path, :queue
       private :log_path, :queue
 
-      def initialize(log_path:)
+      def initialize(log_path: "/dev/null")
         @log_path = log_path
         %x{echo "" > #{log_path}}
       end
