@@ -42,7 +42,7 @@ module TestLauncher
         private
 
         def file_name_regex
-          /.*_test\.rb/
+          /.*_test\.rb$/
         end
 
         def file_name_pattern
