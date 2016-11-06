@@ -5,13 +5,17 @@ module TestLauncher
   module CLI
     module Launcher
       def self.launch(shell:, searcher:, request:)
-        command = request.frameworks.map { |framework|
-          framework.commandify(
+
+        command = nil
+        request.frameworks.each { |framework|
+          command = framework.commandify(
             request: request,
             shell: shell,
             searcher: searcher
           )
-        }.compact.first
+
+          break if command
+        }
 
         if command
           shell.exec command
