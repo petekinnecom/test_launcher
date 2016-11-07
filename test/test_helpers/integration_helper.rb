@@ -12,11 +12,12 @@ module TestLauncher
       File.join(Dir.pwd, relative_dir)
     end
 
-    def launch(query, run_all: false, framework:)
+    def launch(query, run_all: false, framework:, name: nil)
       request = CLI::Request.new(
         query: query,
         run_all: run_all,
-        framework: framework
+        framework: framework,
+        example_name: name
       )
 
       shell = Shell::Runner.new
