@@ -61,6 +61,11 @@ module TestLauncher
       assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' #{system_path("test/test_launcher/fixtures/minitest/test/class_1_test.rb")}", Shell::Runner.recall_exec
     end
 
+    def test__specified_name
+      launch("class_1_test.rb", name: "file_name_1__method_name_1", framework: "minitest") # don't trigger the find in *this* file
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test #{system_path("test/test_launcher/fixtures/minitest/test/class_1_test.rb")} --name=file_name_1__method_name_1", Shell::Runner.recall_exec
+    end
+
     def test__not_found
       launch("not_found""thing", framework: "minitest")
       assert_equal nil, Shell::Runner.recall_exec
