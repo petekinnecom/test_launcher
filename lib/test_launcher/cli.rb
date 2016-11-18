@@ -10,11 +10,8 @@ module TestLauncher
       searcher = Search::Git.new(shell)
       request = TestLauncher::CLI::InputParser.new(argv, env).request
 
-      TestLauncher::CLI::Launcher.launch(
-        shell: shell,
-        searcher: searcher,
-        request: request
-      )
+      request.launch
+
     end
   end
 end
