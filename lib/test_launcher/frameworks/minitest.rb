@@ -20,6 +20,22 @@ module TestLauncher
         ! Dir.glob("**/test/**/*_test.rb").empty?
       end
 
+      class SearchRequest
+        def initialize(shell:, searcher:, run_options:)
+          @run_options = run_options
+          @shell = shell
+          @searcher = searcher
+        end
+
+        def command
+          Minitest.commandify(
+            request: @run_options,
+            shell: @shell,
+            searcher: @searcher
+          )
+        end
+      end
+
       class Runner < Base::Runner
         def single_example(test_case, exact_match: false)
 

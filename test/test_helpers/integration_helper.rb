@@ -13,20 +13,19 @@ module TestLauncher
     end
 
     def launch(query, run_all: false, framework:, name: nil)
+      shell = Shell::Runner.new
       request = CLI::Request.new(
+        shell: shell,
+        searcher: Search::Git.new(shell),
+
         query: query,
         run_all: run_all,
         framework: framework,
         example_name: name
       )
 
-      shell = Shell::Runner.new
 
-      CLI::Launcher.launch(
-        request: request,
-        shell: shell,
-        searcher: Search::Git.new(shell)
-      )
+      request.launch
     end
   end
 end
