@@ -85,7 +85,6 @@ module TestLauncher
           end
         end
 
-
         def found_files
           @found_files ||= queries.map {|query|
             searcher.test_files(query)
@@ -97,6 +96,99 @@ module TestLauncher
         end
       end
 
+      class BaseRequest
+        attr_reader :shell, :searcher, :run_options
+        def initialize(shell:, searcher:, run_options:)
+          @run_options = run_options
+          @shell = shell
+          @searcher = searcher
+        end
+
+        def command
+        end
+
+        def runner
+          Runner.new
+        end
+      end
+
+      class PathQueryRequest < BaseRequest
+        def command
+          return if files_found_by_path.empty?
+
+          test_cases = files_found_by_path.map {|file_path| TestCase.new(file: file_path, request: run_options)}
+
+          if run_options.run_all?
+            shell.notify("Multiple files found")
+            shell.notify("Running them all")
+            runner.multiple_files(test_cases)
+          else
+            test_case = test_cases.sort_by {|tc| File.mtime(tc.file)}.first
+            shell.notify("Multiple files found")
+            shell.notify("Running most recently edited.")
+            runner.single_file(test_case)
+          end
+        end
+
+        def files_found_by_path
+          @files_found_by_path ||= searcher.test_files(run_options.query)
+        end
+      end
+
+
+      class ExampleNameQueryRequest < BaseRequest
+
+        def command
+          return if test_cases.empty?
+
+          if one_example?
+            shell.notify("Found 1 method in 1 file")
+            runner.single_example(test_cases.first, exact_match: true)
+          elsif one_file?
+            shell.notify("Found #{test_cases.size} methods in 1 file")
+            runner.single_example(test_cases.first) # it will regex with the query
+          elsif run_options.run_all?
+            shell.notify("Found #{test_cases.size} methods in multiple files")
+            runner.multiple_files(test_cases)
+          else
+            shell.notify "Found #{test_cases.size} in multiple files."
+            shell.notify "Running most recently edited. Run with '--all' to run all the tests."
+            test_case = test_cases.sort_by {|tc| File.mtime(tc.file)}.first
+            runner.single_example(test_case) # let it regex the query
+          end
+        end
+
+        def test_cases
+          @test_cases ||=
+            examples_found_by_name.map { |grep_result|
+              TestCase.new(
+                file: grep_result[:file],
+                example: run_options.query,
+                request: run_options
+              )
+            }
+        end
+
+        def examples_found_by_name
+          @examples_found_by_name ||= searcher.examples(run_options.query)
+        end
+
+        def one_example?
+          test_cases.size == 1
+        end
+
+        def one_file?
+          test_cases.map {|tc| tc.file }.uniq.size == 1
+        end
+
+      end
+
+        class FileNameQueryRequest < BaseRequest
+        end
+
+        class FullRegexRequest < BaseRequest
+        end
+
       class SingleQueryRequest
         attr_reader :shell, :searcher, :run_options
         def initialize(shell:, searcher:, run_options:)
@@ -106,12 +198,43 @@ module TestLauncher
         end
 
         def command
-          search_results = Locator.new(run_options, searcher).prioritized_results
-
-          runner = Runner.new
-
-          Implementation::Consolidator.consolidate(search_results, shell, runner)
+          [
+            path_query,
+            example_name_query,
+            file_name_regex_query,
+            full_regex_query,
+          ]
+            .each { |query|
+              command = query.command
+              return command if command
+            }
+          nil
         end
+
+        def path_query
+          build_query(PathQueryRequest)
+        end
+
+        def example_name_query
+          build_query(ExampleNameQueryRequest)
+        end
+
+        def file_name_regex_query
+          build_query(FileNameQueryRequest)
+        end
+
+        def full_regex_query
+          build_query(FullRegexRequest)
+        end
+
+        def build_query(klass)
+          klass.new(
+            shell: shell,
+            searcher: searcher,
+            run_options: run_options
+          )
+        end
+
       end
 
 
@@ -177,6 +300,11 @@ module TestLauncher
           raw_searcher
             .find_files(query)
             .select {|f| f.match(file_name_regex)}
+        end
+
+        def examples(query)
+          regex = "^\s*def test_.*#{query.sub(/^test_/, "")}.*"
+          grep(regex)
         end
 
         def grep(regex)
