@@ -55,6 +55,66 @@ module TestLauncher
         end
       end
 
+      class MultiQueryRequest
+        attr_reader :shell, :searcher, :run_options
+        def initialize(shell:, searcher:, run_options:)
+          @run_options = run_options
+          @shell = shell
+          @searcher = searcher
+        end
+
+        def command
+          return unless files.any?
+
+          test_cases = files.map { |file_path|
+            TestCase.new(
+              file: file_path,
+              request: run_options,
+            )
+          }
+
+          Runner.new.multiple_files(test_cases)
+        end
+
+        def files
+          if found_files.any? {|files_array| files_array.empty? }
+            shell.warn("It looks like you're searching for multiple files, but we couldn't identify them all.")
+            []
+          else
+            found_files.flatten.uniq
+          end
+        end
+
+
+        def found_files
+          @found_files ||= queries.map {|query|
+            searcher.test_files(query)
+          }
+        end
+
+        def queries
+          @queries ||= run_options.query.split(" ")
+        end
+      end
+
+      class SingleQueryRequest
+        attr_reader :shell, :searcher, :run_options
+        def initialize(shell:, searcher:, run_options:)
+          @run_options = run_options
+          @shell = shell
+          @searcher = searcher
+        end
+
+        def command
+          search_results = Locator.new(run_options, searcher).prioritized_results
+
+          runner = Runner.new
+
+          Implementation::Consolidator.consolidate(search_results, shell, runner)
+        end
+      end
+
+
       class SearchRequest
         attr_reader :shell, :searcher, :run_options
         def initialize(shell:, searcher:, run_options:)
@@ -64,11 +124,19 @@ module TestLauncher
         end
 
         def command
-          Minitest.commandify(
-            shell: shell,
-            searcher: searcher,
-            run_options: run_options
-          )
+          if run_options.query.split(" ").size > 1
+            MultiQueryRequest.new(
+              shell: shell,
+              searcher: searcher,
+              run_options: run_options
+            ).command
+          else
+            SingleQueryRequest.new(
+              shell: shell,
+              searcher: searcher,
+              run_options: run_options
+            ).command
+          end
         end
       end
 
