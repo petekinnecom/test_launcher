@@ -32,44 +32,15 @@ module TestLauncher
     end
 
     class Request
-      def initialize(
-        shell:,
-        searcher:,
-        query:,
-        framework: "guess",
-        run_all: false,
-        disable_spring: false,
-        example_name: nil
-      )
-
+      attr_reader :shell, :searcher, :framework_name, :run_options
+      def initialize(shell:, searcher:, run_options:, framework_name: "guess")
         @shell = shell
         @searcher = searcher
-        @framework = framework
-
-        # run_options
-        @query = query
-        @run_all = run_all
-        @disable_spring = disable_spring
-        @example_name = example_name
-      end
-
-      def run_options
-        SearchOptions.new(
-          query: @query,
-          framework: @framework,
-          run_all: @run_all,
-          disable_spring: @disable_spring,
-          example_name: @example_name
-        )
+        @framework_name = framework_name
+        @run_options = run_options
       end
 
       def launch
-        command = nil
-        framework_requests.each { |request|
-          command = request.command
-          break if command
-        }
-
         if command
           shell.exec command
         else
@@ -79,12 +50,22 @@ module TestLauncher
         shell.warn(e)
       end
 
+      def command
+        return @command if defined?(@command)
+        @command = nil
+        framework_requests.each { |request|
+          @command = request.command
+          break if @command
+        }
+        @command
+      end
+
       def framework_requests
-        if @framework == "rspec"
+        if @framework_name == "rspec"
           # [CLI::RSpec::Request]
-        elsif @framework == "minitest"
+        elsif @framework_name == "minitest"
           [
-            Frameworks::Minitest::SearchRequest.new(
+            Frameworks::Minitest::GenericRequest.new(
               shell: shell,
               searcher: searcher,
               run_options: run_options
@@ -94,15 +75,6 @@ module TestLauncher
           # [Frameworks::Minitest, Frameworks::RSpec]
         end
       end
-
-      def shell
-        @shell
-      end
-
-      def searcher
-        @searcher
-      end
-
     end
   end
 end

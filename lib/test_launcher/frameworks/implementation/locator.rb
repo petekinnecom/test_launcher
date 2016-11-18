@@ -32,7 +32,7 @@ module TestLauncher
             potential_file_paths = request.query.split(" ")
             if potential_file_paths.all? {|fp| fp.match(file_name_regex)}
 
-              found_files = potential_file_paths.map {|fp| searcher.find_files(fp).select {|fp| fp.match(file_name_regex)} }
+              found_files = potential_file_paths.map {|fp| searcher.test_files(fp) }
               if found_files.any?(&:empty?)
                 raise file_term_error
               end
@@ -58,7 +58,7 @@ module TestLauncher
         def files_found_by_file_name_regex
           @files_found_by_file_name_regex ||= begin
             potential_file_paths = request.query.split(" ")
-            split_query_results = potential_file_paths.map {|fp| searcher.find_files(fp).select {|f| f.match(file_name_regex) } }
+            split_query_results = potential_file_paths.map {|fp| searcher.test_files(fp) }
 
             return [] if split_query_results.any?(&:empty?)
 
@@ -78,7 +78,7 @@ module TestLauncher
         end
 
         def full_regex_search(regex)
-          searcher.grep(regex, file_pattern: file_name_pattern)
+          searcher.grep(regex)
         end
 
         def build_result(file:, query: nil)
