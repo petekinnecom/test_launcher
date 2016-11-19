@@ -50,9 +50,7 @@ module TestLauncher
 
       def build_query(request)
         Queries::GenericQuery.new(
-          shell: shell,
-          searcher: searcher,
-          request: request,
+          request: request
         )
       end
 
@@ -64,6 +62,8 @@ module TestLauncher
             run_all: @run_all,
             disable_spring: @disable_spring,
             example_name: @example_name,
+            shell: shell,
+            searcher: searcher
           )
         }
       end

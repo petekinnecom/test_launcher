@@ -2,10 +2,8 @@ module TestLauncher
   module Queries
     class BaseQuery
       attr_reader :shell, :searcher, :request
-      def initialize(shell:, searcher:, request:)
+      def initialize(request:)
         @request = request
-        @shell = shell
-        @searcher = searcher
       end
 
       def command
@@ -19,7 +17,15 @@ module TestLauncher
       end
 
       def runner
-        request.framework.runner
+        request.runner
+      end
+
+      def shell
+        request.shell
+      end
+
+      def searcher
+        request.searcher
       end
 
       def one_file?
@@ -36,14 +42,8 @@ module TestLauncher
 
       def build_query(klass)
         klass.new(
-          shell: shell,
-          searcher: searcher,
           request: request
         )
-      end
-
-      def build_test_case(*args)
-        request.framework.test_case(*args)
       end
 
       def pluralize(count, singular)
@@ -65,7 +65,7 @@ module TestLauncher
       end
 
       def test_case
-        build_test_case(
+        request.test_case(
           file: file,
           example: request.example_name,
           request: request,
@@ -97,7 +97,7 @@ module TestLauncher
 
       def test_cases
         @test_cases ||= files.map { |file_path|
-          build_test_case(
+          request.test_case(
             file: file_path,
             request: request,
           )
@@ -143,7 +143,7 @@ module TestLauncher
 
       def test_cases
         @test_cases ||= files_found_by_path.map { |file_path|
-          build_test_case(file: file_path, request: request)
+          request.test_case(file: file_path, request: request)
         }
       end
 
@@ -175,7 +175,7 @@ module TestLauncher
       def test_cases
         @test_cases ||=
           examples_found_by_name.map { |grep_result|
-            build_test_case(
+            request.test_case(
               file: grep_result[:file],
               example: request.search_string,
               request: request
@@ -203,17 +203,16 @@ module TestLauncher
           shell.notify "Found #{pluralize(file_count, "file")}."
           runner.multiple_files(test_cases)
         else
-          test_case = test_cases.sort_by {|tc| File.mtime(tc.file)}.last
           shell.notify "Found #{pluralize(file_count, "file")}."
           shell.notify "Running most recently edited. Run with '--all' to run all the tests."
-          runner.single_file(test_case)
+          runner.single_file(most_recently_edited_test_case)
         end
       end
 
       def test_cases
         @test_cases ||=
           files_found_by_full_regex.map { |grep_result|
-            build_test_case(
+            request.test_case(
               file: grep_result[:file],
               request: request
             )
@@ -284,12 +283,6 @@ module TestLauncher
 
       def search_request
         build_query(SearchQuery)
-      end
-
-      def searcher
-        # We wrap the generic searcher in a framework
-        # specific searcher
-        request.framework.searcher(super)
       end
     end
   end

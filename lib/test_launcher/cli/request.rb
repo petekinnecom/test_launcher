@@ -6,13 +6,17 @@ module TestLauncher
         framework:,
         run_all: false,
         disable_spring: false,
-        example_name: nil
+        example_name: nil,
+        shell:,
+        searcher:
       )
         @search_string = search_string
         @framework = framework
         @run_all = run_all
         @disable_spring = disable_spring
         @example_name = example_name
+        @shell = shell
+        @searcher = searcher
       end
 
       def search_string
@@ -30,6 +34,24 @@ module TestLauncher
       def example_name
         @example_name
       end
+
+      def searcher
+        framework.searcher(@searcher)
+      end
+
+      def runner(*a)
+        framework.runner(*a)
+      end
+
+      def test_case(*a)
+        framework.test_case(*a)
+      end
+
+      def shell
+        @shell
+      end
+
+      private
 
       def framework
         @framework
