@@ -46,10 +46,6 @@ module TestLauncher
           File.join(app_root, test_root_dir_name)
         end
 
-        def runner
-          raise NotImplementedError
-        end
-
         def test_root_dir_name
           raise NotImplementedError
         end

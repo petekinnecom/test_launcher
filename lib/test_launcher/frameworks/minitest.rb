@@ -19,9 +19,8 @@ module TestLauncher
       def self.runner(*a)
         Runner.new(*a)
       end
-      
-      class Searcher < Base::Searcher
 
+      class Searcher < Base::Searcher
         private
 
         def file_name_regex
@@ -36,7 +35,6 @@ module TestLauncher
           "^\s*def test_.*#{query.sub(/^test_/, "")}.*"
         end
       end
-
 
       class Runner < Base::Runner
         def single_example(test_case, exact_match: false)
@@ -72,7 +70,6 @@ module TestLauncher
         end
 
         def spring_enabled?
-          # TODO: move ENV reference to options hash
           return false if request.disable_spring?
 
           [

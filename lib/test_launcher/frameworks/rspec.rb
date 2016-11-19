@@ -21,16 +21,6 @@ module TestLauncher
         Runner.new(*a)
       end
 
-      class Runner < Base::Runner
-        def single_example(test_case, **_)
-          %{cd #{test_case.app_root} && rspec #{test_case.file} --example #{Shellwords.escape(test_case.example)}}
-        end
-
-        def one_or_more_files(test_cases)
-          %{cd #{test_cases.first.app_root} && rspec #{test_cases.map(&:file).join(" ")}}
-        end
-      end
-
       class Searcher < Base::Searcher
         private
 
@@ -44,6 +34,16 @@ module TestLauncher
 
         def example_name_regex(query)
           "^\s*(it|context|(RSpec.)?describe) .*#{query}.* do.*"
+        end
+      end
+
+      class Runner < Base::Runner
+        def single_example(test_case, **_)
+          %{cd #{test_case.app_root} && rspec #{test_case.file} --example #{Shellwords.escape(test_case.example)}}
+        end
+
+        def one_or_more_files(test_cases)
+          %{cd #{test_cases.first.app_root} && rspec #{test_cases.map(&:file).join(" ")}}
         end
       end
 

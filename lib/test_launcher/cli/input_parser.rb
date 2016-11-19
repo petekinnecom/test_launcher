@@ -1,7 +1,10 @@
 require "optparse"
 
 require "test_launcher/version"
-require "test_launcher/cli/request"
+
+require "test_launcher/frameworks/rspec"
+require "test_launcher/frameworks/minitest"
+require "test_launcher/cli/query"
 
 module TestLauncher
   module CLI
