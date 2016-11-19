@@ -5,10 +5,46 @@ require "test_launcher/frameworks/rspec"
 
 module TestLauncher
   module CLI
-    class SearchOptions
+    class RawOptions
       def initialize(
         query:,
-        framework: "guess",
+        frameworks:,
+        run_all: false,
+        disable_spring: false,
+        example_name: nil
+      )
+        @query = query
+        @frameworks = frameworks
+        @run_all = run_all
+        @disable_spring = disable_spring
+        @example_name = example_name
+      end
+
+      def query
+        @query
+      end
+
+      def run_all?
+        @run_all
+      end
+
+      def disable_spring?
+        @disable_spring
+      end
+
+      def example_name
+        @example_name
+      end
+
+      def frameworks
+        @frameworks
+      end
+    end
+
+    class RunOptions
+      def initialize(
+        query:,
+        framework:,
         run_all: false,
         disable_spring: false,
         example_name: nil
@@ -35,15 +71,18 @@ module TestLauncher
       def example_name
         @example_name
       end
+
+      def framework
+        @framework
+      end
     end
 
     class Request
-      attr_reader :shell, :searcher, :framework_name, :run_options
-      def initialize(shell:, searcher:, run_options:, framework_name: "guess")
+      attr_reader :shell, :searcher, :raw_options
+      def initialize(shell:, searcher:, raw_options:)
         @shell = shell
         @searcher = searcher
-        @framework_name = framework_name
-        @run_options = run_options
+        @raw_options = raw_options
       end
 
       def launch
@@ -67,23 +106,22 @@ module TestLauncher
       end
 
       def framework_requests
-        frameworks =
-          if @framework_name == "rspec"
-            [Frameworks::RSpec]
-          elsif @framework_name == "minitest"
-            [Frameworks::Minitest]
-          else
-            [Frameworks::Minitest, Frameworks::RSpec]
-          end
-
-        frameworks.map {|f| build_request(f::GenericRequest)}
+        raw_options.frameworks.map {|f| build_request(f)}
       end
 
-      def build_request(klass)
-        klass.new(
+      def build_request(framework)
+        run_options = RunOptions.new(
+          query: raw_options.query,
+          framework: framework,
+          run_all: raw_options.run_all?,
+          disable_spring: raw_options.disable_spring?,
+          example_name: raw_options.example_name,
+        )
+
+        Frameworks::Base::GenericRequest.new(
           shell: shell,
           searcher: searcher,
-          run_options: run_options
+          run_options: run_options,
         )
       end
     end
