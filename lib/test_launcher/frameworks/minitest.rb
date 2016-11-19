@@ -259,11 +259,10 @@ module TestLauncher
 
       class SearchRequest < BaseRequest
         def command
-          if run_options.query.split(" ").size > 1
-            multi_query_request.command
-          else
-            single_query_request.command
-          end
+          _command = multi_query_request.command if run_options.query.split(" ").size > 1
+          return _command if _command
+
+          single_query_request.command
         end
 
         def single_query_request
