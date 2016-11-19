@@ -11,7 +11,6 @@ module TestLauncher
       request = TestLauncher::CLI::InputParser.new(argv, env).request(shell: shell, searcher: searcher)
 
       request.launch
-
     end
   end
 end

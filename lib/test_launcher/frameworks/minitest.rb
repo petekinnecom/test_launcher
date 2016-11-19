@@ -19,7 +19,7 @@ module TestLauncher
       def self.runner(*a)
         Runner.new(*a)
       end
-
+      
       class Searcher < Base::Searcher
 
         private

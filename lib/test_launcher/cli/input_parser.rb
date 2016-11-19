@@ -46,19 +46,15 @@ VERSION: #{TestLauncher::VERSION}
             [Frameworks::Minitest, Frameworks::RSpec]
           end
 
-        raw_options = CLI::RawOptions.new(
+        CLI::Options.new(
           query: @query.join(" "),
           run_all: !!@options[:run_all],
           disable_spring: !!@env["DISABLE_SPRING"],
           example_name: @options[:name],
-          frameworks: frameworks
-        )
-
-        Request.new(
+          frameworks: frameworks,
           shell: shell,
           searcher: searcher,
-          raw_options: raw_options
-        )
+        ).request
       end
 
       def options

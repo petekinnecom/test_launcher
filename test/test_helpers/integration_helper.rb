@@ -15,21 +15,17 @@ module TestLauncher
     def launch(query, run_all: false, framework:, name: nil)
       f = framework == "minitest" ? Frameworks::Minitest : Frameworks::RSpec
 
-      options = CLI::RawOptions.new(
+      shell = Shell::Runner.new
+      options = CLI::Options.new(
         query: query,
         run_all: run_all,
         frameworks: [f],
-        example_name: name
-      )
-
-      shell = Shell::Runner.new
-      request = CLI::Request.new(
+        example_name: name,
         shell: shell,
         searcher: Search::Git.new(shell),
-        raw_options: options,
       )
 
-      request.launch
+      options.request.launch
     end
   end
 end
