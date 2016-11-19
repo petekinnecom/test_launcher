@@ -5,44 +5,6 @@ require "test_launcher/frameworks/rspec"
 
 module TestLauncher
   module CLI
-    class Options
-      def initialize(
-        search_string:,
-        frameworks:,
-        run_all: false,
-        disable_spring: false,
-        example_name: nil,
-        shell:,
-        searcher:
-      )
-        @search_string = search_string
-        @frameworks = frameworks
-        @run_all = run_all
-        @disable_spring = disable_spring
-        @example_name = example_name
-        @shell = shell
-        @searcher = searcher
-      end
-
-      def request
-        requests = @frameworks.map {|framework|
-          Request.new(
-            framework: framework,
-            search_string: @search_string,
-            run_all: @run_all,
-            disable_spring: @disable_spring,
-            example_name: @example_name,
-          )
-        }
-
-        Query.new(
-          shell: @shell,
-          searcher: @searcher,
-          requests: requests
-        )
-      end
-    end
-
     class Request
       def initialize(
         search_string:,
@@ -80,11 +42,23 @@ module TestLauncher
     end
 
     class Query
-      attr_reader :shell, :searcher, :requests
-      def initialize(shell:, searcher:, requests:)
+      attr_reader :shell, :searcher
+      def initialize(
+        search_string:,
+        frameworks:,
+        run_all: false,
+        disable_spring: false,
+        example_name: nil,
+        shell:,
+        searcher:
+      )
+        @search_string = search_string
+        @frameworks = frameworks
+        @run_all = run_all
+        @disable_spring = disable_spring
+        @example_name = example_name
         @shell = shell
         @searcher = searcher
-        @requests = requests
       end
 
       def launch
@@ -117,6 +91,18 @@ module TestLauncher
           searcher: searcher,
           request: request,
         )
+      end
+
+      def requests
+        @frameworks.map {|framework|
+          Request.new(
+            framework: framework,
+            search_string: @search_string,
+            run_all: @run_all,
+            disable_spring: @disable_spring,
+            example_name: @example_name,
+          )
+        }
       end
     end
   end
