@@ -1,5 +1,4 @@
 require "test_launcher/frameworks/base"
-require "test_launcher/frameworks/implementation/collection"
 
 module TestLauncher
   module Frameworks
