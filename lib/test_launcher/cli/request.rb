@@ -7,7 +7,7 @@ module TestLauncher
   module CLI
     class Options
       def initialize(
-        query:,
+        search_string:,
         frameworks:,
         run_all: false,
         disable_spring: false,
@@ -15,7 +15,7 @@ module TestLauncher
         shell:,
         searcher:
       )
-        @query = query
+        @search_string = search_string
         @frameworks = frameworks
         @run_all = run_all
         @disable_spring = disable_spring
@@ -25,41 +25,41 @@ module TestLauncher
       end
 
       def request
-        runs = @frameworks.map {|framework|
-          RunOptions.new(
+        requests = @frameworks.map {|framework|
+          Request.new(
             framework: framework,
-            query: @query,
+            search_string: @search_string,
             run_all: @run_all,
             disable_spring: @disable_spring,
             example_name: @example_name,
           )
         }
 
-        Request.new(
+        Query.new(
           shell: @shell,
           searcher: @searcher,
-          runs: runs
+          requests: requests
         )
       end
     end
 
-    class RunOptions
+    class Request
       def initialize(
-        query:,
+        search_string:,
         framework:,
         run_all: false,
         disable_spring: false,
         example_name: nil
       )
-        @query = query
+        @search_string = search_string
         @framework = framework
         @run_all = run_all
         @disable_spring = disable_spring
         @example_name = example_name
       end
 
-      def query
-        @query
+      def search_string
+        @search_string
       end
 
       def run_all?
@@ -79,12 +79,12 @@ module TestLauncher
       end
     end
 
-    class Request
-      attr_reader :shell, :searcher, :runs
-      def initialize(shell:, searcher:, runs:)
+    class Query
+      attr_reader :shell, :searcher, :requests
+      def initialize(shell:, searcher:, requests:)
         @shell = shell
         @searcher = searcher
-        @runs = runs
+        @requests = requests
       end
 
       def launch
@@ -100,22 +100,22 @@ module TestLauncher
       def command
         return @command if defined?(@command)
         @command = nil
-        requests.each { |request|
-          @command = request.command
+        queries.each { |query|
+          @command = query.command
           break if @command
         }
         @command
       end
 
-      def requests
-        runs.map {|run_options| build_request(run_options)}
+      def queries
+        requests.map {|request| build_query(request)}
       end
 
-      def build_request(run_options)
-        Frameworks::Base::GenericRequest.new(
+      def build_query(request)
+        Frameworks::Base::GenericQuery.new(
           shell: shell,
           searcher: searcher,
-          run_options: run_options,
+          request: request,
         )
       end
     end

@@ -20,7 +20,7 @@ VERSION: #{TestLauncher::VERSION}
       DESC
 
       def initialize(args, env)
-        @query = args
+        @search_string = args
         @env = env
         @options = {}
         option_parser.parse!(args)
@@ -32,7 +32,7 @@ VERSION: #{TestLauncher::VERSION}
       end
 
       def request(shell:, searcher:)
-        if @query.size == 0
+        if @search_string.size == 0
           puts option_parser
           exit
         end
@@ -47,7 +47,7 @@ VERSION: #{TestLauncher::VERSION}
           end
 
         CLI::Options.new(
-          query: @query.join(" "),
+          search_string: @search_string.join(" "),
           run_all: !!@options[:run_all],
           disable_spring: !!@env["DISABLE_SPRING"],
           example_name: @options[:name],

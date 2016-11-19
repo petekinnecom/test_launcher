@@ -3,10 +3,10 @@ require "test_launcher/frameworks/implementation/test_case"
 module TestLauncher
   module Frameworks
     module Base
-      class BaseRequest
-        attr_reader :shell, :searcher, :run_options
-        def initialize(shell:, searcher:, run_options:)
-          @run_options = run_options
+      class BaseQuery
+        attr_reader :shell, :searcher, :request
+        def initialize(shell:, searcher:, request:)
+          @request = request
           @shell = shell
           @searcher = searcher
         end
@@ -22,7 +22,7 @@ module TestLauncher
         end
 
         def runner
-          run_options.framework.runner
+          request.framework.runner
         end
 
         def one_file?
@@ -41,12 +41,12 @@ module TestLauncher
           klass.new(
             shell: shell,
             searcher: searcher,
-            run_options: run_options
+            request: request
           )
         end
 
         def build_test_case(*args)
-          run_options.framework.test_case(*args)
+          request.framework.test_case(*args)
         end
 
         def pluralize(count, singular)
@@ -59,7 +59,7 @@ module TestLauncher
         end
       end
 
-      class NamedRequest < BaseRequest
+      class NamedQuery < BaseQuery
         def command
           return unless file
 
@@ -70,27 +70,27 @@ module TestLauncher
         def test_case
           build_test_case(
             file: file,
-            example: run_options.example_name,
-            request: run_options,
+            example: request.example_name,
+            request: request,
           )
         end
 
         def file
           if potential_files.size == 0
-            shell.warn("Could not locate file: #{run_options.query}")
+            shell.warn("Could not locate file: #{request.search_string}")
           elsif potential_files.size > 1
-            shell.warn("Too many files matched: #{run_options.query}")
+            shell.warn("Too many files matched: #{request.search_string}")
           else
             potential_files.first
           end
         end
 
         def potential_files
-          @potential_files ||= searcher.test_files(run_options.query)
+          @potential_files ||= searcher.test_files(request.search_string)
         end
       end
 
-      class MultiQueryRequest < BaseRequest
+      class MultiQueryQuery < BaseQuery
         def command
           return if test_cases.empty?
 
@@ -102,7 +102,7 @@ module TestLauncher
           @test_cases ||= files.map { |file_path|
             build_test_case(
               file: file_path,
-              request: run_options,
+              request: request,
             )
           }
         end
@@ -123,18 +123,18 @@ module TestLauncher
         end
 
         def queries
-          @queries ||= run_options.query.split(" ")
+          @queries ||= request.search_string.split(" ")
         end
       end
 
-      class PathQueryRequest < BaseRequest
+      class PathQueryQuery < BaseQuery
         def command
           return if test_cases.empty?
 
           if one_file?
             shell.notify "Found #{pluralize(file_count, "file")}."
             runner.single_file(test_cases.first)
-          elsif run_options.run_all?
+          elsif request.run_all?
             shell.notify "Found #{pluralize(file_count, "file")}."
             runner.multiple_files(test_cases)
           else
@@ -146,16 +146,16 @@ module TestLauncher
 
         def test_cases
           @test_cases ||= files_found_by_path.map { |file_path|
-            build_test_case(file: file_path, request: run_options)
+            build_test_case(file: file_path, request: request)
           }
         end
 
         def files_found_by_path
-          @files_found_by_path ||= searcher.test_files(run_options.query)
+          @files_found_by_path ||= searcher.test_files(request.search_string)
         end
       end
 
-      class ExampleNameQueryRequest < BaseRequest
+      class ExampleNameQueryQuery < BaseQuery
         def command
           return if test_cases.empty?
 
@@ -165,7 +165,7 @@ module TestLauncher
           elsif one_file?
             shell.notify("Found #{test_cases.size} methods in 1 file")
             runner.single_example(test_cases.first) # it will regex with the query
-          elsif run_options.run_all?
+          elsif request.run_all?
             shell.notify "Found #{pluralize(test_cases, "method")} in #{pluralize(file_count, "file")}."
             runner.multiple_files(test_cases)
           else
@@ -180,14 +180,14 @@ module TestLauncher
             examples_found_by_name.map { |grep_result|
               build_test_case(
                 file: grep_result[:file],
-                example: run_options.query,
-                request: run_options
+                example: request.search_string,
+                request: request
               )
             }
         end
 
         def examples_found_by_name
-          @examples_found_by_name ||= searcher.examples(run_options.query)
+          @examples_found_by_name ||= searcher.examples(request.search_string)
         end
 
         def one_example?
@@ -195,14 +195,14 @@ module TestLauncher
         end
       end
 
-      class FullRegexRequest < BaseRequest
+      class FullRegexQuery < BaseQuery
         def command
           return if test_cases.empty?
 
           if one_file?
             shell.notify "Found #{pluralize(file_count, "file")}."
             runner.single_file(test_cases.first)
-          elsif run_options.run_all?
+          elsif request.run_all?
             shell.notify "Found #{pluralize(file_count, "file")}."
             runner.multiple_files(test_cases)
           else
@@ -218,17 +218,17 @@ module TestLauncher
             files_found_by_full_regex.map { |grep_result|
               build_test_case(
                 file: grep_result[:file],
-                request: run_options
+                request: request
               )
             }
         end
 
         def files_found_by_full_regex
-          @files_found_by_full_regex ||= searcher.grep(run_options.query)
+          @files_found_by_full_regex ||= searcher.grep(request.search_string)
         end
       end
 
-      class SingleQueryRequest < BaseRequest
+      class SingleQueryQuery < BaseQuery
         def command
           [
             path_query,
@@ -243,45 +243,45 @@ module TestLauncher
         end
 
         def path_query
-          build_query(PathQueryRequest)
+          build_query(PathQueryQuery)
         end
 
         def example_name_query
-          build_query(ExampleNameQueryRequest)
+          build_query(ExampleNameQueryQuery)
         end
 
         def full_regex_query
-          build_query(FullRegexRequest)
+          build_query(FullRegexQuery)
         end
       end
 
-      class SearchRequest < BaseRequest
+      class SearchQuery < BaseQuery
         def command
-          _command = multi_query_request.command if run_options.query.split(" ").size > 1
+          _command = multi_query_request.command if request.search_string.split(" ").size > 1
           return _command if _command
 
           single_query_request.command
         end
 
         def single_query_request
-          build_query(SingleQueryRequest)
+          build_query(SingleQueryQuery)
         end
 
         def multi_query_request
-          build_query(MultiQueryRequest)
+          build_query(MultiQueryQuery)
         end
       end
 
-      class GenericRequest
-        attr_reader :shell, :run_options
-        def initialize(shell:, searcher:, run_options:)
-          @run_options = run_options
+      class GenericQuery
+        attr_reader :shell, :request
+        def initialize(shell:, searcher:, request:)
+          @request = request
           @shell = shell
           @raw_searcher = searcher
         end
 
         def command
-          if run_options.example_name
+          if request.example_name
             named_request.command
           else
             search_request.command
@@ -289,22 +289,22 @@ module TestLauncher
         end
 
         def named_request
-          build_query(NamedRequest)
+          build_query(NamedQuery)
         end
 
         def search_request
-          build_query(SearchRequest)
+          build_query(SearchQuery)
         end
 
         def searcher
-          run_options.framework.searcher(@raw_searcher)
+          request.framework.searcher(@raw_searcher)
         end
 
         def build_query(klass)
           klass.new(
             shell: shell,
             searcher: searcher,
-            run_options: run_options,
+            request: request,
           )
         end
       end
