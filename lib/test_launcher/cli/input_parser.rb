@@ -37,18 +37,27 @@ VERSION: #{TestLauncher::VERSION}
           exit
         end
 
-        run_options = CLI::SearchOptions.new(
+        frameworks =
+          if @options[:framework] == "rspec"
+            [Frameworks::RSpec]
+          elsif @options[:framework] == "minitest"
+            [Frameworks::Minitest]
+          else
+            [Frameworks::Minitest, Frameworks::RSpec]
+          end
+
+        raw_options = CLI::RawOptions.new(
           query: @query.join(" "),
-          framework: @options[:framework],
           run_all: !!@options[:run_all],
           disable_spring: !!@env["DISABLE_SPRING"],
-          example_name: @options[:name]
+          example_name: @options[:name],
+          frameworks: frameworks
         )
 
         Request.new(
           shell: shell,
           searcher: searcher,
-          run_options: run_options
+          raw_options: raw_options
         )
       end
 
