@@ -31,18 +31,24 @@ VERSION: #{TestLauncher::VERSION}
         exit
       end
 
-      def request
+      def request(shell:, searcher:)
         if @query.size == 0
           puts option_parser
           exit
         end
 
-        Request.new(
+        run_options = CLI::SearchOptions.new(
           query: @query.join(" "),
+          framework: @options[:framework],
           run_all: !!@options[:run_all],
           disable_spring: !!@env["DISABLE_SPRING"],
-          framework: @options[:framework],
           example_name: @options[:name]
+        )
+
+        Request.new(
+          shell: shell,
+          searcher: searcher,
+          run_options: run_options
         )
       end
 

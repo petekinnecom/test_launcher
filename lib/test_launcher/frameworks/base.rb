@@ -1,27 +1,8 @@
-require "test_launcher/frameworks/implementation/locator"
 require "test_launcher/frameworks/implementation/test_case"
-require "test_launcher/frameworks/implementation/consolidator"
 
 module TestLauncher
   module Frameworks
     module Base
-      class Locator < Implementation::Locator
-        def file_name_regex
-          # for ruby to match on file names
-          raise NotImplementedError
-        end
-
-        def file_name_pattern
-          # for bash to match on file names
-          raise NotImplementedError
-        end
-
-        def regex_pattern
-          # to match on examples
-          raise NotImplementedError
-        end
-      end
-
       class Runner
         def single_example(test_case)
           raise NotImplementedError

@@ -6,7 +6,13 @@ require "test_launcher/frameworks/rspec"
 module TestLauncher
   module CLI
     class SearchOptions
-      def initialize(query:, framework: "guess", run_all: false, disable_spring: false, example_name: nil)
+      def initialize(
+        query:,
+        framework: "guess",
+        run_all: false,
+        disable_spring: false,
+        example_name: nil
+      )
         @query = query
         @framework = framework
         @run_all = run_all
