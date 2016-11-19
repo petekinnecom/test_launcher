@@ -31,7 +31,7 @@ VERSION: #{TestLauncher::VERSION}
         exit
       end
 
-      def request(shell:, searcher:)
+      def query(shell:, searcher:)
         if @search_string.size == 0
           puts option_parser
           exit
@@ -46,7 +46,7 @@ VERSION: #{TestLauncher::VERSION}
             [Frameworks::Minitest, Frameworks::RSpec]
           end
 
-        CLI::Options.new(
+        CLI::Query.new(
           search_string: @search_string.join(" "),
           run_all: !!@options[:run_all],
           disable_spring: !!@env["DISABLE_SPRING"],
@@ -54,7 +54,7 @@ VERSION: #{TestLauncher::VERSION}
           frameworks: frameworks,
           shell: shell,
           searcher: searcher,
-        ).request
+        )
       end
 
       def options

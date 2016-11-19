@@ -8,9 +8,11 @@ module TestLauncher
     def self.launch(argv, env)
       shell = Shell::Runner.new(log_path: "/tmp/test_launcher.log")
       searcher = Search::Git.new(shell)
-      request = TestLauncher::CLI::InputParser.new(argv, env).request(shell: shell, searcher: searcher)
+      input_parser = TestLauncher::CLI::InputParser.new(argv, env)
 
-      request.launch
+      query = input_parser.query(shell: shell, searcher: searcher)
+
+      query.launch
     end
   end
 end

@@ -16,7 +16,7 @@ module TestLauncher
       f = framework == "minitest" ? Frameworks::Minitest : Frameworks::RSpec
 
       shell = Shell::Runner.new
-      options = CLI::Options.new(
+      query = CLI::Query.new(
         search_string: search_string,
         run_all: run_all,
         frameworks: [f],
@@ -25,7 +25,7 @@ module TestLauncher
         searcher: Search::Git.new(shell),
       )
 
-      options.request.launch
+      query.launch
     end
   end
 end
