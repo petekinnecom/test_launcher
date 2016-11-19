@@ -45,13 +45,7 @@ module TestLauncher
       end
 
       def queries
-        requests.map {|request| build_query(request)}
-      end
-
-      def build_query(request)
-        Queries::GenericQuery.new(
-          request: request
-        )
+        requests.map {|request| Queries::GenericQuery.new(request: request)}
       end
 
       def requests

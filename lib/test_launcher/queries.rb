@@ -87,7 +87,7 @@ module TestLauncher
       end
     end
 
-    class MultiQueryQuery < BaseQuery
+    class MultiTermQuery < BaseQuery
       def command
         return if test_cases.empty?
 
@@ -124,7 +124,7 @@ module TestLauncher
       end
     end
 
-    class PathQueryQuery < BaseQuery
+    class PathQuery < BaseQuery
       def command
         return if test_cases.empty?
 
@@ -152,7 +152,7 @@ module TestLauncher
       end
     end
 
-    class ExampleNameQueryQuery < BaseQuery
+    class ExampleNameQuery < BaseQuery
       def command
         return if test_cases.empty?
 
@@ -224,7 +224,7 @@ module TestLauncher
       end
     end
 
-    class SingleQueryQuery < BaseQuery
+    class SingleTermQuery < BaseQuery
       def command
         [
           path_query,
@@ -239,11 +239,11 @@ module TestLauncher
       end
 
       def path_query
-        build_query(PathQueryQuery)
+        build_query(PathQuery)
       end
 
       def example_name_query
-        build_query(ExampleNameQueryQuery)
+        build_query(ExampleNameQuery)
       end
 
       def full_regex_query
@@ -253,35 +253,35 @@ module TestLauncher
 
     class SearchQuery < BaseQuery
       def command
-        _command = multi_query_request.command if request.search_string.split(" ").size > 1
+        _command = multi_term_query.command if request.search_string.split(" ").size > 1
         return _command if _command
 
-        single_query_request.command
+        single_term_query.command
       end
 
-      def single_query_request
-        build_query(SingleQueryQuery)
+      def single_term_query
+        build_query(SingleTermQuery)
       end
 
-      def multi_query_request
-        build_query(MultiQueryQuery)
+      def multi_term_query
+        build_query(MultiTermQuery)
       end
     end
 
     class GenericQuery < BaseQuery
       def command
         if request.example_name
-          named_request.command
+          named_query.command
         else
-          search_request.command
+          search_query.command
         end
       end
 
-      def named_request
+      def named_query
         build_query(NamedQuery)
       end
 
-      def search_request
+      def search_query
         build_query(SearchQuery)
       end
     end
