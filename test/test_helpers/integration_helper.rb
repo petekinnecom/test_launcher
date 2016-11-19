@@ -25,10 +25,9 @@ module TestLauncher
         shell: shell,
         searcher: Search::Git.new(shell),
         run_options: options,
-        framework_name: "minitest"
+        framework_name: framework
 
       )
-
 
       request.launch
     end

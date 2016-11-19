@@ -61,19 +61,24 @@ module TestLauncher
       end
 
       def framework_requests
-        if @framework_name == "rspec"
-          # [CLI::RSpec::Request]
-        elsif @framework_name == "minitest"
-          [
-            Frameworks::Minitest::GenericRequest.new(
-              shell: shell,
-              searcher: searcher,
-              run_options: run_options
-            )
-          ]
-        else
-          # [Frameworks::Minitest, Frameworks::RSpec]
-        end
+        frameworks =
+          if @framework_name == "rspec"
+            [Frameworks::RSpec]
+          elsif @framework_name == "minitest"
+            [Frameworks::Minitest]
+          else
+            [Frameworks::Minitest, Frameworks::RSpec]
+          end
+
+        frameworks.map {|f| build_request(f::GenericRequest)}
+      end
+
+      def build_request(klass)
+        klass.new(
+          shell: shell,
+          searcher: searcher,
+          run_options: run_options
+        )
       end
     end
   end
