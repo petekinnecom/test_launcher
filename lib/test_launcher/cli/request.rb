@@ -5,39 +5,41 @@ require "test_launcher/frameworks/rspec"
 
 module TestLauncher
   module CLI
-    class RawOptions
+    class Options
       def initialize(
         query:,
         frameworks:,
         run_all: false,
         disable_spring: false,
-        example_name: nil
+        example_name: nil,
+        shell:,
+        searcher:
       )
         @query = query
         @frameworks = frameworks
         @run_all = run_all
         @disable_spring = disable_spring
         @example_name = example_name
+        @shell = shell
+        @searcher = searcher
       end
 
-      def query
-        @query
-      end
+      def request
+        runs = @frameworks.map {|framework|
+          RunOptions.new(
+            framework: framework,
+            query: @query,
+            run_all: @run_all,
+            disable_spring: @disable_spring,
+            example_name: @example_name,
+          )
+        }
 
-      def run_all?
-        @run_all
-      end
-
-      def disable_spring?
-        @disable_spring
-      end
-
-      def example_name
-        @example_name
-      end
-
-      def frameworks
-        @frameworks
+        Request.new(
+          shell: @shell,
+          searcher: @searcher,
+          runs: runs
+        )
       end
     end
 
@@ -78,11 +80,11 @@ module TestLauncher
     end
 
     class Request
-      attr_reader :shell, :searcher, :raw_options
-      def initialize(shell:, searcher:, raw_options:)
+      attr_reader :shell, :searcher, :runs
+      def initialize(shell:, searcher:, runs:)
         @shell = shell
         @searcher = searcher
-        @raw_options = raw_options
+        @runs = runs
       end
 
       def launch
@@ -98,26 +100,18 @@ module TestLauncher
       def command
         return @command if defined?(@command)
         @command = nil
-        framework_requests.each { |request|
+        requests.each { |request|
           @command = request.command
           break if @command
         }
         @command
       end
 
-      def framework_requests
-        raw_options.frameworks.map {|f| build_request(f)}
+      def requests
+        runs.map {|run_options| build_request(run_options)}
       end
 
-      def build_request(framework)
-        run_options = RunOptions.new(
-          query: raw_options.query,
-          framework: framework,
-          run_all: raw_options.run_all?,
-          disable_spring: raw_options.disable_spring?,
-          example_name: raw_options.example_name,
-        )
-
+      def build_request(run_options)
         Frameworks::Base::GenericRequest.new(
           shell: shell,
           searcher: searcher,

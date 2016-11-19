@@ -1,11 +1,9 @@
 require "shellwords"
-
 require "test_launcher/frameworks/base"
 
 module TestLauncher
   module Frameworks
     module RSpec
-      
 
       def self.active?
         ! Dir.glob("**/*_spec.rb").empty?
