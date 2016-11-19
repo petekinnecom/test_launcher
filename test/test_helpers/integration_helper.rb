@@ -12,12 +12,12 @@ module TestLauncher
       File.join(Dir.pwd, relative_dir)
     end
 
-    def launch(query, run_all: false, framework:, name: nil)
+    def launch(search_string, run_all: false, framework:, name: nil)
       f = framework == "minitest" ? Frameworks::Minitest : Frameworks::RSpec
 
       shell = Shell::Runner.new
       options = CLI::Options.new(
-        query: query,
+        search_string: search_string,
         run_all: run_all,
         frameworks: [f],
         example_name: name,
