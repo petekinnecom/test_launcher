@@ -1,7 +1,6 @@
 require "test_launcher/shell/runner"
 require "test_launcher/search/git"
 require "test_launcher/cli/input_parser"
-require "test_launcher/cli/launcher"
 
 module TestLauncher
   module CLI
