@@ -163,10 +163,10 @@ module TestLauncher
           shell.notify("Found #{test_cases.size} methods in 1 file")
           runner.single_example(test_cases.first) # it will regex with the query
         elsif request.run_all?
-          shell.notify "Found #{pluralize(test_cases, "method")} in #{pluralize(file_count, "file")}."
+          shell.notify "Found #{pluralize(test_cases.size, "method")} in #{pluralize(file_count, "file")}."
           runner.multiple_files(test_cases)
         else
-          shell.notify "Found #{pluralize(test_cases, "method")} in #{pluralize(file_count, "file")}."
+          shell.notify "Found #{pluralize(test_cases.size, "method")} in #{pluralize(file_count, "file")}."
           shell.notify "Running most recently edited. Run with '--all' to run all the tests."
           runner.single_example(most_recently_edited_test_case) # let it regex the query
         end
