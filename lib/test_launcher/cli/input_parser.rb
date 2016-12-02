@@ -4,7 +4,7 @@ require "test_launcher/version"
 
 require "test_launcher/frameworks/rspec"
 require "test_launcher/frameworks/minitest"
-require "test_launcher/cli/query"
+require "test_launcher/cli/request"
 
 module TestLauncher
   module CLI
@@ -34,7 +34,7 @@ VERSION: #{TestLauncher::VERSION}
         exit
       end
 
-      def query(shell:, searcher:)
+      def requests(shell:, searcher:)
         if @search_string.size == 0
           puts option_parser
           exit
@@ -49,15 +49,17 @@ VERSION: #{TestLauncher::VERSION}
             [Frameworks::Minitest, Frameworks::RSpec]
           end
 
-        CLI::Query.new(
-          search_string: @search_string.join(" "),
-          run_all: !!@options[:run_all],
-          disable_spring: !!@env["DISABLE_SPRING"],
-          example_name: @options[:name],
-          frameworks: frameworks,
-          shell: shell,
-          searcher: searcher,
-        )
+        frameworks.map {|framework|
+          Request.new(
+            search_string: @search_string.join(" "),
+            run_all: !!@options[:run_all],
+            disable_spring: !!@env["DISABLE_SPRING"],
+            example_name: @options[:name],
+            framework: framework,
+            shell: shell,
+            searcher: searcher
+          )
+        }
       end
 
       def options
