@@ -44,6 +44,8 @@ module TestLauncher
         @command
       end
 
+      private
+
       def queries
         requests.map {|request| Queries::GenericQuery.new(request: request)}
       end
