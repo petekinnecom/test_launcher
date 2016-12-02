@@ -1,9 +1,59 @@
 module TestLauncher
   module Queries
+    class CommandFinder
+      def initialize(request)
+        @request = request
+      end
+
+      def specified_name
+        commandify(SpecifiedNameQuery)
+      end
+
+      def multi_search_term
+        commandify(MultiTermQuery)
+      end
+
+      def by_path
+        commandify(PathQuery)
+      end
+
+      def example_name
+        commandify(ExampleNameQuery)
+      end
+
+      def from_full_regex
+        commandify(FullRegexQuery)
+      end
+
+      def single_search_term
+        commandify(SingleTermQuery)
+      end
+
+      def full_search
+        commandify(SearchQuery)
+      end
+
+      def generic_search
+        commandify(GenericQuery)
+      end
+
+      def request
+        @request
+      end
+
+      def commandify(klass)
+        klass.new(
+          request,
+          self
+        ).command
+      end
+    end
+
     class BaseQuery
       attr_reader :shell, :searcher, :request
-      def initialize(request:)
+      def initialize(request, command_finder)
         @request = request
+        @command_finder = command_finder
       end
 
       def command
@@ -40,12 +90,6 @@ module TestLauncher
         @most_recently_edited_test_case ||= test_cases.sort_by {|tc| File.mtime(tc.file)}.last
       end
 
-      def build_query(klass)
-        klass.new(
-          request: request
-        )
-      end
-
       def pluralize(count, singular)
         phrase = "#{count} #{singular}"
         if count == 1
@@ -54,9 +98,13 @@ module TestLauncher
           "#{phrase}s"
         end
       end
+
+      def command_finder
+        @command_finder
+      end
     end
 
-    class NamedQuery < BaseQuery
+    class SpecifiedNameQuery < BaseQuery
       def command
         return unless file
 
@@ -227,62 +275,34 @@ module TestLauncher
     class SingleTermQuery < BaseQuery
       def command
         [
-          path_query,
-          example_name_query,
-          full_regex_query,
+          :by_path,
+          :example_name,
+          :from_full_regex,
         ]
-          .each { |query|
-            command = query.command
+          .each { |command_type|
+            command = command_finder.public_send(command_type)
             return command if command
           }
         nil
-      end
-
-      def path_query
-        build_query(PathQuery)
-      end
-
-      def example_name_query
-        build_query(ExampleNameQuery)
-      end
-
-      def full_regex_query
-        build_query(FullRegexQuery)
       end
     end
 
     class SearchQuery < BaseQuery
       def command
-        _command = multi_term_query.command if request.search_string.split(" ").size > 1
+        _command = command_finder.multi_search_term if request.search_string.split(" ").size > 1
         return _command if _command
 
-        single_term_query.command
-      end
-
-      def single_term_query
-        build_query(SingleTermQuery)
-      end
-
-      def multi_term_query
-        build_query(MultiTermQuery)
+        command_finder.single_search_term
       end
     end
 
     class GenericQuery < BaseQuery
       def command
         if request.example_name
-          named_query.command
+          command_finder.specified_name
         else
-          search_query.command
+          command_finder.full_search
         end
-      end
-
-      def named_query
-        build_query(NamedQuery)
-      end
-
-      def search_query
-        build_query(SearchQuery)
       end
     end
   end
