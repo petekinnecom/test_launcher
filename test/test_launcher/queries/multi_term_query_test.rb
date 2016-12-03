@@ -26,8 +26,44 @@ module TestLauncher
         end
       end
 
+      def create_mock_request(**attrs)
+        MockRequest.new(**attrs) do |m|
+          m.impl(:test_case) do |file:, example: nil, request:|
+            case file
+            when "file_1"
+              file_1_test_case
+            when "file_2"
+              file_2_test_case
+            when "file_3"
+              file_3_test_case
+            when "file_4"
+              file_4_test_case
+            else
+              raise "unmocked file: #{file}"
+            end
+          end
+        end
+      end
+
+      def file_1_test_case
+        @file_1_test_case ||= MockTestCase.new(file: "file_1", mtime: Time.now - 1)
+      end
+
+      def file_2_test_case
+        @file_2_test_case ||= MockTestCase.new(file: "file_2", mtime: Time.now - 2)
+      end
+
+      def file_3_test_case
+        @file_3_test_case ||= MockTestCase.new(file: "file_3", mtime: Time.now - 3)
+      end
+
+      def file_4_test_case
+        @file_4_test_case ||= MockTestCase.new(file: "file_4", mtime: Time.now - 4)
+      end
+
+
       def test_command__finds_files_for_0_of_2_terms_asdf
-        request = MockRequest.new(
+        request = create_mock_request(
           search_string: "not_found not_found",
           shell: default_shell,
           runner: default_runner,
@@ -39,7 +75,7 @@ module TestLauncher
       end
 
       def test_command__finds_files_for_0_of_2_terms__warns
-        request = MockRequest.new(
+        request = create_mock_request(
           search_string: "not_found not_found",
           shell: default_shell,
           runner: default_runner,
@@ -51,7 +87,7 @@ module TestLauncher
       end
 
       def test_command__finds_files_for_1_of_2_terms
-        request = MockRequest.new(
+        request = create_mock_request(
           search_string: "file_1 not_found",
           shell: default_shell,
           runner: default_runner,
@@ -63,7 +99,7 @@ module TestLauncher
       end
 
       def test_command__finds_files_for_1_of_2_terms__warns
-        request = MockRequest.new(
+        request = create_mock_request(
           search_string: "file_1 not_found",
           shell: default_shell,
           searcher: searcher
@@ -74,63 +110,28 @@ module TestLauncher
       end
 
       def test_command__finds_files_for_2_of_2_terms
-        test_case = MockTestCase.new(file: "file")
-        runner = MockRunner.new(
-          multiple_files: :multiple_files
-        )
-        request = MockRequest.new(
+        request = create_mock_request(
           search_string: "file_1 file_2",
           shell: default_shell,
-          runner: runner,
+          runner: default_runner,
           searcher: searcher,
-          test_case: test_case
         )
         command = MultiTermQuery.new(request, default_command_finder).command
 
-        assert_equal [[[test_case, test_case]]], runner.recall(:multiple_files)
-        assert_equal :multiple_files, command
-      end
-
-      def test_command__finds_files_for_2_of_2_terms__correct_test_cases
-        test_case = MockTestCase.new(file: "file")
-        runner = MockRunner.new(
-          multiple_files: :multiple_files
-        )
-        request = MockRequest.new(
-          search_string: "file_1 file_2",
-          shell: default_shell,
-          runner: runner,
-          searcher: searcher,
-          test_case: test_case
-        )
-        command = MultiTermQuery.new(request, default_command_finder).command
-
-        expected_test_cases = [
-          [file: "file_1", request: request],
-          [file: "file_2", request: request],
-        ]
-        assert_equal expected_test_cases, request.recall(:test_case)
+        assert_equal [[[file_1_test_case, file_2_test_case]]], default_runner.recall(:multiple_files)
+        assert_equal "multiple_files_return", command
       end
 
       def test_command__finds_files_for_2_of_2_terms__extra_files_found
-        test_case = MockTestCase.new(file: "file")
-        runner = MockRunner.new(
-          multiple_files: :multiple_files
-        )
-        request = MockRequest.new(
+        request = create_mock_request(
           search_string: "file_1 files",
           shell: default_shell,
-          runner: runner,
+          runner: default_runner,
           searcher: searcher,
-          test_case: test_case
         )
         command = MultiTermQuery.new(request, default_command_finder).command
-        expected_test_cases = [
-          [file: "file_1", request: request],
-          [file: "file_3", request: request],
-          [file: "file_4", request: request],
-        ]
-        assert_equal expected_test_cases, request.recall(:test_case)
+        assert_equal [[[file_1_test_case, file_3_test_case, file_4_test_case]]], default_runner.recall(:multiple_files)
+        assert_equal "multiple_files_return", command
       end
     end
   end
