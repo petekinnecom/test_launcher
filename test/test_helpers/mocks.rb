@@ -32,6 +32,9 @@ module TestLauncher
   require "test_launcher/frameworks/base"
   class MockRunner < Mock
     mocks Frameworks::Base::Runner
+
+    impl(:single_file) { "single_file_return" }
+    impl(:multiple_files) { "multiple_files_return" }
   end
 
   require "test_launcher/frameworks/base"
@@ -58,6 +61,10 @@ module TestLauncher
 
     def default_runner
       @default_runner ||= MockRunner.new
+    end
+
+    def default_test_case
+      @default_test_case ||= MockTestCase.new
     end
   end
 end

@@ -87,7 +87,7 @@ module TestLauncher
       end
 
       def most_recently_edited_test_case
-        @most_recently_edited_test_case ||= test_cases.sort_by {|tc| File.mtime(tc.file)}.last
+        @most_recently_edited_test_case ||= test_cases.sort_by(&:mtime).last
       end
 
       def pluralize(count, singular)
