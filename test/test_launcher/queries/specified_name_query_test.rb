@@ -69,44 +69,32 @@ module TestLauncher
       end
 
       def test_command__exact_match__command_is_single_example
-        runner = MockRunner.new(
-          single_example: :single_example
-        )
-
-        test_case = MockTestCase.new
-
         request = MockRequest.new(
           search_string: "exact_match",
           example_name: "example_name",
-          test_case: test_case,
+          test_case: default_test_case,
           shell: default_shell,
-          runner: runner,
+          runner: default_runner,
           searcher: searcher
         )
         command = SpecifiedNameQuery.new(request, MockCommandFinder.new).command
 
         expected_runner_args = [
-          test_case,
+          default_test_case,
           exact_match: true
         ]
 
-        assert_includes runner.recall(:single_example), expected_runner_args
-        assert_equal :single_example, command
+        assert_includes default_runner.recall(:single_example), expected_runner_args
+        assert_equal "single_example_return", command
       end
 
       def test_command__exact_match__creates_example_test_case
-        runner = MockRunner.new(
-          single_example: :single_example
-        )
-
-        test_case = MockTestCase.new
-
         request = MockRequest.new(
           search_string: "exact_match",
           example_name: "example_name",
-          test_case: test_case,
+          test_case: default_test_case,
           shell: default_shell,
-          runner: runner,
+          runner: default_runner,
           searcher: searcher
         )
         command = SpecifiedNameQuery.new(request, MockCommandFinder.new).command

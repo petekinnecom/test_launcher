@@ -3,9 +3,9 @@ require "test_helpers/mock"
 
 module TestLauncher
 
-  require "test_launcher/search/git"
+  require "test_launcher/frameworks/base"
   class MockSearcher < Mock
-    mocks Search::Git
+    mocks Frameworks::Base::Searcher
   end
 
   require "test_launcher/shell/runner"
@@ -35,6 +35,7 @@ module TestLauncher
 
     impl(:single_file) { "single_file_return" }
     impl(:multiple_files) { "multiple_files_return" }
+    impl(:single_example) { "single_example_return" }
   end
 
   require "test_launcher/frameworks/base"

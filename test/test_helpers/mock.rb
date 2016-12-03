@@ -47,9 +47,9 @@ class Mock
   end
 
   def record_call(method_name, args)
-    # if !mocked_klass.respond_to?(method_name)
-    #   raise MockingUnimplementedMethodError, "#{mocked_klass} does not implement #{method_name}"
-    # end
+    if !mocked_klass.method_defined?(method_name)
+      raise MockingUnimplementedMethodError, "#{mocked_klass} does not implement #{method_name}"
+    end
     (@calls[method_name] ||= []) << args
   end
 
