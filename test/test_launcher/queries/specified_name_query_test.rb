@@ -8,8 +8,8 @@ module TestLauncher
       include DefaultMocks
 
       def searcher
-        @searcher ||= MockSearcher.new do
-          impl :test_files do |search_string|
+        @searcher ||= MockSearcher.new do |m|
+          m.impl :test_files do |search_string|
             case search_string
             when "not_found"
               []

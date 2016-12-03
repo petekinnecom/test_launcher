@@ -22,16 +22,16 @@ class Mock
     end
   end
 
-  def initialize(*args, &block)
+  def initialize(*args)
     @attrs = args.pop || {}
     @klass = args.first if args.any?
     @calls = {}
-    instance_eval(&block) if block_given?
+    yield(self) if block_given?
     raise "Mocked class not specified" unless mocked_klass
   end
 
   def recall(method_name)
-    @calls[method_name]
+    @calls[method_name] || []
   end
 
   private
