@@ -1,80 +1,34 @@
 require "test_helper"
+require "test_helpers/mocks"
 require "test_launcher/queries"
 
 module TestLauncher
   module Queries
     class SpecifiedNameQueryTest < TestCase
+      include DefaultMocks
 
-      class Mock
-        UnmockedMethodError = Class.new(StandardError)
-
-        def self.stub(method_name)
-          define_method method_name do |*args|
-            record_call(method_name, args)
-            yield(*args) if block_given?
+      def searcher
+        @searcher ||= MockSearcher.new do
+          impl :test_files do |search_string|
+            case search_string
+            when "not_found"
+              []
+            when "multiple_matches"
+              ["file_1", "file_2"]
+            when "exact_match"
+              ["matched_file.rb"]
+            else
+              raise "can't find #{search_string}"
+            end
           end
         end
-
-        def initialize(attrs={})
-          @attrs = attrs
-          @calls = {}
-        end
-
-        def recall(method_name)
-          @calls[method_name]
-        end
-
-        private
-
-        def method_missing(method_name, *args)
-          record_call(method_name, args)
-
-          if @attrs.key?(method_name)
-            @attrs[method_name]
-          else
-            raise UnmockedMethodError, "#{method_name} is not mocked"
-          end
-        end
-
-        def record_call(method_name, args)
-          (@calls[method_name] ||= []) << args
-        end
-      end
-
-      class MockSearcher < Mock
-        stub :test_files do |search_string|
-          case search_string
-          when "no_matches"
-            []
-          when "multiple_matches"
-            ["file_1", "file_2"]
-          when "exact_match"
-            ["matched_file.rb"]
-          else
-            raise "can't find #{search_string}"
-          end
-        end
-      end
-
-      class MockShell < Mock
-        stub :warn
-        stub :notify
-        stub :puts
-      end
-
-      class MockCommandFinder < Mock
-      end
-
-      def setup
-        @shell = MockShell.new
       end
 
       def test_command__file_not_found__returns_no_command
-        request = Mock.new(
-          search_string: "no_matches",
-          shell: @shell,
-          runner: Mock.new,
-          searcher: MockSearcher.new
+        request = MockRequest.new(
+          search_string: "not_found",
+          shell: default_shell,
+          searcher: searcher
         )
         query = SpecifiedNameQuery.new(request, MockCommandFinder.new)
 
@@ -82,22 +36,21 @@ module TestLauncher
       end
 
       def test_command__file_not_found__warns
-        request = Mock.new(
-          search_string: "no_matches",
-          shell: @shell,
-          runner: Mock.new,
-          searcher: MockSearcher.new
+        request = MockRequest.new(
+          search_string: "not_found",
+          shell: default_shell,
+          searcher: searcher
         )
         SpecifiedNameQuery.new(request, MockCommandFinder.new).command
 
-        assert_equal 1, @shell.recall(:warn).size
+        assert_equal 1, default_shell.recall(:warn).size
       end
 
       def test_command__multiple_files_found
-        request = Mock.new(
+        request = MockRequest.new(
           search_string: "multiple_matches",
-          shell: @shell,
-          searcher: MockSearcher.new
+          shell: default_shell,
+          searcher: searcher
         )
         query = SpecifiedNameQuery.new(request, MockCommandFinder.new)
 
@@ -105,52 +58,56 @@ module TestLauncher
       end
 
       def test_command__multiple_files_found__warns
-        request = Mock.new(
+        request = MockRequest.new(
           search_string: "multiple_matches",
-          shell: @shell,
-          searcher: MockSearcher.new
+          shell: default_shell,
+          searcher: searcher
         )
         SpecifiedNameQuery.new(request, MockCommandFinder.new).command
 
-        assert_equal 1, @shell.recall(:warn).size
+        assert_equal 1, default_shell.recall(:warn).size
       end
 
       def test_command__exact_match__command_is_single_example
-        mock_runner = Mock.new(
+        runner = MockRunner.new(
           single_example: :single_example
         )
 
-        request = Mock.new(
+        test_case = MockTestCase.new
+
+        request = MockRequest.new(
           search_string: "exact_match",
           example_name: "example_name",
-          test_case: :test_case,
-          shell: @shell,
-          runner: mock_runner,
-          searcher: MockSearcher.new
+          test_case: test_case,
+          shell: default_shell,
+          runner: runner,
+          searcher: searcher
         )
         command = SpecifiedNameQuery.new(request, MockCommandFinder.new).command
 
         expected_runner_args = [
-          :test_case,
+          test_case,
           exact_match: true
         ]
 
-        assert_includes mock_runner.recall(:single_example), expected_runner_args
+        assert_includes runner.recall(:single_example), expected_runner_args
         assert_equal :single_example, command
       end
 
       def test_command__exact_match__creates_example_test_case
-        mock_runner = Mock.new(
+        runner = MockRunner.new(
           single_example: :single_example
         )
 
-        request = Mock.new(
+        test_case = MockTestCase.new
+
+        request = MockRequest.new(
           search_string: "exact_match",
           example_name: "example_name",
-          test_case: :test_case,
-          shell: @shell,
-          runner: mock_runner,
-          searcher: MockSearcher.new
+          test_case: test_case,
+          shell: default_shell,
+          runner: runner,
+          searcher: searcher
         )
         command = SpecifiedNameQuery.new(request, MockCommandFinder.new).command
 
