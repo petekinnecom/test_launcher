@@ -241,6 +241,9 @@ module TestLauncher
     end
 
     class FullRegexQuery < BaseQuery
+
+      WORK HERE: ADD ME SOME TEST COVERAGE LIKE THE OTHERS
+
       def command
         return if test_cases.empty?
 
