@@ -1,4 +1,5 @@
 require "test_launcher/frameworks/base"
+require "test_launcher/base_error"
 
 module TestLauncher
   module Frameworks
@@ -21,6 +22,38 @@ module TestLauncher
       end
 
       class Searcher < Base::Searcher
+        MultipleByLineMatches = Class.new(BaseError)
+
+        def by_line(file_pattern, line_number_string)
+          line_number = parse_line_number(line_number_string)
+          return unless line_number
+
+          files = test_files(file_pattern)
+          return unless files.any?
+          raise multiple_files_error if files.size > 1
+          #
+          file = files.first
+          grep_results = raw_searcher.grep(example_name_regex, file_pattern: file)
+          # return unless grep_results.any?
+          best_result =
+            grep_results
+              .select {|r| line_number >= r[:line_number]}
+              .min_by {|r| line_number - r[:line_number]}
+
+          if best_result
+            {
+              file: best_result[:file],
+              example_name: best_result[:line].match(/(test_\w+)/)[1],
+              line_number: best_result[:line_number]
+            }
+          else
+            # line number outside of example. Run whole file
+            {
+              file: grep_results.first[:file]
+            }
+          end
+        end
+
         private
 
         def file_name_regex
@@ -31,8 +64,23 @@ module TestLauncher
           "*_test.rb"
         end
 
-        def example_name_regex(query)
+        def example_name_regex(query="")
           "^\s*def test_.*#{query.sub(/^test_/, "")}.*"
+        end
+
+        def multiple_files_error
+          MultipleByLineMatches.new(<<-MSG)
+  It looks like you are running a line number in a test file.
+
+  Multiple files have been found that match your query.
+
+  This case is not supported.
+          MSG
+        end
+
+        def parse_line_number(string)
+          num = string.to_i
+          num if num.to_s == string
         end
       end
 
