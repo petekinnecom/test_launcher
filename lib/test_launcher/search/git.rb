@@ -17,7 +17,7 @@ module TestLauncher
         end
 
         def grep(regex, file_pattern)
-          shell.run("git grep --untracked --extended-regexp '#{regex}' -- '#{file_pattern}'")
+          shell.run("git grep --line-number --untracked --extended-regexp '#{regex}' -- '#{file_pattern}'")
         end
 
         def root_path
@@ -48,23 +48,27 @@ module TestLauncher
         end
       end
 
+
       private
 
       def interpret_grep_result(grep_result)
         splits = grep_result.split(/:/)
         file = splits.shift.strip
+        line_number = splits.shift.strip.to_i
         # we rejoin on ':' because our
         # code may have colons inside of it.
         #
         # example:
-        # path/to/file: run_method(a: A, b: B)
+        # path/to/file:126: run_method(a: A, b: B)
         #
         # so shift the first one out, then
         # rejoin the rest
         line = splits.join(':').strip
 
+        # TODO: Oh goodness, why is this not a class
         {
           :file => system_path(file),
+          :line_number => line_number.to_i,
           :line => line,
         }
       end

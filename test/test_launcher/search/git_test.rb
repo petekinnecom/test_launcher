@@ -1,9 +1,11 @@
 require "test_helper"
 require "test_launcher/search/git"
+require "test_helpers/mocks"
 
 module TestLauncher
   module Search
     class GitTest < TestCase
+      include DefaultMocks
 
       def setup
         super

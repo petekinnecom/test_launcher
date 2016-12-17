@@ -41,6 +41,7 @@ module TestLauncher
   require "test_launcher/frameworks/base"
   class MockTestCase < Mock
     mocks Frameworks::Base::TestCase
+    
   end
 
   module DefaultMocks

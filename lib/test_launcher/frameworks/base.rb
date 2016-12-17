@@ -18,6 +18,10 @@ module TestLauncher
           raw_searcher.grep(regex, file_pattern: file_name_pattern)
         end
 
+        def by_line(file_pattern, line_number)
+          raise NotImplementedError
+        end
+
         private
 
         def file_name_regex

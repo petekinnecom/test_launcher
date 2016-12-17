@@ -37,6 +37,10 @@ module TestLauncher
         commandify(GenericQuery)
       end
 
+      def line_number
+        commandify(LineNumberQuery)
+      end
+
       def request
         @request
       end
@@ -241,9 +245,6 @@ module TestLauncher
     end
 
     class FullRegexQuery < BaseQuery
-
-      WORK HERE: ADD ME SOME TEST COVERAGE LIKE THE OTHERS
-
       def command
         return if test_cases.empty?
 
@@ -275,6 +276,27 @@ module TestLauncher
       end
     end
 
+    class LineNumberQuery < BaseQuery
+      LINE_SPLIT_REGEX = /\A(?<file>.*):(?<line_number>\d+)\Z/
+
+      def command
+        match = request.search_string.match(LINE_SPLIT_REGEX)
+        return unless match
+
+        search_result = searcher.by_line(match[:file], match[:line_number])
+        return unless search_result
+
+        if search_result[:example_name]
+          shell.notify("Found 1 example on line #{search_result[:line_number]}.")
+          runner.single_example(request.test_case(file: search_result[:file], example: search_result[:example_name], request: request))
+        else
+          shell.notify("Found file, but line is not inside an example.")
+          runner.single_file(request.test_case(file: search_result[:file], request: request))
+        end
+
+      end
+    end
+
     class SingleTermQuery < BaseQuery
       def command
         [
@@ -292,8 +314,11 @@ module TestLauncher
 
     class SearchQuery < BaseQuery
       def command
-        _command = command_finder.multi_search_term if request.search_string.split(" ").size > 1
-        return _command if _command
+        command_1 = command_finder.multi_search_term if request.search_string.split(" ").size > 1
+        return command_1 if command_1
+
+        command_2 = command_finder.line_number if request.search_string.split(":").size > 1
+        return command_2 if command_2
 
         command_finder.single_search_term
       end
