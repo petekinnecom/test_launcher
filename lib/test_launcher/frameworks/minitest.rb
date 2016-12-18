@@ -24,10 +24,7 @@ module TestLauncher
       class Searcher < Base::Searcher
         MultipleByLineMatches = Class.new(BaseError)
 
-        def by_line(file_pattern, line_number_string)
-          line_number = parse_line_number(line_number_string)
-          return unless line_number
-
+        def by_line(file_pattern, line_number)
           files = test_files(file_pattern)
           return unless files.any?
           raise multiple_files_error if files.size > 1
@@ -78,10 +75,6 @@ module TestLauncher
           MSG
         end
 
-        def parse_line_number(string)
-          num = string.to_i
-          num if num.to_s == string
-        end
       end
 
       class Runner < Base::Runner

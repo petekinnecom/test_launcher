@@ -11,15 +11,15 @@ module TestLauncher
         @searcher ||= MockSearcher.new do |m|
           m.impl :by_line do |file, line_number|
             case [file, line_number]
-            when ["not_found", "1"]
+            when ["not_found", 1]
               nil
-            when ["found", "17"]
+            when ["found", 17]
               {file: "found", example_name: "test_example", line: 14}
-            when ["found", "1"]
+            when ["found", 1]
               {file: "found"}
-            when ["found", "9999"]
+            when ["found", 9999]
               raise "invalid line number"
-            when ["multiple", "1"]
+            when ["multiple", 1]
               raise "multiple files matched with line query"
             else
               raise "unmocked search_string: #{file}, #{line_number}"

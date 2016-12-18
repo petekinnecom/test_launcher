@@ -1,10 +1,24 @@
 require "test_launcher/search/git"
 require "test_launcher/shell/runner"
 
-require "test_launcher/cli/request"
+require "test_launcher/cli"
+require "test_helpers/mocks"
 
 module TestLauncher
   module IntegrationHelper
+    include DefaultMocks
+
+    class IntegrationShell < Shell::Runner
+      def exec(string)
+        raise "Cannot exec twice!" if defined?(@exec)
+        @exec = string
+      end
+
+      def recall_exec
+        @exec
+      end
+    end
+
     private
 
     def system_path(relative_dir)
@@ -12,19 +26,15 @@ module TestLauncher
     end
 
     def launch(search_string, run_all: false, framework:, name: nil)
-      f = framework == "minitest" ? Frameworks::Minitest : Frameworks::RSpec
+      argv = [search_string, "--framework", framework]
+      argv << "--all" if run_all
+      argv.concat(["--name", name]) if name
+      env = {}
+      CLI.launch(argv, env, shell: shell_mock)
+    end
 
-      shell = Shell::Runner.new
-      query = CLI::Query.new(
-        search_string: search_string,
-        run_all: run_all,
-        frameworks: [f],
-        example_name: name,
-        shell: shell,
-        searcher: Search::Git.new(shell),
-      )
-
-      query.launch
+    def shell_mock
+      @shell_mock ||= IntegrationShell.new
     end
   end
 end

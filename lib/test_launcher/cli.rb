@@ -22,8 +22,7 @@ module TestLauncher
       end
     end
 
-    def self.launch(argv, env)
-      shell = Shell::Runner.new(log_path: "/tmp/test_launcher.log")
+    def self.launch(argv, env, shell: Shell::Runner.new(log_path: "/tmp/test_launcher.log"))
       searcher = Search::Git.new(shell)
       requests = TestLauncher::CLI::InputParser.new(
         argv,

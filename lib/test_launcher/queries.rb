@@ -283,7 +283,7 @@ module TestLauncher
         match = request.search_string.match(LINE_SPLIT_REGEX)
         return unless match
 
-        search_result = searcher.by_line(match[:file], match[:line_number])
+        search_result = searcher.by_line(match[:file], match[:line_number].to_i)
         return unless search_result
 
         if search_result[:example_name]
