@@ -22,6 +22,18 @@ module TestLauncher
       end
 
       class Searcher < Base::Searcher
+
+        def by_line(file_pattern, line_number)
+          files = test_files(file_pattern)
+          return unless files.any?
+          raise multiple_files_error if files.size > 1
+
+          {
+            file: files.first,
+            line_number: line_number
+          }
+        end
+
         private
 
         def file_name_regex
