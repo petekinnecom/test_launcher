@@ -88,7 +88,7 @@ module TestLauncher
 
         command = ExampleNameQuery.new(request, default_command_finder).command
 
-        assert_equal [[file_1_test_case, exact_match: true]], default_runner.recall(:single_example)
+        assert_equal [[file_1_test_case]], default_runner.recall(:single_example)
 
         assert_equal "single_example_return", command
       end
