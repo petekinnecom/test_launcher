@@ -210,7 +210,7 @@ module TestLauncher
 
         if one_example?
           shell.notify("Found 1 example in 1 file.")
-          runner.single_example(test_cases.first, exact_match: true)
+          runner.single_example(test_cases.first)
         elsif one_file?
           shell.notify("Found #{test_cases.size} examples in 1 file.")
           runner.single_example(test_cases.first) # it will regex with the query
