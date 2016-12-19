@@ -76,14 +76,15 @@ module TestLauncher
           shell: default_shell,
           runner: default_runner,
           searcher: searcher
-        )
+        ) do |m|
+          m.impl(:test_case) { default_test_case }
+        end # TODO: hack while implementing new searcher mocking
         command = SpecifiedNameQuery.new(request, MockCommandFinder.new).command
 
         expected_runner_args = [
           default_test_case,
           exact_match: true
         ]
-
         assert_includes default_runner.recall(:single_example), expected_runner_args
         assert_equal "single_example_return", command
       end

@@ -1,5 +1,5 @@
 require "test_helpers/mock"
-
+require "test_helpers/mocks/searcher_mock"
 
 module TestLauncher
 
@@ -27,6 +27,10 @@ module TestLauncher
   require "test_launcher/cli/request"
   class MockRequest < Mock
     mocks CLI::Request
+
+    impl :test_case do |*args|
+      MockTestCase.new(*args)
+    end
   end
 
   require "test_launcher/frameworks/base"
@@ -41,7 +45,7 @@ module TestLauncher
   require "test_launcher/frameworks/base"
   class MockTestCase < Mock
     mocks Frameworks::Base::TestCase
-    
+
   end
 
   module DefaultMocks

@@ -263,12 +263,14 @@ module TestLauncher
 
       def test_cases
         @test_cases ||=
-          files_found_by_full_regex.map { |grep_result|
-            request.test_case(
-              file: grep_result[:file],
-              request: request
-            )
-          }
+          files_found_by_full_regex
+            .uniq { |grep_result| grep_result[:file] }
+            .map { |grep_result|
+              request.test_case(
+                file: grep_result[:file],
+                request: request
+              )
+            }
       end
 
       def files_found_by_full_regex
