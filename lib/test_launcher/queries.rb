@@ -316,13 +316,17 @@ module TestLauncher
 
     class SearchQuery < BaseQuery
       def command
-        command_1 = command_finder.multi_search_term if request.search_string.split(" ").size > 1
-        return command_1 if command_1
+        {
+          multi_search_term: request.search_string.include?(" "),
+          line_number: request.search_string.include?(":"),
+          single_search_term: true
+        }.each {|command_type, valid|
+          next unless valid
 
-        command_2 = command_finder.line_number if request.search_string.split(":").size > 1
-        return command_2 if command_2
-
-        command_finder.single_search_term
+          command = command_finder.public_send(command_type)
+          return command if command
+        }
+        nil
       end
     end
 

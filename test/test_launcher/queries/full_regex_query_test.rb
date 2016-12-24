@@ -86,12 +86,8 @@ module TestLauncher
 
       end
 
-      def create_mock_request(**attrs)
-        MockRequest.new(**attrs)
-      end
-
       def test_command__regex_not_found
-        request = create_mock_request(
+        request = MockRequest.new(
           search_string: "not_found",
           searcher: searcher
         )
@@ -101,7 +97,7 @@ module TestLauncher
       end
 
       def test_command__single_match
-        request = create_mock_request(
+        request = MockRequest.new(
           search_string: "single",
           searcher: searcher,
           runner: runner,
@@ -114,7 +110,7 @@ module TestLauncher
       end
 
       def test_command__multiple_matches_same_file
-        request = create_mock_request(
+        request = MockRequest.new(
           search_string: "multiple_matches_1",
           searcher: searcher,
           runner: runner,
@@ -127,7 +123,7 @@ module TestLauncher
       end
 
       def test_command__multiple_matches_different_files__no_all
-        request = create_mock_request(
+        request = MockRequest.new(
           search_string: "multiple_matches",
           searcher: searcher,
           runner: runner,
@@ -141,7 +137,7 @@ module TestLauncher
       end
 
       def test_command__multiple_matches_different_files__all
-        request = create_mock_request(
+        request = MockRequest.new(
           search_string: "multiple_matches",
           searcher: searcher,
           runner: runner,
