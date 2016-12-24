@@ -23,6 +23,7 @@ module TestLauncher
 
           searcher.mock_file do |f|
             f.path "multiple_matches_1_test.rb"
+            f.mtime Time.now - 3000
             f.contents <<-RB
               class MultipleMatches1Test
                 def test__1
@@ -38,6 +39,7 @@ module TestLauncher
 
           searcher.mock_file do |f|
             f.path "multiple_matches_2_test.rb"
+            f.mtime Time.now
             f.contents <<-RB
               class MultipleMatches2Test
                 def test__1
@@ -65,6 +67,8 @@ module TestLauncher
               "single_file single_test.rb"
             when "multiple_matches_1_test.rb"
               "single_file multiple_matches_1_test.rb"
+            when "multiple_matches_2_test.rb"
+              "single_file multiple_matches_2_test.rb"
             else
               raise "unmocked single_file: #{test_case.file}"
             end
@@ -126,14 +130,14 @@ module TestLauncher
         request = create_mock_request(
           search_string: "multiple_matches",
           searcher: searcher,
-          runner: default_runner,
+          runner: runner,
           shell: default_shell,
           run_all?: false
         )
 
         command = FullRegexQuery.new(request, default_command_finder).command
 
-        assert_equal "single_file multiple_matches_1_test.rb", command
+        assert_equal "single_file multiple_matches_2_test.rb", command
       end
 
       def test_command__multiple_matches_different_files__all

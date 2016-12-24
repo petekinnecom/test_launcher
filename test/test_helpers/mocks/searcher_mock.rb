@@ -22,6 +22,13 @@ module TestLauncher
     end
 
     class FileMock < Struct.new(:path, :lines, :mtime)
+      attr_reader :path, :lines
+      def initialize(path, lines, mtime)
+        @path = path
+        @lines = lines
+        File.stubs(:mtime).with(path).returns(mtime)
+      end
+
       def grep(regex)
         lines
           .each_with_index
