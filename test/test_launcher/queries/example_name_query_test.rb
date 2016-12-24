@@ -71,6 +71,10 @@ module TestLauncher
             "single_example #{test_case.file} #{test_case.example}"
           end
 
+          m.impl :multiple_examples_same_file do |test_cases|
+            "multiple_examples_same_file #{test_cases.first.file} #{test_cases.first.example}"
+          end
+
           m.impl :multiple_files do |test_cases|
             "multiple_files #{test_cases.map(&:file).join(" ")}"
           end
@@ -127,7 +131,7 @@ module TestLauncher
 
         command = ExampleNameQuery.new(request, default_command_finder).command
 
-        assert_equal "single_example file_1_test.rb same_file", command
+        assert_equal "multiple_examples_same_file file_1_test.rb same_file", command
       end
 
       def test_command__multiple_examples__one_file__notifies

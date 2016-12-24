@@ -7,7 +7,7 @@ module TestLauncher
 
     def test__single_method
       launch("file_name_1__method_name_1", framework: "minitest")
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test #{system_path("test/test_launcher/fixtures/minitest/test/class_1_test.rb")} --name=/file_name_1__method_name_1/", shell_mock.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test #{system_path("test/test_launcher/fixtures/minitest/test/class_1_test.rb")} --name=file_name_1__method_name_1", shell_mock.recall_exec
     end
 
     def test__multiple_methods__same_file
@@ -17,7 +17,7 @@ module TestLauncher
 
     def test__multiple_methods__different_files
       launch("multiple_files__same_method", framework: "minitest")
-      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test #{system_path("test/test_launcher/fixtures/minitest/test/class_2_test.rb")} --name=/multiple_files__same_method/", shell_mock.recall_exec
+      assert_equal "cd #{system_path("test/test_launcher/fixtures/minitest")} && bundle exec ruby -I test #{system_path("test/test_launcher/fixtures/minitest/test/class_2_test.rb")} --name=multiple_files__same_method", shell_mock.recall_exec
     end
 
     def test__single_file
