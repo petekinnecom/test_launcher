@@ -83,7 +83,6 @@ module TestLauncher
             end
           end
         end
-
       end
 
       def test_command__regex_not_found
