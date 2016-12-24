@@ -158,7 +158,9 @@ module TestLauncher
 
       def files
         if found_files.any? {|files_array| files_array.empty? }
-          shell.warn("It looks like you're searching for multiple files, but we couldn't identify them all.")
+          if !found_files.all? {|files_array| files_array.empty? }
+            shell.warn("It looks like you're searching for multiple files, but we couldn't identify them all.")
+          end
           []
         else
           found_files.flatten.uniq
@@ -230,6 +232,7 @@ module TestLauncher
             request.test_case(
               file: grep_result[:file],
               example: request.search_string,
+              line_number: grep_result[:line_number],
               request: request
             )
           }
@@ -288,9 +291,9 @@ module TestLauncher
         search_result = searcher.by_line(match[:file], match[:line_number].to_i)
         return unless search_result
 
-        if search_result[:example_name]
+        if search_result[:line_number]
           shell.notify("Found 1 example on line #{search_result[:line_number]}.")
-          runner.single_example(request.test_case(file: search_result[:file], example: search_result[:example_name], request: request))
+          runner.single_example(request.test_case(file: search_result[:file], line_number: search_result[:line_number], example: search_result[:example_name], request: request))
         else
           shell.notify("Found file, but line is not inside an example.")
           runner.single_file(request.test_case(file: search_result[:file], request: request))
