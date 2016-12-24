@@ -29,7 +29,7 @@ module TestLauncher
     mocks CLI::Request
 
     impl :test_case do |*args|
-      MockTestCase.new(*args)
+      Frameworks::Implementation::TestCase.new(*args)
     end
   end
 
