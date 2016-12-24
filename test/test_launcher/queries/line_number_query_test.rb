@@ -14,7 +14,7 @@ module TestLauncher
             when ["not_found", 1]
               nil
             when ["found", 17]
-              {file: "found", example_name: "test_example", line: 14}
+              {file: "found", example_name: "test_example", line_number: 14}
             when ["found", 1]
               {file: "found"}
             when ["found", 9999]
@@ -30,7 +30,7 @@ module TestLauncher
 
       def create_mock_request(**attrs)
         MockRequest.new(**attrs) do |m|
-          m.impl(:test_case) do |file:, example: nil, request:|
+          m.impl(:test_case) do |file:, example: nil, request:, line_number: nil|
             case [file, example]
             when ["found", nil]
               whole_file_test_case

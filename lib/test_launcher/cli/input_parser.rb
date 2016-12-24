@@ -4,6 +4,7 @@ require "test_launcher/version"
 
 require "test_launcher/frameworks/rspec"
 require "test_launcher/frameworks/minitest"
+require "test_launcher/frameworks/elixir"
 require "test_launcher/cli/request"
 
 module TestLauncher
@@ -45,8 +46,10 @@ VERSION: #{TestLauncher::VERSION}
             [Frameworks::RSpec]
           elsif @options[:framework] == "minitest"
             [Frameworks::Minitest]
+          elsif @options[:framework] == "elixir"
+            [Frameworks::Elixir]
           else
-            [Frameworks::Minitest, Frameworks::RSpec]
+            [Frameworks::Minitest, Frameworks::RSpec, Frameworks::Elixir]
           end
 
         frameworks.map {|framework|

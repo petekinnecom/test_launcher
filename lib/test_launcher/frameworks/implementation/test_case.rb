@@ -4,15 +4,16 @@ module TestLauncher
   module Frameworks
     module Implementation
       class TestCase
-        attr_reader :file, :example, :request
+        attr_reader :file, :example, :request, :line_number
 
         def self.from_search(file:, query:, request:)
           new(file: file, example: query, request: request)
         end
 
-        def initialize(file:, example: nil, request:)
+        def initialize(file:, example: nil, request:, line_number: nil)
           @file = file
           @example = example
+          @line_number = line_number
           @request = request
         end
 
@@ -31,7 +32,7 @@ module TestLauncher
             while !candidates.empty?
               if candidates.last == test_root_dir_name
                 root_path = File.join("/", candidates[0..-2])
-                return root_path if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec/}
+                return root_path if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec|mix.exs/} # TODO: extract this
               end
 
               candidates.pop
