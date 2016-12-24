@@ -42,6 +42,10 @@ module TestLauncher
           raise NotImplementedError
         end
 
+        def multiple_examples_same_file(test_cases)
+          raise NotImplementedError
+        end
+
         def one_or_more_files(test_cases)
           raise NotImplementedError
         end

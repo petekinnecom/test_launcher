@@ -54,6 +54,12 @@ module TestLauncher
           %{cd #{test_case.app_root} && rspec #{test_case.file} --example #{Shellwords.escape(test_case.example)}}
         end
 
+        def multiple_examples_same_file(test_cases)
+          test_case = test_cases.first
+          single_example(test_case)
+        end
+
+
         def one_or_more_files(test_cases)
           %{cd #{test_cases.first.app_root} && rspec #{test_cases.map(&:file).join(" ")}}
         end

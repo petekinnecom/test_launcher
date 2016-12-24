@@ -83,7 +83,6 @@ module TestLauncher
 
         expected_runner_args = [
           default_test_case,
-          exact_match: true
         ]
         assert_includes default_runner.recall(:single_example), expected_runner_args
         assert_equal "single_example_return", command

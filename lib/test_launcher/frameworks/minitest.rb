@@ -78,16 +78,14 @@ module TestLauncher
       end
 
       class Runner < Base::Runner
-        def single_example(test_case, exact_match: false)
+        def single_example(test_case, name: test_case.example)
 
-          name =
-            if exact_match
-              "--name=#{test_case.example}"
-            else
-              "--name=/#{test_case.example}/"
-            end
+          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} --name=#{name}}
+        end
 
-          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} #{name}}
+        def multiple_examples_same_file(test_cases)
+          test_case = test_cases.first
+          single_example(test_case, name: "/#{test_case.example}/")
         end
 
         def one_or_more_files(test_cases)

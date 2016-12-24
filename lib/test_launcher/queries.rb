@@ -113,7 +113,7 @@ module TestLauncher
         return unless file
 
         shell.notify("Found matching test.")
-        runner.single_example(test_case, exact_match: true)
+        runner.single_example(test_case)
       end
 
       def test_case
@@ -213,7 +213,7 @@ module TestLauncher
           runner.single_example(test_cases.first)
         elsif one_file?
           shell.notify("Found #{test_cases.size} examples in 1 file.")
-          runner.single_example(test_cases.first) # it will regex with the query
+          runner.multiple_examples_same_file(test_cases) # it will regex with the query
         elsif request.run_all?
           shell.notify "Found #{pluralize(test_cases.size, "example")} in #{pluralize(file_count, "file")}."
           runner.multiple_files(test_cases)
