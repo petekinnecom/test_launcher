@@ -1,5 +1,5 @@
 require "test_launcher/shell/runner"
-require "test_launcher/search/git"
+require "test_launcher/search"
 require "test_launcher/cli/input_parser"
 require "test_launcher/queries"
 
@@ -23,8 +23,9 @@ module TestLauncher
     end
 
     def self.launch(argv, env, shell: Shell::Runner.new(log_path: "/tmp/test_launcher.log"))
-      searcher = Search::Git.new(shell)
-      requests = TestLauncher::CLI::InputParser.new(
+      searcher = Search.searcher(shell)
+
+      requests = CLI::InputParser.new(
         argv,
         env
       ).requests(shell: shell, searcher: searcher)
