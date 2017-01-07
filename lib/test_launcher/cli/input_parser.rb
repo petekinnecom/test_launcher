@@ -89,7 +89,7 @@ VERSION: #{TestLauncher::VERSION}
             exit
           end
 
-          opts.on("-f", "--framework framework", "The testing framework being used. Valid options: ['minitest', 'rspec', 'guess']. Defaults to 'guess'") do |framework|
+          opts.on("-f", "--framework framework", "The testing framework being used. Valid options: ['minitest', 'rspec', 'elixir', 'guess']. Defaults to 'guess'") do |framework|
             options[:framework] = framework
           end
 
