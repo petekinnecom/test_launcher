@@ -80,12 +80,12 @@ module TestLauncher
       class Runner < Base::Runner
         def single_example(test_case, name: test_case.example)
 
-          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} --name=#{name}}
+          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} --name=/#{name}/}
         end
 
         def multiple_examples_same_file(test_cases)
           test_case = test_cases.first
-          single_example(test_case, name: "/#{test_case.example}/")
+          single_example(test_cases.first)
         end
 
         def one_or_more_files(test_cases)
