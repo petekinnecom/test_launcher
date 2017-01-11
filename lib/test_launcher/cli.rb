@@ -25,15 +25,17 @@ module TestLauncher
     def self.launch(argv, env, shell: Shell::Runner.new(log_path: "/tmp/test_launcher.log"))
       searcher = Search.searcher(shell)
 
-      requests = CLI::InputParser.new(
+      distinct_requests = CLI::InputParser.new(
         argv,
         env
       ).requests(shell: shell, searcher: searcher)
 
-      command = MultiRequestQuery.new(requests).command
+      commands = distinct_requests.map do |requests|
+        MultiRequestQuery.new(requests).command
+      end.compact
 
-      if command
-        shell.exec command
+      if commands.any?
+        commands.each { |command| shell.exec command }
       else
         shell.warn "No tests found."
       end
