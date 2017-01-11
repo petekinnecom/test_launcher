@@ -17,14 +17,14 @@ Find tests and run them by trying to match an individual test or the name of a t
 
 See full README: https://github.com/petekinnecom/test_launcher
 
-Usage: `test_launcher "search string" [--all]`
+Usage: `test_launcher "search string"... [--all]`
 
 VERSION: #{TestLauncher::VERSION}
 
       DESC
 
       def initialize(args, env)
-        @search_string = args
+        @search_strings = args
         @env = env
         @options = {}
         option_parser.parse!(args)
@@ -36,7 +36,7 @@ VERSION: #{TestLauncher::VERSION}
       end
 
       def requests(shell:, searcher:)
-        if @search_string.size == 0
+        if @search_strings.size == 0
           puts option_parser
           exit
         end
@@ -52,17 +52,19 @@ VERSION: #{TestLauncher::VERSION}
             [Frameworks::Minitest, Frameworks::RSpec, Frameworks::Elixir]
           end
 
-        frameworks.map {|framework|
-          Request.new(
-            search_string: @search_string.join(" "),
-            run_all: !!@options[:run_all],
-            disable_spring: !!@env["DISABLE_SPRING"],
-            example_name: @options[:name],
-            framework: framework,
-            shell: shell,
-            searcher: searcher
-          )
-        }
+        @search_strings.map do |search_string|
+          frameworks.map do |framework|
+            Request.new(
+              search_string: search_string,
+              run_all: !!@options[:run_all],
+              disable_spring: !!@env["DISABLE_SPRING"],
+              example_name: @options[:name],
+              framework: framework,
+              shell: shell,
+              searcher: searcher
+            )
+          end
+        end
       end
 
       def options
