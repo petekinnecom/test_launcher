@@ -62,7 +62,11 @@ module TestLauncher
         end
 
         def example_name_regex(query="")
-          "^\s*def test_.*#{query.sub(/^test_/, "")}.*"
+          if query.match(/^test_/)
+            "^\s*def\s+#{query}.*"
+          else
+            "^\s*def\s+test_.*#{query}.*"
+          end
         end
 
         def multiple_files_error
