@@ -4,7 +4,7 @@ require "test_launcher/version"
 
 require "test_launcher/frameworks/rspec"
 require "test_launcher/frameworks/minitest"
-require "test_launcher/frameworks/elixir"
+require "test_launcher/frameworks/ex_unit"
 require "test_launcher/cli/request"
 
 module TestLauncher
@@ -46,10 +46,10 @@ VERSION: #{TestLauncher::VERSION}
             [Frameworks::RSpec]
           elsif @options[:framework] == "minitest"
             [Frameworks::Minitest]
-          elsif @options[:framework] == "elixir"
-            [Frameworks::Elixir]
+          elsif @options[:framework] == "ex_unit"
+            [Frameworks::ExUnit]
           else
-            [Frameworks::Minitest, Frameworks::RSpec, Frameworks::Elixir]
+            [Frameworks::Minitest, Frameworks::RSpec, Frameworks::ExUnit]
           end
 
         frameworks.map {|framework|
@@ -89,7 +89,7 @@ VERSION: #{TestLauncher::VERSION}
             exit
           end
 
-          opts.on("-f", "--framework framework", "The testing framework being used. Valid options: ['minitest', 'rspec', 'elixir', 'guess']. Defaults to 'guess'") do |framework|
+          opts.on("-f", "--framework framework", "The testing framework being used. Valid options: ['minitest', 'rspec', 'ex_unit', 'guess']. Defaults to 'guess'") do |framework|
             options[:framework] = framework
           end
 

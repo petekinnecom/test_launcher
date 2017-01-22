@@ -3,7 +3,7 @@ require "test_launcher/base_error"
 
 module TestLauncher
   module Frameworks
-    module Elixir
+    module ExUnit
       def self.active?
         # Do not do this outside of the shell.
         ! Dir.glob("**/test/**/*.exs").empty?

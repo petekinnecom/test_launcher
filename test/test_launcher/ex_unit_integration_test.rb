@@ -6,7 +6,7 @@ module TestLauncher
     include IntegrationHelper
 
     def launch(query, env: {}, searcher:)
-      query += " --framework elixir "
+      query += " --framework ex_unit "
       shell_mock.reset
       CLI.launch(query.split(" "), env, shell: shell_mock, searcher: searcher)
     end
