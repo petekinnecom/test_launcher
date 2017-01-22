@@ -25,12 +25,12 @@ module TestLauncher
 
         def by_line(file_pattern, line_number)
           files = test_files(file_pattern)
-          return unless files.any?
-          raise multiple_files_error if files.size > 1
 
-          {
-            file: files.first,
-            line_number: line_number
+          files.map {|file|
+            {
+              file: file,
+              line_number: line_number
+            }
           }
         end
 
@@ -50,6 +50,10 @@ module TestLauncher
       end
 
       class Runner < Base::Runner
+        def by_line_number(test_case)
+          %{cd #{test_case.app_root} && bundle exec rspec #{test_case.file}:#{test_case.line_number}}
+        end
+
         def single_example(test_case, **_)
           %{cd #{test_case.app_root} && bundle exec rspec #{test_case.file} --example #{Shellwords.escape(test_case.example)}}
         end

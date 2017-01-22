@@ -110,28 +110,26 @@ module TestLauncher
 
     class SpecifiedNameQuery < BaseQuery
       def command
-        return unless file
-
-        shell.notify("Found matching test.")
-        runner.single_example(test_case)
-      end
-
-      def test_case
-        request.test_case(
-          file: file,
-          example: request.example_name,
-          request: request,
-        )
-      end
-
-      def file
-        if potential_files.size == 0
-          shell.warn("Could not locate file: #{request.search_string}")
-        elsif potential_files.size > 1
-          shell.warn("Too many files matched: #{request.search_string}")
+        if test_cases.empty?
+          shell.warn("Could not identify file: #{request.search_string}")
+        elsif test_cases.size == 1
+          shell.notify("Found 1 example in 1 file.")
+          runner.single_example(test_cases.first)
         else
-          potential_files.first
+          shell.notify "Found #{pluralize(test_cases.size, "example")} in #{pluralize(file_count, "file")}."
+          shell.notify "Running most recently edited. Run with '--all' to run all the tests."
+          runner.single_example(most_recently_edited_test_case)
         end
+      end
+
+      def test_cases
+        @test_cases ||= potential_files.map {|file|
+          request.test_case(
+            file: file,
+            example: request.example_name,
+            request: request,
+          )
+        }
       end
 
       def potential_files
@@ -285,20 +283,38 @@ module TestLauncher
       LINE_SPLIT_REGEX = /\A(?<file>.*):(?<line_number>\d+)\Z/
 
       def command
-        match = request.search_string.match(LINE_SPLIT_REGEX)
-        return unless match
+        return unless search_results.any?
 
-        search_result = searcher.by_line(match[:file], match[:line_number].to_i)
-        return unless search_result
-
-        if search_result[:line_number]
-          shell.notify("Found 1 example on line #{search_result[:line_number]}.")
-          runner.single_example(request.test_case(file: search_result[:file], line_number: search_result[:line_number], example: search_result[:example_name], request: request))
+        if one_file?
+          shell.notify "Found #{pluralize(file_count, "file")}."
+          runner.by_line_number(test_cases.first)
         else
-          shell.notify("Found file, but line is not inside an example.")
-          runner.single_file(request.test_case(file: search_result[:file], request: request))
+          shell.notify "Found #{pluralize(file_count, "file")}."
+          shell.notify "Cannot run all tests with --all because test frameworks don't accept multiple file/lines combos."
+          runner.by_line_number(most_recently_edited_test_case)
         end
+      end
 
+      def test_cases
+        @test_cases ||= search_results.map {|sr|
+          request.test_case(
+            file: sr[:file],
+            line_number: sr[:line_number],
+            example: sr[:example_name],
+            request: request
+          )
+        }
+      end
+
+      def search_results
+        @search_results ||= begin
+          match = request.search_string.match(LINE_SPLIT_REGEX)
+          if match
+            searcher.by_line(match[:file], match[:line_number].to_i)
+          else
+            []
+          end
+        end
       end
     end
 

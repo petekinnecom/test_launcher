@@ -25,13 +25,11 @@ module TestLauncher
         MultipleByLineMatches = Class.new(BaseError)
 
         def by_line(file_pattern, line_number)
-          files = test_files(file_pattern)
-          return unless files.any?
-          raise multiple_files_error if files.size > 1
-
-          {
-            file: files.first,
-            line_number: line_number
+          test_files(file_pattern).map {|file|
+            {
+              file: file,
+              line_number: line_number
+            }
           }
         end
 
@@ -48,21 +46,15 @@ module TestLauncher
         def example_name_regex(query="")
           "^\s*test\s+\".*#{query}.*\"\s+do"
         end
-
-        def multiple_files_error
-          MultipleByLineMatches.new(<<-MSG)
-It looks like you are running a line number in a test file.
-
-Multiple files have been found that match your query.
-
-This case is not supported.
-          MSG
-        end
       end
 
       class Runner < Base::Runner
-        def single_example(test_case)
+        def by_line_number(test_case)
           %{cd #{test_case.app_root} && mix test #{test_case.file}:#{test_case.line_number}}
+        end
+
+        def single_example(test_case)
+          by_line_number(test_case)
         end
 
         def multiple_examples_same_file(test_cases)

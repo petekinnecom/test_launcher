@@ -334,9 +334,8 @@ module TestLauncher
       launch('test_name_\d', searcher: searcher)
       assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb --example test_name_\\\\d", shell_mock.recall_exec
 
-      skip "this is a bug"
       launch('test_name_\d --all', searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb /src/test/file_2_test.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb", shell_mock.recall_exec
     end
 
     def test__not_found
@@ -422,7 +421,6 @@ module TestLauncher
       launch("file_2 --name test_name_2", searcher: searcher)
       assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_2_spec.rb --example test_name_2", shell_mock.recall_exec
 
-      skip "not implemented yet"
       launch("file_1 --example test_name_1", searcher: searcher)
       assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
     end
@@ -446,7 +444,9 @@ module TestLauncher
         end
       end
 
-      skip "bug"
+      launch("file_1_spec.rb --name test_name_1", searcher: searcher)
+      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
+
       launch("file_1 --name test_name_1", searcher: searcher)
       assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
     end
@@ -460,9 +460,11 @@ module TestLauncher
         end
       end
 
-      skip "this is a bug"
       launch("file_1_spec.rb:1", searcher: searcher)
-      assert_equal "cd /src && bundle exec /src/spec/file_1_spec.rb:1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:1", shell_mock.recall_exec
+
+      launch("/src/spec/file_1_spec.rb:1", searcher: searcher)
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:1", shell_mock.recall_exec
 
       launch("file_1_spec.rb:273", searcher: searcher)
       assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:273", shell_mock.recall_exec
@@ -482,7 +484,7 @@ module TestLauncher
           f.contents ""
         end
       end
-      skip "bug"
+
       launch("file_1_spec.rb:1", searcher: searcher)
       assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb:1", shell_mock.recall_exec
     end

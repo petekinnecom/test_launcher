@@ -385,7 +385,7 @@ module TestLauncher
         end
       end
 
-      skip "this is a bug"
+      skip "this is a bug" # last priority
 
       launch("file_1_test.exs:1", searcher: searcher)
       assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs:1", shell_mock.recall_exec

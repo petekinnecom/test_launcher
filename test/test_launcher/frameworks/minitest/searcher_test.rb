@@ -60,42 +60,42 @@ module TestLauncher
         end
 
         def test_by_line__file_not_found
-          assert_equal nil, searcher.by_line("not_found_test.rb", 1)
+          assert_equal [], searcher.by_line("not_found_test.rb", 1)
         end
 
         def test_by_line__file_is_not_test_file
-          assert_equal nil, searcher.by_line("non_test_file.rb", 1)
+          assert_equal [], searcher.by_line("non_test_file.rb", 1)
         end
 
         def test_by_line__single_file_line_before_all_examples
-          expected_result = {file: "test/test_launcher/single_test.rb"}
+          expected_result = [{file: "test/test_launcher/single_test.rb"}]
           assert_equal expected_result, searcher.by_line("single_test.rb", 1)
         end
 
         def test_by_line__single_file_line_exact_number
-          expected_result = {
+          expected_result = [{
             file: "test/test_launcher/single_test.rb",
             example_name: "test__first",
             line_number: 8
-          }
+          }]
           assert_equal expected_result, searcher.by_line("single_test.rb", 8)
         end
 
         def test_by_line__single_file_line_after_example
-          expected_result = {
+          expected_result = [{
             file: "test/test_launcher/single_test.rb",
             example_name: "test__first",
             line_number: 8
-          }
+          }]
           assert_equal expected_result, searcher.by_line("single_test.rb", 10)
         end
 
         def test_by_line__single_file_line_after_example_2
-          expected_result = {
+          expected_result = [{
             file: "test/test_launcher/single_test.rb",
             example_name: "test__second",
             line_number: 13
-          }
+          }]
           assert_equal expected_result, searcher.by_line("single_test.rb", 17)
         end
 

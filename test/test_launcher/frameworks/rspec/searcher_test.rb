@@ -33,18 +33,18 @@ module TestLauncher
         end
 
         def test_by_line__file_not_found
-          assert_equal nil, searcher.by_line("not_found_spec.rb", 1)
+          assert_equal [], searcher.by_line("not_found_spec.rb", 1)
         end
 
         def test_by_line__file_is_not_test_file
-          assert_equal nil, searcher.by_line("non_test_file.rb", 1)
+          assert_equal [], searcher.by_line("non_test_file.rb", 1)
         end
 
         def test_by_line__file_is_found
-          expected_result = {
+          expected_result = [{
             file: "spec/test_launcher/single_spec.rb",
             line_number: 8
-          }
+          }]
 
           assert_equal expected_result, searcher.by_line("single_spec.rb", 8)
         end

@@ -27,7 +27,7 @@ module TestLauncher
 
         def by_line(file_pattern, line_number)
           files = test_files(file_pattern)
-          return unless files.any?
+          return [] unless files.any?
           raise multiple_files_error if files.size > 1
           #
           file = files.first
@@ -39,16 +39,16 @@ module TestLauncher
               .min_by {|r| line_number - r[:line_number]}
 
           if best_result
-            {
+            [{
               file: best_result[:file],
               example_name: best_result[:line].match(/(test_\w+)/)[1],
               line_number: best_result[:line_number]
-            }
+            }]
           else
             # line number outside of example. Run whole file
-            {
+            [{
               file: grep_results.first[:file]
-            }
+            }]
           end
         end
 
@@ -72,17 +72,27 @@ module TestLauncher
 
         def multiple_files_error
           MultipleByLineMatches.new(<<-MSG)
-  It looks like you are running a line number in a test file.
+It looks like you are running a line number in a test file.
 
-  Multiple files have been found that match your query.
+Multiple files have been found that match your query.
 
-  This case is not supported.
+This case is not supported for Minitest.
+
+Open an issue on https://github.com/petekinnecom/test_launcher if this is something you have run into at least 3 times. :)
           MSG
         end
 
       end
 
       class Runner < Base::Runner
+        def by_line_number(test_case)
+          if test_case.example
+            single_example(test_case)
+          else
+            single_file(test_case)
+          end
+        end
+
         def single_example(test_case, name: test_case.example, exact_match: false)
 
           name_arg =

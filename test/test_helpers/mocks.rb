@@ -40,6 +40,7 @@ module TestLauncher
     impl(:single_file) { "single_file_return" }
     impl(:multiple_files) { "multiple_files_return" }
     impl(:single_example) { "single_example_return" }
+    impl(:by_line_number) { "by_line_number_return" }
   end
 
   require "test_launcher/frameworks/base"

@@ -12,11 +12,11 @@ module TestLauncher
           m.impl :by_line do |file, line_number|
             case [file, line_number]
             when ["not_found", 1]
-              nil
+              []
             when ["found", 17]
-              {file: "found", example_name: "test_example", line_number: 14}
+              [{file: "found", example_name: "test_example", line_number: 14}]
             when ["found", 1]
-              {file: "found"}
+              [{file: "found"}]
             when ["found", 9999]
               raise "invalid line number"
             when ["multiple", 1]
@@ -82,9 +82,9 @@ module TestLauncher
 
         command = LineNumberQuery.new(request, default_command_finder).command
 
-        assert_equal [[whole_file_test_case]], default_runner.recall(:single_file)
+        assert_equal [[whole_file_test_case]], default_runner.recall(:by_line_number)
 
-        assert_equal "single_file_return", command
+        assert_equal "by_line_number_return", command
       end
 
 
@@ -98,9 +98,9 @@ module TestLauncher
 
         command = LineNumberQuery.new(request, default_command_finder).command
 
-        assert_equal [[example_name_test_case]], default_runner.recall(:single_example)
+        assert_equal [[example_name_test_case]], default_runner.recall(:by_line_number)
 
-        assert_equal "single_example_return", command
+        assert_equal "by_line_number_return", command
       end
     end
   end

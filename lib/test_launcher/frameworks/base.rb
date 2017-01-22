@@ -38,6 +38,10 @@ module TestLauncher
       end
 
       class Runner
+        def by_line_number(test_case)
+          raise NotImplementedError
+        end
+
         def single_example(test_case)
           raise NotImplementedError
         end

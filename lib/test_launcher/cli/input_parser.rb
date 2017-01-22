@@ -93,8 +93,12 @@ VERSION: #{TestLauncher::VERSION}
             options[:framework] = framework
           end
 
-          opts.on("-n", "--name name", "Minitest name of testcase to run") do |name|
+          opts.on("-n", "--name name", "Name of testcase/example to run. This will pass through to the selected framework without verifying that the example actually exists. This option really only exists to work with tooling that will automatically run your tests. You shouldn't have much need for this.") do |name|
             options[:name] = name
+          end
+
+          opts.on("--example example", "alias of name") do |example|
+            options[:name] = example
           end
         end
       end
