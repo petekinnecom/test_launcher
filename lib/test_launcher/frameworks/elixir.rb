@@ -66,7 +66,7 @@ This case is not supported.
         end
 
         def multiple_examples_same_file(test_cases)
-          one_or_more_files(test_cases.first)
+          one_or_more_files(test_cases.uniq {|tc| tc.file})
         end
 
         def one_or_more_files(test_cases)

@@ -17,7 +17,7 @@ module TestLauncher
       end
 
       def to_file_mock
-        FileMock.new(@path, @lines, @time)
+        FileMock.new(@path, @lines, @mtime)
       end
     end
 
@@ -27,6 +27,8 @@ module TestLauncher
         @path = path
         @lines = lines
         File.stubs(:mtime).with(path).returns(mtime)
+        File.stubs(:exist?).returns(false)
+        File.stubs(:exist?).with(path).returns(true)
       end
 
       def grep(regex)

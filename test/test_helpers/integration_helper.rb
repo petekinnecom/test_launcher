@@ -10,28 +10,21 @@ module TestLauncher
 
     class IntegrationShell < Shell::Runner
       def exec(string)
-        raise "Cannot exec twice!" if defined?(@exec)
+        raise "Cannot exec twice!" if @exec
         @exec = string
       end
 
       def recall_exec
         @exec
       end
+
+      def reset
+        @exec = nil
+      end
     end
 
     private
 
-    def system_path(relative_dir)
-      File.join(Dir.pwd, relative_dir)
-    end
-
-    def launch(search_string, run_all: false, framework:, name: nil)
-      argv = [search_string, "--framework", framework]
-      argv << "--all" if run_all
-      argv.concat(["--name", name]) if name
-      env = {}
-      CLI.launch(argv, env, shell: shell_mock)
-    end
 
     def shell_mock
       @shell_mock ||= IntegrationShell.new
