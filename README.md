@@ -99,7 +99,7 @@ test_launcher blog_post_test.rb comment_test.rb
 Or maybe you'd like to run all test methods that match a regular expression:
 
 ```
-test_launcher 'hello_\w*|goodbye_\w+'
+test_launcher 'hello_\w*|goodbye_\w+' --all
 
 #=> Found 2 methods in 2 files.
 #=> bundle exec ruby -I test -e "ARGV.push('--name=/hello_\w*|goodbye_\w+/')" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb
@@ -149,7 +149,7 @@ Suppose you type `test_launcher thing`.  It will run tests using this priority p
 1. Any test file based on a generic search
   - runs `stuff_test.rb` because it found the word `thing` inside of it
 
-If your looks like it's specifying a line number (e.g. `file_test.rb:17`), that search will be preferred.
+If your query looks like it's specifying a line number (e.g. `file_test.rb:17`), that search will be preferred.
 
 Any time it matches multiple files, it will default to running the most recently edited file.  You can append `--all` if you want to run all matching tests, even if they are in different engines/gems!
 
@@ -167,9 +167,8 @@ If you've already committed your changes, but want to double check before you pu
 ```
 git diff --name-only --diff-filter=ACMTUXB origin/master | grep _test.rb | xargs test_launcher
 ```
-(see https://git-scm.com/docs/git-diff)
 
-
+Add this to your `~/.bash_profile` and enjoy!
 ```
 function tdiff()
 {
@@ -253,14 +252,14 @@ $:time test_launcher something_that_no_test_says
 
 #=> real	0m2.214s
 #=> user	0m1.407s
-#=> sys	0m1.062s
+#=> sys	  0m1.062s
 
-$:time NOEXEC_DISABLE=1 test_launcher something_that_no_test_might_say
+$:time NOEXEC_DISABLE=1 test_launcher something_that_no_test_says
 #=> Could not find any tests.
 
 #=> real	0m1.412s
 #=> user	0m0.745s
-#=> sys	0m0.945s
+#=> sys	  0m0.945s
 ```
 
 I suggest that if you are using RVM, you may as well make this your alias:
