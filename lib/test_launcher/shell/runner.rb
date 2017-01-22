@@ -1,5 +1,6 @@
 require "test_launcher/shell/color"
 require "bundler"
+require "shellwords"
 
 module TestLauncher
   module Shell
@@ -52,7 +53,7 @@ module TestLauncher
       private
 
       def log(msg)
-        %x{echo "#{msg}" >> #{log_path}}
+        %x{echo #{Shellwords.escape(msg)} >> #{log_path}}
       end
 
       def shell_out(command)

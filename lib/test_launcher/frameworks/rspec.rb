@@ -63,6 +63,9 @@ module TestLauncher
           single_example(test_case)
         end
 
+        def multiple_examples_same_root(test_cases)
+          one_or_more_files(test_cases.uniq {|tc| tc.file})
+        end
 
         def one_or_more_files(test_cases)
           %{cd #{test_cases.first.app_root} && bundle exec rspec #{test_cases.map(&:file).join(" ")}}

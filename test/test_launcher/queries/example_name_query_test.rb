@@ -78,6 +78,10 @@ module TestLauncher
           m.impl :multiple_files do |test_cases|
             "multiple_files #{test_cases.map(&:file).join(" ")}"
           end
+
+          m.impl :multiple_examples do |test_cases|
+            "multiple_examples #{test_cases.map(&:file).join(" ")}"
+          end
         end
       end
 
@@ -193,7 +197,7 @@ module TestLauncher
 
         command = ExampleNameQuery.new(request, default_command_finder).command
 
-        assert_equal "multiple_files file_1_test.rb file_2_test.rb", command
+        assert_equal "multiple_examples file_1_test.rb file_2_test.rb", command
       end
 
       def test_command__multiple_examples__multiple_files__all__notifies

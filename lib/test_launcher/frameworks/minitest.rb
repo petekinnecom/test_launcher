@@ -109,8 +109,12 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
           single_example(test_cases.first)
         end
 
+        def multiple_examples_same_root(test_cases)
+          %{cd #{test_cases.first.app_root} && bundle exec ruby -I test -e "ARGV.push('--name=/#{test_cases.first.example}/')" #{test_cases.map {|tc| "-r #{tc.file}"}.uniq.join(" ")}}
+        end
+
         def one_or_more_files(test_cases)
-          %{cd #{test_cases.first.app_root} && #{test_cases.first.file_runner} #{test_cases.map(&:file).join(" ")}}
+          %{cd #{test_cases.first.app_root} && #{test_cases.first.file_runner} #{test_cases.map(&:file).uniq.join(" ")}}
         end
       end
 

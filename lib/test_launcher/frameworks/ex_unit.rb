@@ -61,6 +61,10 @@ module TestLauncher
           one_or_more_files(test_cases.uniq {|tc| tc.file})
         end
 
+        def multiple_examples_same_root(test_cases)
+          one_or_more_files(test_cases.uniq {|tc| tc.file})
+        end
+
         def one_or_more_files(test_cases)
           %{cd #{test_cases.first.app_root} && mix test #{test_cases.map(&:file).join(" ")}}
         end

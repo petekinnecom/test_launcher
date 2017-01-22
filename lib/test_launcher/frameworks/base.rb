@@ -58,6 +58,13 @@ module TestLauncher
           one_or_more_files([test_case])
         end
 
+        def multiple_examples(collection)
+          collection
+            .group_by(&:app_root)
+            .map { |_root, test_cases| multiple_examples_same_root(test_cases) }
+            .join("; cd -;\n\n")
+        end
+
         def multiple_files(collection)
           collection
             .group_by(&:app_root)

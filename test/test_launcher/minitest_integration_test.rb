@@ -82,7 +82,6 @@ module TestLauncher
       assert_equal "cd /src && bundle exec ruby -I test /src/test/class_1_test.rb --name=/test_name/", shell_mock.recall_exec
     end
 
-
     def test__by_example__multiple_methods__different_files
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|
@@ -119,10 +118,13 @@ module TestLauncher
       assert_equal "cd /src && bundle exec ruby -I test /src/test/class_2_test.rb --name=/name_2/", shell_mock.recall_exec
 
       launch("name_1 --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/class_1_test.rb /src/test/class_2_test.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/name_1/')\" -r /src/test/class_1_test.rb -r /src/test/class_2_test.rb", shell_mock.recall_exec
 
       launch("name_2 --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/class_1_test.rb /src/test/class_2_test.rb /src/test/class_3_test.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/name_2/')\" -r /src/test/class_1_test.rb -r /src/test/class_2_test.rb -r /src/test/class_3_test.rb", shell_mock.recall_exec
+
+      launch("name_1|name_2 --all", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/name_1|name_2/')\" -r /src/test/class_1_test.rb -r /src/test/class_2_test.rb -r /src/test/class_3_test.rb", shell_mock.recall_exec
     end
 
     def test__by_filename
@@ -386,7 +388,7 @@ module TestLauncher
       assert_equal "cd /src && bundle exec ruby -I test /src/test/file_2_test.rb --name=/test_name_\\\\d/", shell_mock.recall_exec
 
       launch('test_name_\d --all', searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb /src/test/file_2_test.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/test_name_\\d/')\" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb", shell_mock.recall_exec
     end
 
     def test__not_found
@@ -435,7 +437,7 @@ module TestLauncher
       assert_equal "cd /src/inline/gem && bundle exec ruby -I test /src/inline/gem/test/file_1_test.rb --name=/test_name_1/", shell_mock.recall_exec
 
       launch("test_name_1 --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb; cd -;\n\ncd /src/inline/gem && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/inline/gem/test/file_1_test.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/test_name_1/')\" -r /src/test/file_1_test.rb; cd -;\n\ncd /src/inline/gem && bundle exec ruby -I test -e \"ARGV.push('--name=/test_name_1/')\" -r /src/inline/gem/test/file_1_test.rb", shell_mock.recall_exec
 
       launch("file --all", searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb /src/test/file_2_test.rb; cd -;\n\ncd /src/inline/gem && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/inline/gem/test/file_1_test.rb", shell_mock.recall_exec

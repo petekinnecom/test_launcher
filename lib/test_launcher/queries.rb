@@ -216,7 +216,7 @@ module TestLauncher
           runner.multiple_examples_same_file(test_cases) # it will regex with the query
         elsif request.run_all?
           shell.notify "Found #{pluralize(test_cases.size, "example")} in #{pluralize(file_count, "file")}."
-          runner.multiple_files(test_cases)
+          runner.multiple_examples(test_cases)
         else
           shell.notify "Found #{pluralize(test_cases.size, "example")} in #{pluralize(file_count, "file")}."
           shell.notify "Running most recently edited. Run with '--all' to run all the tests."
