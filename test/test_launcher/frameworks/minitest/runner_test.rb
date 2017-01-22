@@ -18,7 +18,7 @@ module TestLauncher
             runner: "runner",
             file: "file"
           )
-          assert_equal "cd app_root && runner file --name=example_name", Runner.new.single_example(test_case)
+          assert_equal "cd app_root && runner file --name=/example_name/", Runner.new.single_example(test_case)
         end
 
         def test_multiple_examples_same_file

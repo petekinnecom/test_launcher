@@ -83,9 +83,16 @@ module TestLauncher
       end
 
       class Runner < Base::Runner
-        def single_example(test_case, name: test_case.example)
+        def single_example(test_case, name: test_case.example, exact_match: false)
 
-          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} --name=/#{Shellwords.escape(name)}/}
+          name_arg =
+            if exact_match
+              Shellwords.escape(name)
+            else
+              "/#{Shellwords.escape(name)}/"
+            end
+
+          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} --name=#{name_arg}}
         end
 
         def multiple_examples_same_file(test_cases)

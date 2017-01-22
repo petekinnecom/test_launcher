@@ -13,7 +13,7 @@ module TestLauncher
           mocks Search::Git
 
           impl :grep do |regex, file_pattern:|
-            example_name_regex = "^ *def test_.*.*" #TODO: no bueno copying this
+            example_name_regex = "^ *def +test_.*.*" #TODO: no bueno copying this
             case [regex, file_pattern]
             when [example_name_regex, "test/test_launcher/single_test.rb"]
               [
@@ -34,6 +34,7 @@ module TestLauncher
                 "test/dir/2_multiple_test.rb:30:    def test__second",
               ]
             else
+              require "pry";binding.pry
               raise "unmocked search: #{regex}, #{file_pattern}"
             end
           end

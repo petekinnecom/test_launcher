@@ -17,7 +17,7 @@ module TestLauncher
             app_root: "app_root",
             file: "file"
           )
-          assert_equal "cd app_root && rspec file --example example_name", Runner.new.single_example(test_case)
+          assert_equal "cd app_root && bundle exec rspec file --example example_name", Runner.new.single_example(test_case)
         end
 
         def test_single_example__with_messy_name
@@ -26,7 +26,7 @@ module TestLauncher
             app_root: "app_root",
             file: "file"
           )
-          assert_equal "cd app_root && rspec file --example this\\ is\\ it\\'s\\ name\\ :\\(", Runner.new.single_example(test_case)
+          assert_equal "cd app_root && bundle exec rspec file --example this\\ is\\ it\\'s\\ name\\ :\\(", Runner.new.single_example(test_case)
         end
 
 
@@ -43,7 +43,7 @@ module TestLauncher
               file: "file"
             )
           ]
-          assert_equal "cd app_root && rspec file --example example_name", Runner.new.multiple_examples_same_file(test_cases)
+          assert_equal "cd app_root && bundle exec rspec file --example example_name", Runner.new.multiple_examples_same_file(test_cases)
         end
 
         def test_single_file
@@ -52,7 +52,7 @@ module TestLauncher
             app_root: "app_root",
             file: "file"
           )
-          assert_equal "cd app_root && rspec file", Runner.new.single_file(test_case)
+          assert_equal "cd app_root && bundle exec rspec file", Runner.new.single_file(test_case)
         end
 
         def test_one_or_more_files
@@ -68,7 +68,7 @@ module TestLauncher
               file: "file_2"
             )
           ]
-          assert_equal "cd app_root && rspec file_1 file_2", Runner.new.one_or_more_files(test_cases)
+          assert_equal "cd app_root && bundle exec rspec file_1 file_2", Runner.new.one_or_more_files(test_cases)
         end
       end
     end

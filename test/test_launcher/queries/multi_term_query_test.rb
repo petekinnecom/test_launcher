@@ -74,18 +74,6 @@ module TestLauncher
         assert_equal nil, command
       end
 
-      def test_command__finds_files_for_0_of_2_terms__warns
-        request = create_mock_request(
-          search_string: "not_found not_found",
-          shell: default_shell,
-          runner: default_runner,
-          searcher: searcher
-        )
-        command = MultiTermQuery.new(request, default_command_finder).command
-
-        assert_equal 1, default_shell.recall(:warn).size
-      end
-
       def test_command__finds_files_for_1_of_2_terms
         request = create_mock_request(
           search_string: "file_1 not_found",
