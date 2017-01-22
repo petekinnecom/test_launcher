@@ -8,7 +8,7 @@ module TestLauncher
   module IntegrationHelper
     include DefaultMocks
 
-    class IntegrationShell < Shell::Runner
+    class IntegrationShell < MockShell
       def exec(string)
         raise "Cannot exec twice!" if @exec
         @exec = string

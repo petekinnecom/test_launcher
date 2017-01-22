@@ -523,10 +523,7 @@ module TestLauncher
           f.mtime Time.new(2013, 01, 01, 00, 00, 00)
           f.contents <<-RB
             class File1Test
-              def test_name_1
-                things
-              end
-            end
+            def test_name_1
           RB
         end
 
@@ -535,21 +532,13 @@ module TestLauncher
           f.mtime Time.new(2014, 01, 01, 00, 00, 00)
           f.contents <<-RB
             class File1Test
-              def test_name_1
-                things
-              end
-            end
+            def test_name_1
           RB
         end
       end
 
-      skip "this is a bug"
-
       launch("file_1_test.rb:1", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/inline/gem/test/file_1_test.rb", shell_mock.recall_exec
-
-      launch("file_1_test.rb:2", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec ruby -I test /src/inline/gem/test/file_1_test.rb --name=/test_name_1/", shell_mock.recall_exec
+      assert shell_mock.recall(:warn).first.first.to_s.match(/Open an issue/)
     end
   end
 end
