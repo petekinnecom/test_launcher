@@ -49,11 +49,39 @@ module TestLauncher
 
       launch("name_", searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test /src/test/class_1_test.rb --name=/name_/", shell_mock.recall_exec
-
-      skip "this is a bug"
-      launch("_name_", searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test /src/test/class_1_test.rb --name=/_name_/", shell_mock.recall_exec
     end
+
+    def test__by_example__multiple_methods__regex_issue
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/class_1_test.rb"
+          f.mtime Time.new(2014, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            def test_name_1
+          RB
+        end
+
+        searcher.mock_file do |f|
+          f.path "/src/test/class_2_test.rb"
+          f.mtime Time.new(2015, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            def test_somename
+          RB
+        end
+      end
+
+      launch("test_name", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/class_1_test.rb --name=/test_name/", shell_mock.recall_exec
+
+      skip
+      # not seeing a good solution here...
+      # we cannot tell whether the _ is part of the test_ or not.
+      # might need to do two passes: first with user input, then
+      # filter down to those that match test_...would that work?
+      launch("_name", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/class_1_test.rb --name=/test_name/", shell_mock.recall_exec
+    end
+
 
     def test__by_example__multiple_methods__different_files
       searcher = MemorySearcher.new do |searcher|
@@ -90,7 +118,6 @@ module TestLauncher
       launch("name_2", searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test /src/test/class_2_test.rb --name=/name_2/", shell_mock.recall_exec
 
-      skip "this is a bug"
       launch("name_1 --all", searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/class_1_test.rb /src/test/class_2_test.rb", shell_mock.recall_exec
 
@@ -358,7 +385,6 @@ module TestLauncher
       launch('test_name_\d', searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test /src/test/file_2_test.rb --name=/test_name_\\\\d/", shell_mock.recall_exec
 
-      skip "this is a bug"
       launch('test_name_\d --all', searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb /src/test/file_2_test.rb", shell_mock.recall_exec
     end
@@ -408,7 +434,6 @@ module TestLauncher
       launch("test_name_1", searcher: searcher)
       assert_equal "cd /src/inline/gem && bundle exec ruby -I test /src/inline/gem/test/file_1_test.rb --name=/test_name_1/", shell_mock.recall_exec
 
-      skip "this is a bug"
       launch("test_name_1 --all", searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb; cd -;\n\ncd /src/inline/gem && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/inline/gem/test/file_1_test.rb", shell_mock.recall_exec
 
@@ -467,7 +492,6 @@ module TestLauncher
         end
       end
 
-      skip "this is a bug"
       launch("file_1 --name test_name_1", searcher: searcher)
       assert_equal "cd /src/inline/gem && bundle exec ruby -I test /src/inline/gem/test/file_1_test.rb --name=/test_name_1/", shell_mock.recall_exec
     end

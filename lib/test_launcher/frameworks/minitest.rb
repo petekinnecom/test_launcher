@@ -94,7 +94,6 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
         end
 
         def single_example(test_case, name: test_case.example, exact_match: false)
-
           name_arg =
             if exact_match
               Shellwords.escape(name)
@@ -102,7 +101,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
               "/#{Shellwords.escape(name)}/"
             end
 
-          %{cd #{test_case.app_root} && #{test_case.runner} #{test_case.file} --name=#{name_arg}}
+          %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name=#{name_arg}}
         end
 
         def multiple_examples_same_file(test_cases)
@@ -111,16 +110,22 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
         end
 
         def one_or_more_files(test_cases)
-          %{cd #{test_cases.first.app_root} && #{test_cases.first.runner} #{test_cases.map(&:file).join(" ")}}
+          %{cd #{test_cases.first.app_root} && #{test_cases.first.file_runner} #{test_cases.map(&:file).join(" ")}}
         end
       end
 
       class TestCase < Base::TestCase
-        def runner
+        def example_runner
           if spring_enabled?
             "bundle exec spring testunit"
-          elsif is_example?
+          else
             "bundle exec ruby -I test"
+          end
+        end
+
+        def file_runner
+          if spring_enabled?
+            "bundle exec spring testunit"
           else
             "bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}'"
           end
