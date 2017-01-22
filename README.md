@@ -1,8 +1,25 @@
-#Test Launcher -->
+# Test Launcher -->
 
-Test Launcher takes some input and tries to figure out what test you want to run. It makes running tests on the command line much easier.  Test Launcher always outputs the command that it has decided to run so that you can verify that it is running the test you want it to run.
+Test Launcher takes a search query and tries to figure out what test you want to run. It makes running tests on the command line easy! Super bonus!
 
-Test Launcher works with Minitest.  RSpec support is in its infancy.  You should try it and let me know!
+You might use Test Launcher for two reasons:
+
+1. You run tests from the command line a lot.
+2. You work in a ruby app that contains inline gems/engines with their own test suites.
+
+It was built for Minitest, but it also has basic support for RSpec and ExUnit.
+
+See the __Usages__ section below for some examples.
+
+# Installation
+
+To install:
+
+```
+gem install test_launcher
+```
+
+Under the hood, it uses git to determine your project root. If you're on an app that's not using git, let me know and I can remove that dependency.
 
 ### Usage
 
@@ -19,6 +36,7 @@ But with Test Launcher, you can just type this:
 ```
 test_launcher test_blog_name_thing
 
+#=> Found 1 example in 1 file
 #=> ruby -I test test/models/blog_post_test.rb --name=test_blog_name_thing
 ```
 
@@ -28,6 +46,22 @@ What if you want to run a whole file?  Just go for it!
 test_launcher blog_post_test
 
 #=> ruby -I test test/models/blog_post_test.rb
+```
+
+Maybe you'd like to run a whole folder?
+
+```
+test_launcher test/models --all
+
+#=> ruby -I test -e 'ARGV.each {|f| require(f)}' test/models/blog_post_test.rb test/models/comment_test.rb
+```
+
+You can run specific test methods by line:
+```
+test_launcher blog_post_test.rb:13
+
+#=> Found 1 example in 1 file
+#=> ruby -I test test/models/blog_post_test.rb --name=test_blog_name_thing
 ```
 
 What if you just have the class name for the test?
@@ -55,16 +89,27 @@ test_launcher /Users/username/code/my_repo/test/models/blog_post_test.rb
 #=> ruby -I test test/models/blog_post_test.rb
 ```
 
-But can it run two files for you?
+Suppose you have multiple files you'd like to run:
 ```
 test_launcher blog_post_test.rb comment_test.rb
 
 #=> ruby -I test -e 'ARGV.each {|f| require(f)}' test/models/blog_post_test.rb test/models/comment_test.rb
 ```
 
+Or maybe you'd like to run all test methods that match a regular expression:
+
+```
+test_launcher 'hello_\w*|goodbye_\w+'
+
+#=> Found 2 methods in 2 files.
+#=> bundle exec ruby -I test -e "ARGV.push('--name=/hello_\w*|goodbye_\w+/')" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb
+```
+
 ### Inline Gems
 
-Test Launcher will automatically move to the correct subdirectory in order to run the tests.  For example, if `thing_test.rb` is within your inline_gem, you can run:
+If you work in an application that has inlined gems/engines, you've probably already experienced pain around running tests. IDEs and editor plugins have a hard time understanding how to run tests for inlined gems when you have opened the project from a parent folder. By looking for Gemfiles and gemspecs, Test Launcher can run your tests in the correct context. If you are using RubyMine in a project with inline gems, see the __RubyMine__ section below.
+
+For example, if `thing_test.rb` is within your inline_gem, you can run:
 
 ```
 test_launcher thing_test
@@ -72,7 +117,7 @@ test_launcher thing_test
 #=> cd /path/to/inline_gem && ruby -I test test/thing_test.rb
 ```
 
-You don't have to run Test Launcher from the root of your project either.  It will figure things out.
+You don't have to run Test Launcher from the root of your project either.  It will figure things out, even when using the `--all` flag!
 
 ### Spring preloader
 
@@ -85,6 +130,29 @@ test_launcher springified_test
 ```
 
 Test Launcher will not use spring if the `DISABLE_SPRING=1` environment variable is set.
+
+### Priorities
+
+Test Launcher searches for tests based on your input.
+
+Suppose you type `test_launcher thing`.  It will run tests using this priority preference:
+
+1. A single test file
+  - matches on `thing_test.rb`
+
+1. A single, specific test method name or partial name
+  - `def test_the_thing`
+
+1. Multiple test method names in the same file
+  - `def test_the_thing` and `def test_the_other_thing`
+
+1. Any test file based on a generic search
+  - runs `stuff_test.rb` because it found the word `thing` inside of it
+
+If your looks like it's specifying a line number (e.g. `file_test.rb:17`), that search will be preferred.
+
+Any time it matches multiple files, it will default to running the most recently edited file.  You can append `--all` if you want to run all matching tests, even if they are in different engines/gems!
+
 
 ### Running all tests you've changed:
 
@@ -119,18 +187,7 @@ tdiff origin/master
 
 Super fun!
 
-#Installation
-
-To install:
-
-```
-gem install test_launcher
-```
-
-Under the hood it uses git to search for files and to grep, so it will only work in git repositories.
-
-
-#Setup
+### Setup
 
 This gem installs one executable called `test_launcher`.
 
@@ -149,25 +206,6 @@ alias t='NOEXEC_DISABLE=1 test_launcher'
 
 Now you can just type `t` instead of `test_launcher`.  Much nicer!
 
-#Usage
-
-Test Launcher searches for tests based on your input.
-
-Suppose you type `test_launcher thing`.  It will run tests using this priority preference:
-
-1. A single, specific test method name or partial name
-  - `def test_the_thing`
-
-1. Multiple test method names in the same file
-  - `def test_the_thing` and `def test_the_other_thing`
-
-1. A single test file
-  - matches on `thing_test.rb`
-
-1. Any test file based on a generic search
-  - runs `stuff_test.rb` because it found the word `thing` inside of it
-
-Any time it matches multiple files, it will default to running the most recently edited file.  You can append `--all` if you want to run all matching tests, even if they are in different engines/gems!
 
 # RubyMine Support
 
@@ -230,3 +268,9 @@ I suggest that if you are using RVM, you may as well make this your alias:
 ```
 alias t='NOEXEC_DISABLE=1 test_launcher'
 ```
+
+# What's going on in there?
+
+Test Launcher began life as a bash script patching together `ag`, `awk`, `grep`, and all sorts of insanity. After looking up how to do an if/else in bash for the millionth time, I decided to rewrite it in Ruby.
+
+Test Launcher was developed using "BDD" (Bug Driven Development). Because I use it so heavily, I'd pop over and hack something precisely at the moment I needed it (often breaking all sorts of other things). I've since added some tests, but I reserve the right to break anything at anytime if only for old times' sake.
