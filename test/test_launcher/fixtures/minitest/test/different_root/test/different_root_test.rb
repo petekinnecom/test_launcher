@@ -1,2 +1,0 @@
-class Root2DummyTestClass1Test
-end
