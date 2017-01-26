@@ -344,6 +344,65 @@ module TestLauncher
       assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name=/regex_match/", shell_mock.recall_exec
     end
 
+    def test__multiple_queries__generic_regex__prefers_to_keep_spaces
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/file_1_test.rb"
+          f.mtime Time.new(2013, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            this matches
+          RB
+        end
+
+        searcher.mock_file do |f|
+          f.path "/src/test/file_2_test.rb"
+          f.mtime Time.new(2015, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            this
+            matches
+          RB
+        end
+
+        launch("this matches", searcher: searcher)
+        assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb", shell_mock.recall_exec
+
+        launch("this matches --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb", shell_mock.recall_exec
+
+        launch("matches this --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb /src/test/file_2_test.rb", shell_mock.recall_exec
+      end
+    end
+
+    def test__multiple_queries__splits_spaces_for_test_names
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/file_1_test.rb"
+          f.mtime Time.new(2013, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            def test_this
+          RB
+        end
+
+        searcher.mock_file do |f|
+          f.path "/src/test/file_2_test.rb"
+          f.mtime Time.new(2015, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            def test_matches
+          RB
+        end
+
+        launch("this matches", searcher: searcher)
+        assert_equal "cd /src && bundle exec ruby -I test /src/test/file_2_test.rb --name=/this\\|matches/", shell_mock.recall_exec
+
+        launch("this matches --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/this|matches/')\" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb", shell_mock.recall_exec
+
+        launch("this    matches --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/this|matches/')\" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb", shell_mock.recall_exec
+      end
+    end
+
     def test__helper_methods_are_considered_regexes
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|

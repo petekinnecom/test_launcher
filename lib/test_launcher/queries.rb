@@ -225,7 +225,16 @@ module TestLauncher
       end
 
       def test_cases
-        @test_cases ||=
+        if test_cases_found_by_name.any?
+          test_cases_found_by_name
+        else
+          test_cases_found_by_joining_query
+        end
+      end
+
+      def test_cases_found_by_name
+        @test_cases_found_by_name ||= begin
+          examples_found_by_name = searcher.examples(request.search_string)
           examples_found_by_name.map { |grep_result|
             request.test_case(
               file: grep_result[:file],
@@ -234,10 +243,21 @@ module TestLauncher
               request: request
             )
           }
+        end
       end
 
-      def examples_found_by_name
-        @examples_found_by_name ||= searcher.examples(request.search_string)
+      def test_cases_found_by_joining_query
+        @test_cases_found_by_joining_query ||= begin
+          multiple_examples_query = request.search_string.squeeze(" ").gsub(" ", "|")
+          searcher.examples(multiple_examples_query).map {|grep_result|
+            request.test_case(
+              file: grep_result[:file],
+              example: multiple_examples_query,
+              line_number: grep_result[:line_number],
+              request: request
+            )
+          }
+        end
       end
 
       def one_example?
@@ -264,7 +284,7 @@ module TestLauncher
 
       def test_cases
         @test_cases ||=
-          files_found_by_full_regex
+          files_found
             .uniq { |grep_result| grep_result[:file] }
             .map { |grep_result|
               request.test_case(
@@ -274,8 +294,21 @@ module TestLauncher
             }
       end
 
+      def files_found
+        if files_found_by_full_regex.any?
+          files_found_by_full_regex
+        else
+          files_found_by_joining_terms
+        end
+      end
+
       def files_found_by_full_regex
         @files_found_by_full_regex ||= searcher.grep(request.search_string)
+      end
+
+      def files_found_by_joining_terms
+        joined_query = request.search_string.squeeze(" ").gsub(" ", "|")
+        @files_found_by_joining_terms ||= searcher.grep(joined_query)
       end
     end
 

@@ -64,9 +64,9 @@ module TestLauncher
 
         def example_name_regex(query="")
           if query.match(/^test_/)
-            "^\s*def\s+#{query}.*"
+            "^\s*def\s+(#{query}).*"
           else
-            "^\s*def\s+test_.*#{query}.*"
+            "^\s*def\s+test_.*(#{query }).*"
           end
         end
 

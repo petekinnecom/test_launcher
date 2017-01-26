@@ -44,7 +44,7 @@ module TestLauncher
         end
 
         def example_name_regex(query="")
-          "^\s*test\s+\".*#{query}.*\"\s+do"
+          "^\s*test\s+\".*(#{query}).*\"\s+do"
         end
       end
 

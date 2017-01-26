@@ -176,6 +176,66 @@ module TestLauncher
       assert_equal "cd /src && bundle exec rspec /src/spec/name_spec.rb", shell_mock.recall_exec
     end
 
+    def test__multiple_queries__generic_regex__prefers_to_keep_spaces
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/spec/file_1_spec.rb"
+          f.mtime Time.new(2013, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            this matches
+          RB
+        end
+
+        searcher.mock_file do |f|
+          f.path "/src/spec/file_2_spec.rb"
+          f.mtime Time.new(2015, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            this
+            matches
+          RB
+        end
+
+        launch("this matches", searcher: searcher)
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+
+        launch("this matches --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+
+        launch("matches this --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb", shell_mock.recall_exec
+      end
+    end
+
+    def test__multiple_queries__splits_spaces_for_test_names
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/spec/file_1_spec.rb"
+          f.mtime Time.new(2013, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            it "this" do
+          RB
+        end
+
+        searcher.mock_file do |f|
+          f.path "/src/spec/file_2_spec.rb"
+          f.mtime Time.new(2015, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            it "matches" do
+          RB
+        end
+
+        launch("this matches", searcher: searcher)
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb --example this\\|matches", shell_mock.recall_exec
+
+        skip "not supported in rspec yet"
+        launch("this matches --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", shell_mock.recall_exec
+
+        launch("matches this --all", searcher: searcher)
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", shell_mock.recall_exec
+      end
+    end
+
     def test__by_multiple_filenames__multiple_files_found
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|

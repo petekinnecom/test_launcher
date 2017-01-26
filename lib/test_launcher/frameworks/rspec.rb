@@ -45,7 +45,7 @@ module TestLauncher
         end
 
         def example_name_regex(query)
-          "^\s*(it|context|(RSpec.)?describe) .*#{query}.* do.*"
+          "^\s*(it|context|(RSpec.)?describe) .*(#{query}).* do.*"
         end
       end
 
