@@ -96,12 +96,12 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
         def single_example(test_case, name: test_case.example, exact_match: false)
           name_arg =
             if exact_match
-              Shellwords.escape(name)
+              name
             else
-              "/#{Shellwords.escape(name)}/"
+              "/#{name}/"
             end
 
-          %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name=#{name_arg}}
+          %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name='#{name_arg}'}
         end
 
         def multiple_examples_same_file(test_cases)
