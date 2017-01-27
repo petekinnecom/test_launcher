@@ -95,6 +95,13 @@ test_launcher blog_post_test.rb comment_test.rb
 
 #=> ruby -I test -e 'ARGV.each {|f| require(f)}' test/models/blog_post_test.rb test/models/comment_test.rb
 ```
+Or maybe you've got multiple test methods you want to run:
+
+```
+test_launcher test_name_1 test_name_2
+
+#=> ruby -I test -e "ARGV.push('--name=/test_name_1|test_name_2/')" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb
+```
 
 Or maybe you'd like to run all test methods that match a regular expression:
 
