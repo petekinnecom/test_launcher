@@ -9,8 +9,8 @@ module TestLauncher
         commandify(SpecifiedNameQuery)
       end
 
-      def multi_search_term
-        commandify(MultiTermQuery)
+      def multi_path_query
+        commandify(MultiPathQuery)
       end
 
       def by_path
@@ -19,6 +19,10 @@ module TestLauncher
 
       def example_name
         commandify(ExampleNameQuery)
+      end
+
+      def multi_example_name
+        commandify(MultiExampleNameQuery)
       end
 
       def from_full_regex
@@ -137,7 +141,7 @@ module TestLauncher
       end
     end
 
-    class MultiTermQuery < BaseQuery
+    class MultiPathQuery < BaseQuery
       def command
         return if test_cases.empty?
 
@@ -225,16 +229,7 @@ module TestLauncher
       end
 
       def test_cases
-        if test_cases_found_by_name.any?
-          test_cases_found_by_name
-        else
-          test_cases_found_by_joining_query
-        end
-      end
-
-      def test_cases_found_by_name
-        @test_cases_found_by_name ||= begin
-          examples_found_by_name = searcher.examples(request.search_string)
+        @test_cases ||= begin
           examples_found_by_name.map { |grep_result|
             request.test_case(
               file: grep_result[:file],
@@ -246,18 +241,50 @@ module TestLauncher
         end
       end
 
-      def test_cases_found_by_joining_query
-        @test_cases_found_by_joining_query ||= begin
-          multiple_examples_query = request.search_string.squeeze(" ").gsub(" ", "|")
-          searcher.examples(multiple_examples_query).map {|grep_result|
-            request.test_case(
-              file: grep_result[:file],
-              example: multiple_examples_query,
-              line_number: grep_result[:line_number],
-              request: request
-            )
-          }
+      def examples_found_by_name
+        @examples_found_by_name ||= searcher.examples(request.search_string)
+      end
+
+      def one_example?
+        test_cases.size == 1
+      end
+    end
+
+    class MultiExampleNameQuery < BaseQuery
+      def command
+        return if test_cases.empty?
+
+        if one_example?
+          shell.notify("Found 1 example in 1 file.")
+          runner.single_example(test_cases.first)
+        elsif one_file?
+          shell.notify("Found #{test_cases.size} examples in 1 file.")
+          runner.multiple_examples_same_file(test_cases) # it will regex with the query
+        else
+          shell.notify "Found #{pluralize(test_cases.size, "example")} in #{pluralize(file_count, "file")}."
+          runner.multiple_examples(test_cases)
         end
+      end
+
+      def test_cases
+        return [] if joined_query == request.search_string
+
+        @test_cases_found_by_joining_query ||= examples_found.map { |grep_result|
+          request.test_case(
+            file: grep_result[:file],
+            example: joined_query,
+            line_number: grep_result[:line_number],
+            request: request
+          )
+        }
+      end
+
+      def examples_found
+        @examples_found_by_joining_query ||= searcher.examples(joined_query)
+      end
+
+      def joined_query
+        @joined_query ||= request.search_string.squeeze(" ").gsub(" ", "|")
       end
 
       def one_example?
@@ -356,6 +383,7 @@ module TestLauncher
         [
           :by_path,
           :example_name,
+          :multi_example_name,
           :from_full_regex,
         ]
           .each { |command_type|
@@ -369,7 +397,7 @@ module TestLauncher
     class SearchQuery < BaseQuery
       def command
         {
-          multi_search_term: request.search_string.include?(" "),
+          multi_path_query: request.search_string.include?(" "),
           line_number: request.search_string.include?(":"),
           single_search_term: true
         }.each {|command_type, valid|

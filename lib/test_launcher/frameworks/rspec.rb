@@ -55,7 +55,7 @@ module TestLauncher
         end
 
         def single_example(test_case, **_)
-          %{cd #{test_case.app_root} && bundle exec rspec #{test_case.file} --example #{Shellwords.escape(test_case.example)}}
+          multiple_examples_same_root([test_case])
         end
 
         def multiple_examples_same_file(test_cases)
@@ -64,7 +64,7 @@ module TestLauncher
         end
 
         def multiple_examples_same_root(test_cases)
-          one_or_more_files(test_cases.uniq {|tc| tc.file})
+          %{cd #{test_cases.first.app_root} && bundle exec rspec #{test_cases.map(&:file).join(" ")} --example #{Shellwords.escape(test_cases.first.example)}}
         end
 
         def one_or_more_files(test_cases)

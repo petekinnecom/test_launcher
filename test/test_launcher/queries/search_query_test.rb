@@ -8,14 +8,14 @@ module TestLauncher
       include DefaultMocks
 
       def test__multi_search_term__hits
-        command_finder = Mock.new(Queries::CommandFinder, multi_search_term: :multi_search_term)
+        command_finder = Mock.new(Queries::CommandFinder, multi_path_query: :multi_path_query)
         request = MockRequest.new(search_string: "a b")
 
-        assert_equal :multi_search_term, SearchQuery.new(request, command_finder).command
+        assert_equal :multi_path_query, SearchQuery.new(request, command_finder).command
       end
 
       def test__multi_search_term__misses
-        command_finder = Mock.new(Queries::CommandFinder, multi_search_term: nil, single_search_term: :single_search_term)
+        command_finder = Mock.new(Queries::CommandFinder, multi_path_query: nil, single_search_term: :single_search_term)
         request = MockRequest.new(search_string: "a b")
 
         assert_equal :single_search_term, SearchQuery.new(request, command_finder).command

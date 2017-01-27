@@ -393,12 +393,12 @@ module TestLauncher
         end
 
         launch("this matches", searcher: searcher)
-        assert_equal "cd /src && bundle exec ruby -I test /src/test/file_2_test.rb --name='/this|matches/'", shell_mock.recall_exec
+        assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/this|matches/')\" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb", shell_mock.recall_exec
 
         launch("this matches --all", searcher: searcher)
         assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/this|matches/')\" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb", shell_mock.recall_exec
 
-        launch("this    matches --all", searcher: searcher)
+        launch("this    matches", searcher: searcher)
         assert_equal "cd /src && bundle exec ruby -I test -e \"ARGV.push('--name=/this|matches/')\" -r /src/test/file_1_test.rb -r /src/test/file_2_test.rb", shell_mock.recall_exec
       end
     end
