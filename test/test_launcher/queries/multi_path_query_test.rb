@@ -4,7 +4,7 @@ require "test_launcher/queries"
 
 module TestLauncher
   module Queries
-    class MultiTermQueryTest < TestCase
+    class MultiPathQueryTest < TestCase
       include DefaultMocks
 
       def searcher
@@ -69,7 +69,7 @@ module TestLauncher
           runner: default_runner,
           searcher: searcher
         )
-        command = MultiTermQuery.new(request, default_command_finder).command
+        command = MultiPathQuery.new(request, default_command_finder).command
 
         assert_equal nil, command
       end
@@ -81,7 +81,7 @@ module TestLauncher
           runner: default_runner,
           searcher: searcher
         )
-        command = MultiTermQuery.new(request, default_command_finder).command
+        command = MultiPathQuery.new(request, default_command_finder).command
 
         assert_equal nil, command
       end
@@ -92,7 +92,7 @@ module TestLauncher
           shell: default_shell,
           searcher: searcher
         )
-        command = MultiTermQuery.new(request, default_command_finder).command
+        command = MultiPathQuery.new(request, default_command_finder).command
 
         assert_equal 1, default_shell.recall(:warn).size
       end
@@ -104,7 +104,7 @@ module TestLauncher
           runner: default_runner,
           searcher: searcher,
         )
-        command = MultiTermQuery.new(request, default_command_finder).command
+        command = MultiPathQuery.new(request, default_command_finder).command
 
         assert_equal [[[file_1_test_case, file_2_test_case]]], default_runner.recall(:multiple_files)
         assert_equal "multiple_files_return", command
@@ -117,7 +117,7 @@ module TestLauncher
           runner: default_runner,
           searcher: searcher,
         )
-        command = MultiTermQuery.new(request, default_command_finder).command
+        command = MultiPathQuery.new(request, default_command_finder).command
         assert_equal [[[file_1_test_case, file_3_test_case, file_4_test_case]]], default_runner.recall(:multiple_files)
         assert_equal "multiple_files_return", command
       end
