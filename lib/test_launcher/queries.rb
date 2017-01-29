@@ -29,10 +29,6 @@ module TestLauncher
         commandify(FullRegexQuery)
       end
 
-      def single_search_term
-        commandify(SingleTermQuery)
-      end
-
       def full_search
         commandify(SearchQuery)
       end
@@ -143,6 +139,7 @@ module TestLauncher
 
     class MultiPathQuery < BaseQuery
       def command
+        return unless request.search_string.include?(" ")
         return if test_cases.empty?
 
         shell.notify("Found #{pluralize(file_count, "file")}.")
@@ -343,7 +340,8 @@ module TestLauncher
       LINE_SPLIT_REGEX = /\A(?<file>.*):(?<line_number>\d+)\Z/
 
       def command
-        return unless search_results.any?
+        return unless match
+        return unless test_cases.any?
 
         if one_file?
           shell.notify "Found #{pluralize(file_count, "file")}."
@@ -368,7 +366,6 @@ module TestLauncher
 
       def search_results
         @search_results ||= begin
-          match = request.search_string.match(LINE_SPLIT_REGEX)
           if match
             searcher.by_line(match[:file], match[:line_number].to_i)
           else
@@ -376,33 +373,22 @@ module TestLauncher
           end
         end
       end
-    end
 
-    class SingleTermQuery < BaseQuery
-      def command
-        [
-          :by_path,
-          :example_name,
-          :multi_example_name,
-          :from_full_regex,
-        ]
-          .each { |command_type|
-            command = command_finder.public_send(command_type)
-            return command if command
-          }
-        nil
+      def match
+        @match ||= request.search_string.match(LINE_SPLIT_REGEX)
       end
     end
 
     class SearchQuery < BaseQuery
       def command
-        {
-          multi_path_query: request.search_string.include?(" "),
-          line_number: request.search_string.include?(":"),
-          single_search_term: true
-        }.each {|command_type, valid|
-          next unless valid
-
+        [
+          :line_number,
+          :by_path,
+          :multi_path_query,
+          :example_name,
+          :multi_example_name,
+          :from_full_regex,
+        ].each {|command_type|
           command = command_finder.public_send(command_type)
           return command if command
         }
