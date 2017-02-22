@@ -45,7 +45,7 @@ module TestLauncher
       end
 
       def grep(regex, file_pattern: '*')
-        results = interface.grep(regex, file_pattern)
+        results = interface.grep(regex, strip_system_path(file_pattern))
         results.map do |result|
           interpret_grep_result(result)
         end
