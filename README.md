@@ -2,6 +2,15 @@
 
 Test Launcher takes a search query and tries to figure out what test you want to run. It makes running tests on the command line easy! Super bonus!
 
+For example:
+
+```
+test_launcher test_name
+
+#=> Found 1 example in 1 file
+#=> ruby -I test test/models/blog_post_test.rb --name=test_name
+```
+
 You might use Test Launcher for two reasons:
 
 1. You run tests from the command line a lot.
@@ -9,7 +18,19 @@ You might use Test Launcher for two reasons:
 
 It was built for Minitest, but it also has basic support for RSpec and ExUnit.
 
-See the __Usages__ section below for some examples.
+---
+
+### Table of Contents
+1. [Installation](#installation)
+1. [Examples](#examples)
+1. [Usage and Options](#usage-and-options)
+1. [Search Prioty](#search-priority)
+1. [Running all changed tests](#running-all-changed-tests)
+1. [Aliases](#quit-typing-so-much)
+1. [RubyMine Support](#rubymine-support)
+1. [Visual Studio Code Support](#visual-studio-code-support)
+1. [Atom Support](#atom-support)
+1. [What's going on in there?](#whats-going-on-in-there)
 
 # Installation
 
@@ -21,7 +42,7 @@ gem install test_launcher
 
 Under the hood, it uses git to determine your project root. If you're on an app that's not using git, let me know and I can remove that dependency.
 
-### Usage
+# Examples
 
 Let's suppose you want to run the test `test_name` in your `blog_post_test.rb`.
 
@@ -138,30 +159,47 @@ test_launcher springified_test
 
 Test Launcher will not use spring if the `DISABLE_SPRING=1` environment variable is set.
 
-### Priorities
+# Usage and Options
+
+```
+Common Usage: `test_launcher "search string" [--all]`
+
+VERSION: 2.2.0
+
+    -a, --all                        Run all matching tests. Defaults to false.
+    -h, --help                       Prints this help
+    -v, --version                    Display the version info
+    -f, --framework framework        The testing framework being used. Valid options: ['minitest', 'rspec', 'ex_unit', 'guess']. Defaults to 'guess'
+    -n, --name name                  Name of testcase/example to run. This will pass through to the selected framework without verifying that the example actually exists. This option really only exists to work with tooling that will automatically run your tests. You shouldn't have much need for this.
+        --example example            alias of name
+    -r, --rerun                      Rerun the previous test. This flag cannot be set when entering search terms
+        --disable-spring             Disable spring. You can also set the env var: DISABLE_SPRING=1
+```
+
+# Search Priority
 
 Test Launcher searches for tests based on your input.
 
 Suppose you type `test_launcher thing`.  It will run tests using this priority preference:
 
 1. A single test file
-  - matches on `thing_test.rb`
+    - matches on `thing_test.rb`
 
 1. A single, specific test method name or partial name
-  - `def test_the_thing`
+    - `def test_the_thing`
 
 1. Multiple test method names in the same file
-  - `def test_the_thing` and `def test_the_other_thing`
+    - `def test_the_thing` and `def test_the_other_thing`
 
 1. Any test file based on a generic search
-  - runs `stuff_test.rb` because it found the word `thing` inside of it
+    - runs `stuff_test.rb` because it found the word `thing` inside of it
 
 If your query looks like it's specifying a line number (e.g. `file_test.rb:17`), that search will be preferred.
 
 Any time it matches multiple files, it will default to running the most recently edited file.  You can append `--all` if you want to run all matching tests, even if they are in different engines/gems!
 
 
-### Running all tests you've changed:
+# Running all changed tests
 
 This will find all uncommitted `*_test.rb` files  and pass them to test_launcher to be run.  Use this before you commit so you don't accidentally commit a test you've broken.
 
@@ -193,7 +231,7 @@ tdiff origin/master
 
 Super fun!
 
-### Setup
+# Quit typing so much!
 
 This gem installs one executable called `test_launcher`.
 
@@ -205,13 +243,42 @@ For me, that's way too much to type, so I recommend adding an alias to your `.ba
 
 ```
 alias t='test_launcher'
-
-# If you are using RVM, use this: (see below for more details)
-alias t='NOEXEC_DISABLE=1 test_launcher'
 ```
 
 Now you can just type `t` instead of `test_launcher`.  Much nicer!
 
+
+## Optimizing with RVM
+
+By default, RVM installs a hook to remove the need to run `bundle exec`.  When you run a gem command, it will search your bundle to see if that command is included in your bundle.  If it is, it will run that version of the command.  If it's not in your bundle, then it will fall back to the global gem.  You can read more about it on [rubygems-bundler](https://github.com/rvm/rubygems-bundler).
+
+Test Launcher is not installed in your bundle.  This means that the time that Bundler spends resolving your Gemfile to check if there's a test\_launcher executable in your bundle is wasted.  For most projects, the amount of time this takes is probably unnoticeable.
+
+On projects with lots of dependencies, this wasted time can be significant.
+
+For example, in a large project, we get a nice improvement:
+
+```
+$: time test_launcher something_that_no_test_says
+#=> Could not find any tests.
+
+#=> real  0m2.214s
+#=> user  0m1.407s
+#=> sys	  0m1.062s
+
+$: time NOEXEC_DISABLE=1 test_launcher something_that_no_test_says
+#=> Could not find any tests.
+
+#=> real  0m1.412s
+#=> user  0m0.745s
+#=> sys   0m0.945s
+```
+
+I suggest that if you are using RVM, you may as well make this your alias:
+
+```
+alias t='NOEXEC_DISABLE=1 test_launcher'
+```
 
 # RubyMine Support
 
@@ -243,36 +310,62 @@ Replace it with:
 
 Using Test Launcher to hijack your RubyMine run configuration should allow you to debug any test as well without issue.
 
-# Optimizing with RVM
+# Visual Studio Code Support
 
-By default, RVM installs a hook to remove the need to run `bundle exec`.  When you run a gem command, it will search your bundle to see if that command is included in your bundle.  If it is, it will run that version of the command.  If it's not in your bundle, then it will fall back to the global gem.  You can read more about it on [rubygems-bundler](https://github.com/rvm/rubygems-bundler).
+To run tests from the editor, we need to define some tasks. I like to have three tasks defined: run the test that contains the cursor, run the whole test file, and rerun the last test.
 
-Test Launcher is not installed in your bundle.  This means that the time that Bundler spends resolving your Gemfile to check if there's a test\_launcher executable in your bundle is wasted.  For most projects, the amount of time this takes is probably unnoticeable.
-
-On projects with lots of dependencies, this wasted time can be significant.
-
-For example, in a large project, we get a nice improvement:
+You can add these to your `.vscode/tasks.json` file:
 
 ```
-$:time test_launcher something_that_no_test_says
-#=> Could not find any tests.
-
-#=> real	0m2.214s
-#=> user	0m1.407s
-#=> sys	  0m1.062s
-
-$:time NOEXEC_DISABLE=1 test_launcher something_that_no_test_says
-#=> Could not find any tests.
-
-#=> real	0m1.412s
-#=> user	0m0.745s
-#=> sys	  0m0.945s
+{
+  "version": "0.1.0",
+  "tasks": [
+    {
+      "taskName": "run-test-line",
+      "command": "test_launcher",
+      "args": ["${file}:${lineNumber}"]
+    },
+    {
+      "taskName": "run-test-file",
+      "command": "test_launcher",
+      "args": ["${file}"]
+    },
+    {
+      "taskName": "rerun-last-test",
+      "command": "test_launcher",
+      "args": ["--rerun"]
+    }
+  ]
+}
 ```
 
-I suggest that if you are using RVM, you may as well make this your alias:
+Next, we need some key-combos to trigger each task. Add this to your `.vscode/keybindings.json` and tweak the key-combos to your liking:
+```
+...
+    {
+        "key": "shift+cmd+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "run-test-line"
+    },
+    {
+        "key": "alt+cmd+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "run-test-file"
+    },
+    {
+        "key": "cmd+r",
+        "command": "workbench.action.tasks.runTask",
+        "args": "rerun-last-test"
+    }
+...
+```
+
+# Atom Support
+
+The [ruby-test](https://github.com/moxley/atom-ruby-test) extension works well for testing ruby apps, so there's only a need to use test\_launcher if you work on a project with inline engines/gems.  If that's the case, you can set it to use test\_launcher in the settings like so:
 
 ```
-alias t='NOEXEC_DISABLE=1 test_launcher'
+test_launcher {relative_path} --name={regex}
 ```
 
 # What's going on in there?
