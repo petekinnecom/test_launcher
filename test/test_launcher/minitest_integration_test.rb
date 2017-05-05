@@ -269,11 +269,13 @@ module TestLauncher
         end
       end
 
-
       launch("class_1_test.rb", env: {}, searcher: searcher)
       assert_equal "cd /src && bundle exec spring testunit /src/test/class_1_test.rb", shell_mock.recall_exec
 
       launch("class_1_test.rb", env: {"DISABLE_SPRING" => "1"}, searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/class_1_test.rb", shell_mock.recall_exec
+
+      launch("class_1_test.rb --disable-spring", searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/class_1_test.rb", shell_mock.recall_exec
     end
 

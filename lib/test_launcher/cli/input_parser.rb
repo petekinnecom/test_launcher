@@ -59,7 +59,7 @@ VERSION: #{TestLauncher::VERSION}
           search_string: @search_string.join(" "),
           run_all: !!@options[:run_all],
           rerun: !!@options[:rerun],
-          disable_spring: !!@env["DISABLE_SPRING"],
+          disable_spring: @options[:disable_spring] || !!@env["DISABLE_SPRING"],
           example_name: @options[:name],
           frameworks: frameworks,
           shell: shell,
@@ -105,6 +105,10 @@ VERSION: #{TestLauncher::VERSION}
 
           opts.on("-r", "--rerun", "Rerun the previous test. This flag cannot be set when entering search terms") do
             options[:rerun] = true
+          end
+
+          opts.on("--disable-spring", "Disable spring. You can also set the env var: DISABLE_SPRING=1") do
+            options[:disable_spring] = true
           end
         end
       end
