@@ -37,9 +37,14 @@ VERSION: #{TestLauncher::VERSION}
 
       def parsed_options(shell:, searcher:)
         if @search_string.size == 0 && !@options[:rerun]
+          puts "Enter a search term"
+          puts "----"
           puts option_parser
           exit
         elsif @search_string.size > 0 && @options[:rerun]
+          puts "Cannot specify search terms and use --rerun flag"
+          puts "----"
+
           puts option_parser
           exit
         end
