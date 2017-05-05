@@ -5,10 +5,10 @@ module TestLauncher
   class RspecIntegrationTest < TestCase
     include IntegrationHelper
 
-    def launch(query, env: {}, searcher:)
+    def launch(query, env: {}, searcher:, shell: shell_mock)
       query += " --framework rspec"
-      shell_mock.reset
-      CLI.launch(query.split(" "), env, shell: shell_mock, searcher: searcher)
+      shell.reset
+      CLI.launch(query.split(" "), env, shell: shell, searcher: searcher)
     end
 
     def test__by_example__single_example
@@ -562,12 +562,13 @@ module TestLauncher
         end
       end
 
-      launch("file_1_spec.rb", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      history_shell = Shell::HistoryRunner.new(shell: shell_mock, history_path: File.expand_path(File.join(__dir__, '../../tmp/test_history.log')))
 
-      shell_mock.reset
-      launch("--rerun", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      launch("file_1_spec.rb", searcher: searcher, shell: history_shell)
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", history_shell.recall_exec
+
+      launch("--rerun", searcher: searcher, shell: history_shell)
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", history_shell.recall_exec
     end
   end
 end

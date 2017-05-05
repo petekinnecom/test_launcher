@@ -3,6 +3,7 @@ require "test_launcher/shell/runner"
 
 require "test_launcher/cli"
 require "test_helpers/mocks"
+require "test_launcher/shell/history_runner"
 
 module TestLauncher
   module IntegrationHelper
@@ -24,7 +25,6 @@ module TestLauncher
     end
 
     private
-
 
     def shell_mock
       @shell_mock ||= IntegrationShell.new

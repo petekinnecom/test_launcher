@@ -13,12 +13,12 @@ module TestLauncher
       )
         @search_string = search_string
         @framework = framework
+        @rerun = rerun
         @run_all = run_all
         @disable_spring = disable_spring
         @example_name = example_name
         @shell = shell
         @searcher = searcher
-        @rerun = rerun
       end
 
       def search_string

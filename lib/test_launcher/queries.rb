@@ -87,7 +87,7 @@ module TestLauncher
       end
 
       def one_file?
-         file_count == 1
+        file_count == 1
       end
 
       def file_count
