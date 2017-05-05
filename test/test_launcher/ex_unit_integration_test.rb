@@ -388,5 +388,26 @@ module TestLauncher
       launch("file_1_test.exs:1", searcher: searcher)
       assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs:1", shell_mock.recall_exec
     end
+
+    def test__rerun
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/file_1_test.exs"
+          f.mtime Time.new(2014, 01, 01, 00, 00, 00)
+        end
+        searcher.mock_file do |f|
+          f.path "/src/test/file_2_test.exs"
+          f.mtime Time.new(2015, 01, 01, 00, 00, 00)
+        end
+      end
+
+      launch("file_1_test.exs", searcher: searcher)
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+
+      shell_mock.reset
+
+      launch("--rerun", searcher: searcher)
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+    end
   end
 end

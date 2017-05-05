@@ -21,6 +21,13 @@ module TestLauncher
         assert_equal true, requests.first.run_all?
       end
 
+      def test_request__rerun
+        requests = parse("--rerun", {})
+
+        assert_equal true, requests.first.rerun?
+      end
+
+
       def test_request__disable_spring
         requests = parse("a_string", {"DISABLE_SPRING" => "1"})
 

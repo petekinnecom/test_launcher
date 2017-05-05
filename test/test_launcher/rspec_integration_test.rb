@@ -548,5 +548,26 @@ module TestLauncher
       launch("file_1_spec.rb:1", searcher: searcher)
       assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb:1", shell_mock.recall_exec
     end
+
+    def test__rerun
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/spec/file_1_spec.rb"
+          f.mtime Time.new(2014, 01, 01, 00, 00, 00)
+        end
+
+        searcher.mock_file do |f|
+          f.path "/src/spec/file_2_spec.rb"
+          f.mtime Time.new(2015, 01, 01, 00, 00, 00)
+        end
+      end
+
+      launch("file_1_spec.rb", searcher: searcher)
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+
+      shell_mock.reset
+      launch("--rerun", searcher: searcher)
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+    end
   end
 end

@@ -36,7 +36,10 @@ VERSION: #{TestLauncher::VERSION}
       end
 
       def requests(shell:, searcher:)
-        if @search_string.size == 0
+        if @search_string.size == 0 && !@options[:rerun]
+          puts option_parser
+          exit
+        elsif @search_string.size > 0 && @options[:rerun]
           puts option_parser
           exit
         end
@@ -56,6 +59,7 @@ VERSION: #{TestLauncher::VERSION}
           Request.new(
             search_string: @search_string.join(" "),
             run_all: !!@options[:run_all],
+            rerun: !!@options[:rerun],
             disable_spring: !!@env["DISABLE_SPRING"],
             example_name: @options[:name],
             framework: framework,
@@ -99,6 +103,10 @@ VERSION: #{TestLauncher::VERSION}
 
           opts.on("--example example", "alias of name") do |example|
             options[:name] = example
+          end
+
+          opts.on("-r", "--rerun", "Rerun the previous test. This flag cannot be set when entering search terms") do
+            options[:rerun] = true
           end
         end
       end

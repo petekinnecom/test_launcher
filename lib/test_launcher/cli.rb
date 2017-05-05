@@ -31,6 +31,7 @@ module TestLauncher
       command = MultiRequestQuery.new(requests).command
 
       if command
+        File.open("/tmp/test_launcher__last_run", "w") {|f| f.puts(command)}
         shell.exec command
       else
         shell.warn "No tests found."

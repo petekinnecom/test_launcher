@@ -4,6 +4,7 @@ module TestLauncher
       def initialize(
         search_string:,
         framework:,
+        rerun: false,
         run_all: false,
         disable_spring: false,
         example_name: nil,
@@ -17,6 +18,7 @@ module TestLauncher
         @example_name = example_name
         @shell = shell
         @searcher = searcher
+        @rerun = rerun
       end
 
       def search_string
@@ -25,6 +27,10 @@ module TestLauncher
 
       def run_all?
         @run_all
+      end
+
+      def rerun?
+        @rerun
       end
 
       def disable_spring?

@@ -41,6 +41,10 @@ module TestLauncher
         commandify(LineNumberQuery)
       end
 
+      def rerun
+        commandify(RerunQuery)
+      end
+
       def request
         @request
       end
@@ -134,6 +138,14 @@ module TestLauncher
 
       def potential_files
         @potential_files ||= searcher.test_files(request.search_string)
+      end
+    end
+
+    class RerunQuery < BaseQuery
+      def command
+        if File.exists?("/tmp/test_launcher__last_run")
+          File.read("/tmp/test_launcher__last_run").chomp
+        end
       end
     end
 
@@ -398,7 +410,9 @@ module TestLauncher
 
     class GenericQuery < BaseQuery
       def command
-        if request.example_name
+        if request.rerun?
+          command_finder.rerun
+        elsif request.example_name
           command_finder.specified_name
         else
           command_finder.full_search
