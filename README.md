@@ -194,6 +194,9 @@ Suppose you type `test_launcher thing`.  It will run tests using this priority p
 1. Any test file based on a generic search
     - runs `stuff_test.rb` because it found the word `thing` inside of it
 
+1. Finally, if the query matches against a non-test file, it will simply run that file
+    - runs `ruby thing.rb` because it found `thing.rb`
+
 If your query looks like it's specifying a line number (e.g. `file_test.rb:17`), that search will be preferred.
 
 Any time it matches multiple files, it will default to running the most recently edited file.  You can append `--all` if you want to run all matching tests, even if they are in different engines/gems!
