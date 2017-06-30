@@ -628,6 +628,22 @@ module TestLauncher
       assert shell_mock.recall(:warn).first.first.to_s.match(/Open an issue/)
     end
 
+    def test__by_line_number__file_contains_no_tests
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/file_test.rb"
+          f.mtime Time.new(2013, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            class File1Test
+            end
+          RB
+        end
+      end
+
+      launch("file_test.rb:1", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_test.rb", shell_mock.recall_exec
+    end
+
     def test__rerun
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|

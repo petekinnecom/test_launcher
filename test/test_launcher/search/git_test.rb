@@ -23,6 +23,19 @@ module TestLauncher
 
         assert_equal ["/path/to/repo/inline_gem/relative/file_test.rb"], files
       end
+
+      def test_find_files__returns_file_if_exists
+        # git ls-files will not find newly created files
+        interface = mock {
+          expects(:root_path).returns("/path/to/repo")
+        }
+
+        File.stubs(:exist?).with('thing_test.rb').returns(true)
+        searcher = Git.new(nil, interface)
+        files = searcher.find_files("thing_test.rb")
+
+        assert_equal ['/path/to/repo/thing_test.rb'], files
+      end
     end
   end
 end

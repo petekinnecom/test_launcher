@@ -38,7 +38,12 @@ module TestLauncher
 
       def find_files(pattern)
         relative_pattern = strip_system_path(pattern)
-        interface.ls_files(relative_pattern).map {|f| system_path(f)}
+
+        if File.exist?(relative_pattern)
+          [system_path(relative_pattern)]
+        else
+          interface.ls_files(relative_pattern).map {|f| system_path(f)}
+        end
       end
 
       def grep(regex, file_pattern: '*')

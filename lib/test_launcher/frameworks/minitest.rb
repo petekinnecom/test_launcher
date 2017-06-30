@@ -32,7 +32,13 @@ module TestLauncher
           #
           file = files.first
           grep_results = raw_searcher.grep(example_name_regex, file_pattern: file)
-          # return unless grep_results.any?
+
+          if grep_results.empty?
+            # the file exists, but doesn't appear to contain any tests...
+            # we'll try to run it anyway
+            return [file: file]
+          end
+
           best_result =
             grep_results
               .select {|r| line_number >= r[:line_number]}
