@@ -121,7 +121,7 @@ VERSION: #{TestLauncher::VERSION}
             options[:disable_spring] = true
           end
 
-          opts.on("--wrap wrap", "Wrap the test command with a custom wrapper. See README for more info.") do |wrap|
+          opts.on("--wrap wrap", "Wrap the test command with a custom wrapper. Use %cmd for substitution location. See README for more info.") do |wrap|
             options[:wrap] = wrap
           end
 

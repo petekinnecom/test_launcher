@@ -30,6 +30,7 @@ It was built for Minitest, but it also has basic support for RSpec and ExUnit.
 1. [RubyMine Support](#rubymine-support)
 1. [Visual Studio Code Support](#visual-studio-code-support)
 1. [Atom Support](#atom-support)
+1. [Docker Support](#docker-support)
 1. [What's going on in there?](#whats-going-on-in-there)
 
 # Installation
@@ -162,9 +163,13 @@ Test Launcher will not use spring if the `DISABLE_SPRING=1` environment variable
 # Usage and Options
 
 ```
-Common Usage: `test_launcher "search string" [--all]`
+Find tests and run them by trying to match an individual test or the name of a test file(s).
 
-VERSION: 2.2.0
+See full README: https://github.com/petekinnecom/test_launcher
+
+Usage: `test_launcher "search string" [--all]`
+
+VERSION: 2.5.0
 
     -a, --all                        Run all matching tests. Defaults to false.
     -h, --help                       Prints this help
@@ -174,6 +179,8 @@ VERSION: 2.2.0
         --example example            alias of name
     -r, --rerun                      Rerun the previous test. This flag cannot be set when entering search terms
         --disable-spring             Disable spring. You can also set the env var: DISABLE_SPRING=1
+        --wrap wrap                  Wrap the test command with a custom wrapper. Use %cmd for substitution location. See README for more info.
+        --root-override override     Override the path to the app root. See README for more info.
 ```
 
 # Search Priority
@@ -369,6 +376,35 @@ The [ruby-test](https://github.com/moxley/atom-ruby-test) extension works well f
 
 ```
 test_launcher {relative_path} --name={regex}
+```
+
+# Docker Support (EXPERIMENTAL)
+
+TestLauncher now accepts two new args: `--wrap` and `--root-override`.  These can be used to run tests with Docker. The `--wrap` option allows you to pass in a string that where the test command can be substituted.  Here is an example of the wrap command:
+
+```
+test_launcher example.rb
+#=> ruby -I test /path/to/example.rb
+
+test_launcher example.rb --wrap 'docker run container bash -c "%cmd"'
+#=> docker run container bash -c "ruby -I test /path/to/example.rb"
+```
+
+However, in a docker container, the path to the test file will be different than it is on the host. To fix this, we can use the `--root-override` option. This allows you to specify a different path to the repo where you're working. Set this to the path to the application in the docker container.  For example, if you've mounted `/path/to/:/home/app`, then you can run:
+
+```
+test_launcher example.rb
+#=> ruby -I test /path/to/example.rb
+
+test_launcher example.rb --root-override /home/app
+#=> ruby -I test /home/code/example.rb
+```
+
+Put these two ideas together and you can run your tests in a container:
+
+```
+test_launcher example.rb --wrap 'docker run container bash -c "%cmd"' --root-override /home/app
+#=> docker run container bash -c "ruby -I test /home/app/example.rb"
 ```
 
 # What's going on in there?
