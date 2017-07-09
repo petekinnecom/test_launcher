@@ -5,10 +5,10 @@ module TestLauncher
   class GenericIntegrationTest < TestCase
     include IntegrationHelper
 
-    def launch(query, env: {}, searcher:, shell: shell_mock)
+    def launch(query, env: {}, searcher:, shell: shell_mock, &block)
       query += " --framework generic "
       shell.reset
-      CLI.launch(query.split(" "), env, shell: shell, searcher: searcher)
+      CLI.launch(query.split(" "), env, shell: shell, searcher: searcher, &block)
     end
 
     def test__by_filename
@@ -39,6 +39,24 @@ module TestLauncher
 
       launch("/src/test/file_1.rb:1", searcher: searcher)
       assert_equal nil, shell_mock.recall_exec
+    end
+
+    def test__cli_yields_block
+      # TODO: don't test this here
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/file_1.rb"
+          f.contents "runme"
+        end
+      end
+      @yielded = false
+      launch("/src/test/file_1.rb", searcher: searcher) do |command|
+        @yielded = true
+        assert_equal "ruby /src/test/file_1.rb", command
+        "new_command"
+      end
+      assert @yielded
+      assert_equal "new_command", shell_mock.recall_exec
     end
   end
 end

@@ -42,10 +42,17 @@ module TestLauncher
         env
       ).parsed_options(shell: shell, searcher: searcher)
 
+      # TODO: Well, this isn't pretty anymore...
+
       if options.rerun
         shell.reexec
       elsif command = MultiFrameworkQuery.new(options).command
-        shell.exec command
+        command = yield(command) if block_given?
+        if command
+          shell.exec(command)
+        else
+          command
+        end
       else
         shell.warn "No tests found."
       end

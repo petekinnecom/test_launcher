@@ -26,10 +26,12 @@ It was built for Minitest, but it also has basic support for RSpec and ExUnit.
 1. [Usage and Options](#usage-and-options)
 1. [Search Prioty](#search-priority)
 1. [Running all changed tests](#running-all-changed-tests)
+1. [Tweaking the Command](#tweaking-the-command)
 1. [Aliases](#quit-typing-so-much)
 1. [RubyMine Support](#rubymine-support)
 1. [Visual Studio Code Support](#visual-studio-code-support)
 1. [Atom Support](#atom-support)
+1. [Docker Support](#docker-support)
 1. [What's going on in there?](#whats-going-on-in-there)
 
 # Installation
@@ -234,6 +236,34 @@ tdiff origin/master
 
 Super fun!
 
+# Tweaking the Command
+
+The CLI class will yield the command in a block just before it's run, allowing you to adjust the command. The value of the block will be executed by test_launcher. Here is an example script:
+
+/bin/wrapped_test_launcher:
+
+~~~ruby
+require "test_launcher/cli"
+
+TestLauncher::CLI.launch(ARGV, ENV) do |command|
+  "the new command"
+end
+~~~
+
+If you don't want the command to be executed, you can return `nil` from the block.  This is an ugly hack, but ... well it works ...
+
+~~~ruby
+require "test_launcher/cli"
+
+TestLauncher::CLI.launch(ARGV, ENV) do |command|
+  @the_command = command
+  nil
+end
+
+puts "here is the command that would have been run: #{@the_command}"
+~~~
+
+
 # Quit typing so much!
 
 This gem installs one executable called `test_launcher`.
@@ -370,6 +400,22 @@ The [ruby-test](https://github.com/moxley/atom-ruby-test) extension works well f
 ```
 test_launcher {relative_path} --name={regex}
 ```
+
+# Docker Support
+
+We can write our own script to run tests in a docker container. Perhaps you're using `docker-compose` for testing. This means you need to pass the command on to the container to be run.
+
+Because the path to the project and test file will be different inside of the container, we need to adjust the paths used in the executed command.  Here is an example script:
+
+~~~ruby
+require 'test_launcher/cli'
+
+TestLauncher::CLI.launch(ARGV, ENV) do |command|
+  app_root = File.expand_path(File.join(__dir__, '..'))
+  docker_command = command.gsub(app_root, "/app")
+  "docker-compose exec dev bash -c '#{docker_command}'"
+end
+~~~
 
 # What's going on in there?
 
