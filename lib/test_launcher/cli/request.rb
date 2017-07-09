@@ -9,7 +9,8 @@ module TestLauncher
         disable_spring: false,
         example_name: nil,
         shell:,
-        searcher:
+        searcher:,
+        root_override:
       )
         @search_string = search_string
         @framework = framework
@@ -19,6 +20,7 @@ module TestLauncher
         @example_name = example_name
         @shell = shell
         @searcher = searcher
+        @root_override = root_override
       end
 
       def search_string
@@ -35,6 +37,10 @@ module TestLauncher
 
       def disable_spring?
         @disable_spring
+      end
+
+      def root_override
+        @root_override
       end
 
       def example_name

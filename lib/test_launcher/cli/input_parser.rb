@@ -71,7 +71,9 @@ VERSION: #{TestLauncher::VERSION}
           example_name: @options[:name],
           frameworks: frameworks,
           shell: shell,
-          searcher: searcher
+          searcher: searcher,
+          wrap: @options[:wrap],
+          root_override: @options[:root_override]
         )
       end
 
@@ -117,6 +119,14 @@ VERSION: #{TestLauncher::VERSION}
 
           opts.on("--disable-spring", "Disable spring. You can also set the env var: DISABLE_SPRING=1") do
             options[:disable_spring] = true
+          end
+
+          opts.on("--wrap wrap", "Wrap the test command with a custom wrapper. See README for more info.") do |wrap|
+            options[:wrap] = wrap
+          end
+
+          opts.on("--root-override override", "Override the path to the app root. See README for more info.") do |override|
+            options[:root_override] = override.sub(/\/$/, '') # remove trailing slash if it's there
           end
         end
       end

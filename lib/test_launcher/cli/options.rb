@@ -8,7 +8,9 @@ module TestLauncher
       :disable_spring,
       :example_name,
       :shell,
-      :searcher
+      :searcher,
+      :wrap,
+      :root_override
     )
       def initialize(**args)
         raise ArgumentError.new("These keys are allowed and required: #{members}") unless args.keys.sort == members.sort

@@ -13,7 +13,18 @@ module TestLauncher
           command = command_finder.generic_search
           break if command
         end
-        command
+
+        return unless command
+
+        if cli_options.root_override
+          command = command.gsub(Dir.pwd, cli_options.root_override)
+        end
+
+        if cli_options.wrap
+          cli_options.wrap.sub("%cmd", command)
+        else
+          command
+        end
       end
 
       def command_finders
@@ -32,6 +43,7 @@ module TestLauncher
           example_name: cli_options.example_name,
           shell: cli_options.shell,
           searcher: cli_options.searcher,
+          root_override: cli_options.root_override
         )
       end
     end
