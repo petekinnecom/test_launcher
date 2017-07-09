@@ -57,7 +57,7 @@ module TestLauncher
       end
 
       def shell_out(command)
-        %x{ set -o pipefail && #{command} 2>> #{log_path} | tee -a #{log_path} }.chomp
+        %x{ bash -c 'set -o pipefail && #{command} 2>> #{log_path} | tee -a #{log_path}' }.chomp
       end
 
     end
