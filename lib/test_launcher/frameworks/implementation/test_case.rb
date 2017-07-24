@@ -32,7 +32,7 @@ module TestLauncher
             while !candidates.empty?
               if candidates.last == test_root_dir_name
                 root_path = File.join("/", candidates[0..-2])
-                return root_path if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec|mix.exs/} # TODO: extract this
+                return root_path if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec|mix.exs|config.ru/} # TODO: extract this
               end
 
               candidates.pop

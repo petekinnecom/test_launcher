@@ -40,6 +40,16 @@ module TestLauncher
           assert_equal "/path/root", test_case.app_root
         end
 
+        def test_app_root__multiple_test_dirs__find_configru
+          test_case = DummyTestCase.new(file: "/path/root/test/dummy/test/thing_test.rb")
+
+          Dir.stubs(:entries).with("/path/root").returns([".", "..", "gem.gemspec", "other_stuff.rb"])
+          Dir.stubs(:entries).with("/path/root/test").returns([".", "..", "other_stuff.rb"])
+          Dir.stubs(:entries).with("/path/root/test/dummy").returns([".", "..", "config.ru"])
+
+          assert_equal "/path/root/test/dummy", test_case.app_root
+        end
+
         def test_app_root__multiple_test_dirs__prefers_deeply_nested_dirs
           test_case = DummyTestCase.new(file: "/path/root/test/inline_gem/test/thing_test.rb")
 
