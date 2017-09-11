@@ -351,22 +351,33 @@ You can add these to your `.vscode/tasks.json` file:
 
 ```
 {
-  "version": "0.1.0",
+  "version": "2.0.0",
   "tasks": [
     {
       "taskName": "run-test-line",
       "command": "test_launcher",
-      "args": ["${file}:${lineNumber}"]
+      "runner": "terminal",
+      "args": [
+        "${file}:${lineNumber}",
+        "--disable-spring"
+      ]
     },
     {
       "taskName": "run-test-file",
       "command": "test_launcher",
-      "args": ["${file}"]
+      "runner": "terminal",
+      "args": [
+        "${file}",
+        "--disable-spring"
+      ]
     },
     {
       "taskName": "rerun-last-test",
       "command": "test_launcher",
-      "args": ["--rerun"]
+      "runner": "terminal",
+      "args": [
+        "--rerun"
+      ]
     }
   ]
 }
