@@ -93,7 +93,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
       class Runner < Base::Runner
         def by_line_number(test_case)
           if test_case.example
-            single_example(test_case)
+            single_example(test_case, exact_match: true)
           else
             single_file(test_case)
           end
