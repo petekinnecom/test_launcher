@@ -164,9 +164,13 @@ Test Launcher will not use spring if the `DISABLE_SPRING=1` environment variable
 # Usage and Options
 
 ```
-Common Usage: `test_launcher "search string" [--all]`
+Find tests and run them by trying to match an individual test or the name of a test file(s).
 
-VERSION: 2.2.0
+See full README: https://github.com/petekinnecom/test_launcher
+
+Usage: `test_launcher "search string" [--all]`
+
+VERSION: 2.10.0
 
     -a, --all                        Run all matching tests. Defaults to false.
     -h, --help                       Prints this help
@@ -176,6 +180,7 @@ VERSION: 2.2.0
         --example example            alias of name
     -r, --rerun                      Rerun the previous test. This flag cannot be set when entering search terms
         --disable-spring             Disable spring. You can also set the env var: DISABLE_SPRING=1
+        --spring                     Force spring commands to be used (useful when test_launcher is unable to detect that spring is used)
 ```
 
 # Search Priority
