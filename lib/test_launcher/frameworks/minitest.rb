@@ -147,6 +147,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
 
         def spring_enabled?
           return false if request.disable_spring?
+          return true if request.force_spring?
 
           [
             "bin/spring",

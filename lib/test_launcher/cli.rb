@@ -29,6 +29,7 @@ module TestLauncher
           rerun: cli_options.rerun,
           run_all: cli_options.run_all,
           disable_spring: cli_options.disable_spring,
+          force_spring: cli_options.force_spring,
           example_name: cli_options.example_name,
           shell: cli_options.shell,
           searcher: cli_options.searcher,

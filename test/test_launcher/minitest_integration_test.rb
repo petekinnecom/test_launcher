@@ -279,6 +279,20 @@ module TestLauncher
       assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/class_1_test.rb", shell_mock.recall_exec
     end
 
+    def test_uses_spring__if_forced
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/class_1_test.rb"
+          f.contents <<-RB
+            def test_name
+          RB
+        end
+      end
+
+      launch("class_1_test.rb --spring", env: {}, searcher: searcher)
+      assert_equal "cd /src && bundle exec spring testunit /src/test/class_1_test.rb", shell_mock.recall_exec
+    end
+
     def test__by_regex__one_match
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|

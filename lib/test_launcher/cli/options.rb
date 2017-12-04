@@ -6,6 +6,7 @@ module TestLauncher
       :rerun,
       :run_all,
       :disable_spring,
+      :force_spring,
       :example_name,
       :shell,
       :searcher

@@ -68,6 +68,7 @@ VERSION: #{TestLauncher::VERSION}
           run_all: !!@options[:run_all],
           rerun: !!@options[:rerun],
           disable_spring: @options[:disable_spring] || !!@env["DISABLE_SPRING"],
+          force_spring: @options[:force_spring],
           example_name: @options[:name],
           frameworks: frameworks,
           shell: shell,
@@ -116,7 +117,21 @@ VERSION: #{TestLauncher::VERSION}
           end
 
           opts.on("--disable-spring", "Disable spring. You can also set the env var: DISABLE_SPRING=1") do
+            if options[:force_spring]
+              puts "You have specified both --spring and --disable-spring. Please specify only one."
+              exit(1)
+            end
+
             options[:disable_spring] = true
+          end
+
+          opts.on("--spring", "Force spring commands to be used (useful when test_launcher is unable to detect that spring is used)") do
+            if options[:disable_spring]
+              puts "You have specified both --spring and --disable-spring. Please specify only one."
+              exit(1)
+            end
+
+            options[:force_spring] = true
           end
         end
       end

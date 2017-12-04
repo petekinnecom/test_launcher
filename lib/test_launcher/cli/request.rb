@@ -7,6 +7,7 @@ module TestLauncher
         rerun: false,
         run_all: false,
         disable_spring: false,
+        force_spring: false,
         example_name: nil,
         shell:,
         searcher:
@@ -16,6 +17,7 @@ module TestLauncher
         @rerun = rerun
         @run_all = run_all
         @disable_spring = disable_spring
+        @force_spring = force_spring
         @example_name = example_name
         @shell = shell
         @searcher = searcher
@@ -35,6 +37,10 @@ module TestLauncher
 
       def disable_spring?
         @disable_spring
+      end
+
+      def force_spring?
+        @force_spring
       end
 
       def example_name
