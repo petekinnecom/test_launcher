@@ -344,9 +344,21 @@ Replace it with:
 
 1. Run a test.  Test Launcher should report that it is hijacking the test and it will output the command that it has decided to use.
 
+
 ### Debugging Support
 
 Using Test Launcher to hijack your RubyMine run configuration should allow you to debug any test as well without issue.
+
+
+### Spring and Rubymine
+
+If you don't want to use spring to run your tests, but test_launcher tries to use it anyways, follow these steps:
+
+1. Open your project
+1. Click on Run -> 'Edit Configurations...'
+1. If you have any run configurations listed under 'Test::Unit/Shoulda/Minitest', use the minus button to remove them.
+1. Open the 'Defaults' and click on 'Test::Unit/Shoulda/Minitest'
+1. Under 'Environment Variables' add as a variable with the name `DISABLE_SPRING` and the value `1`
 
 # Visual Studio Code Support
 
