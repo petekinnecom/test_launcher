@@ -8,6 +8,10 @@ module TestLauncher
       def disable_spring?
         @disable_spring
       end
+
+      def force_spring?
+        false
+      end
     end
   end
 end
