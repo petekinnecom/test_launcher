@@ -107,7 +107,11 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
               "/#{name}/"
             end
 
-          %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name='#{name_arg}'}
+          if test_case.spring_enabled?
+            %{cd #{test_case.app_root} && TESTOPTS="--name='#{name_arg}'" #{test_case.example_runner} #{test_case.file}}
+          else
+            %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name='#{name_arg}'}
+          end
         end
 
         def multiple_examples_same_file(test_cases)
@@ -127,7 +131,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
       class TestCase < Base::TestCase
         def example_runner
           if spring_enabled?
-            "bundle exec spring testunit"
+            "bundle exec spring rake test"
           else
             "bundle exec ruby -I test"
           end
@@ -135,7 +139,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
 
         def file_runner
           if spring_enabled?
-            "bundle exec spring testunit"
+            "bundle exec spring rake test"
           else
             "bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}'"
           end
