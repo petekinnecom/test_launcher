@@ -46,7 +46,8 @@ module TestLauncher
             example: "example_name",
             app_root: "app_root",
             file_runner: "file_runner",
-            file: "file"
+            file: "file",
+            spring_enabled?: false
           )
           assert_equal "cd app_root && file_runner file", Runner.new.single_file(test_case)
         end
@@ -57,7 +58,8 @@ module TestLauncher
               example: "example_name",
               app_root: "app_root",
               file_runner: "file_runner",
-              file: "file_1"
+              file: "file_1",
+              spring_enabled?: false
             ),
             MockTestCase.new(
               example: "example_name",

@@ -24,6 +24,10 @@ module TestLauncher
         def mtime
           @mtime ||= File.mtime(file)
         end
+        
+        def relative_file
+          file.sub(/^#{File.join(app_root, '/')}/, '')
+        end
 
         def app_root
           if exploded_path.select { |dir| dir == test_root_dir_name }.size > 1

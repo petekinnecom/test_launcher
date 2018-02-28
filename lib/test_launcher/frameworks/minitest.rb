@@ -108,7 +108,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
             end
 
           if test_case.spring_enabled?
-            %{cd #{test_case.app_root} && TESTOPTS="--name='#{name_arg}'" #{test_case.example_runner} #{test_case.file}}
+            %{cd #{test_case.app_root} && TESTOPTS="--name='#{name_arg}'" #{test_case.example_runner} #{test_case.relative_file}}
           else
             %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name='#{name_arg}'}
           end
@@ -124,7 +124,11 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
         end
 
         def one_or_more_files(test_cases)
-          %{cd #{test_cases.first.app_root} && #{test_cases.first.file_runner} #{test_cases.map(&:file).uniq.join(" ")}}
+          if test_cases.first.spring_enabled?
+            %{cd #{test_cases.first.app_root} && #{test_cases.first.file_runner} #{test_cases.map(&:relative_file).uniq.join(" ")}}
+          else
+            %{cd #{test_cases.first.app_root} && #{test_cases.first.file_runner} #{test_cases.map(&:file).uniq.join(" ")}}
+          end
         end
       end
 
