@@ -14,7 +14,7 @@ module TestLauncher
         if args.any? {|a| a.match("ruby-debug-ide")}
           shell.puts "test_launcher: hijacking and debugging"
 
-          debug_command = "cd #{test_case.app_root} && ruby -I test #{args.join(" ")}"
+          debug_command = "cd #{test_case.app_root} && bundle exec ruby -I test #{args.join(" ")}"
           shell.puts debug_command
           shell.exec debug_command
         else
