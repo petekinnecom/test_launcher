@@ -362,63 +362,33 @@ If you don't want to use spring to run your tests, but test_launcher tries to us
 
 # Visual Studio Code Support
 
-To run tests from the editor, we need to define some tasks. I like to have three tasks defined: run the test that contains the cursor, run the whole test file, and rerun the last test.
-
-You can add these to your `.vscode/tasks.json` file:
+Install the [Run in Terminal](https://marketplace.visualstudio.com/items?itemName=kortina.run-in-terminal) extension. This allows us to assign keybindings to specific terminal commands.  Then we can add TestLauncher keybindings to our `keybindings.json`. Here is an example configuration:
 
 ```
-{
-  "version": "2.0.0",
-  "tasks": [
-    {
-      "taskName": "run-test-line",
-      "command": "test_launcher",
-      "runner": "terminal",
-      "args": [
-        "${file}:${lineNumber}",
-        "--disable-spring"
-      ]
-    },
-    {
-      "taskName": "run-test-file",
-      "command": "test_launcher",
-      "runner": "terminal",
-      "args": [
-        "${file}",
-        "--disable-spring"
-      ]
-    },
-    {
-      "taskName": "rerun-last-test",
-      "command": "test_launcher",
-      "runner": "terminal",
-      "args": [
-        "--rerun"
-      ]
-    }
-  ]
-}
-```
-
-Next, we need some key-combos to trigger each task. Add this to your `.vscode/keybindings.json` and tweak the key-combos to your liking:
-```
-...
-    {
-        "key": "shift+cmd+r",
-        "command": "workbench.action.tasks.runTask",
-        "args": "run-test-line"
-    },
-    {
-        "key": "alt+cmd+r",
-        "command": "workbench.action.tasks.runTask",
-        "args": "run-test-file"
-    },
-    {
-        "key": "cmd+r",
-        "command": "workbench.action.tasks.runTask",
-        "args": "rerun-last-test"
-    }
-...
+  {
+      "key": "shift+cmd+r",
+      "command": "runInTerminal.run",
+      "args": {
+          "cmd": "test_launcher ${file}:${line}",
+          "match": ".*"
+      }
+  },
+  {
+      "key": "alt+cmd+r",
+      "command": "runInTerminal.run",
+      "args": {
+          "cmd": "test_launcher ${file}",
+          "match": ".*"
+      }
+  },
+  {
+      "key": "cmd+r",
+      "command": "runInTerminal.run",
+      "args": {
+          "cmd": "test_launcher --rerun",
+          "match": ".*"
+      }
+  },
 ```
 
 # Atom Support
