@@ -6,6 +6,7 @@ require "test_launcher/frameworks/rspec"
 require "test_launcher/frameworks/minitest"
 require "test_launcher/frameworks/ex_unit"
 require "test_launcher/frameworks/generic"
+require "test_launcher/frameworks/mochajs"
 require "test_launcher/cli/options"
 
 module TestLauncher
@@ -60,7 +61,12 @@ VERSION: #{TestLauncher::VERSION}
           elsif @options[:framework] == "generic"
             [Frameworks::Generic]
           else
-            [Frameworks::Minitest, Frameworks::RSpec, Frameworks::ExUnit, Frameworks::Generic]
+            [Frameworks::Minitest,
+            Frameworks::RSpec,
+            Frameworks::ExUnit,
+            Frameworks::Mochajs,
+            Frameworks::Generic,
+          ]
           end
 
         Options.new(
