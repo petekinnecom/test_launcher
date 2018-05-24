@@ -584,7 +584,7 @@ module TestLauncher
                 things
               end
 
-              def test_name_2
+              def test_name_2?
                 things
               end
             end
@@ -608,13 +608,13 @@ module TestLauncher
       assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_1'", shell_mock.recall_exec
 
       launch("file_1_test.rb:6", searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2'", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2?'", shell_mock.recall_exec
 
       launch("file_1_test.rb:7", searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2'", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2?'", shell_mock.recall_exec
 
       launch("file_1_test.rb:8", searcher: searcher)
-      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2'", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2?'", shell_mock.recall_exec
     end
 
     def test__by_line_number__multiple_files

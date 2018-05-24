@@ -47,7 +47,7 @@ module TestLauncher
           if best_result
             [{
               file: best_result[:file],
-              example_name: best_result[:line].match(/(test_\w+)/)[1],
+              example_name: best_result[:line].match(/(test_[\w\?]+)/)[1],
               line_number: best_result[:line_number]
             }]
           else
