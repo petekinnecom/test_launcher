@@ -362,33 +362,30 @@ If you don't want to use spring to run your tests, but test_launcher tries to us
 
 # Visual Studio Code Support
 
-Install the [Run in Terminal](https://marketplace.visualstudio.com/items?itemName=kortina.run-in-terminal) extension. This allows us to assign keybindings to specific terminal commands.  Then we can add TestLauncher keybindings to our `keybindings.json`. Here is an example configuration:
+Install the [Terminal Command Keys](https://marketplace.visualstudio.com/items?itemName=petekinnecom.terminal-command-keys) extension (you can search for `petekinnecom.terminal-command-keys` in vscode's extension search box). This allows us to assign keybindings to specific terminal commands.  Then we can add TestLauncher keybindings to our `keybindings.json`. Here is an example configuration:
 
 ```
-  {
-      "key": "shift+cmd+r",
-      "command": "runInTerminal.run",
-      "args": {
-          "cmd": "test_launcher ${file}:${line}",
-          "match": ".*"
-      }
-  },
-  {
-      "key": "alt+cmd+r",
-      "command": "runInTerminal.run",
-      "args": {
-          "cmd": "test_launcher ${file}",
-          "match": ".*"
-      }
-  },
-  {
-      "key": "cmd+r",
-      "command": "runInTerminal.run",
-      "args": {
-          "cmd": "test_launcher --rerun",
-          "match": ".*"
-      }
-  },
+{
+    "key": "shift+cmd+r",
+    "command": "terminalCommandKeys.run",
+    "args": {
+        "cmd": "test_launcher ${file}:${line}",
+    }
+},
+{
+    "key": "alt+cmd+r",
+    "command": "terminalCommandKeys.run",
+    "args": {
+        "cmd": "test_launcher ${file}",
+    }
+},
+{
+    "key": "cmd+r",
+    "command": "terminalCommandKeys.run",
+    "args": {
+        "cmd": "test_launcher --rerun",
+    }
+}
 ```
 
 # Atom Support
