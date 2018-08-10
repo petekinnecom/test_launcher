@@ -111,7 +111,7 @@ VERSION: #{TestLauncher::VERSION}
             options[:framework] = framework
           end
 
-          opts.on("-n", "--name name", "Name of testcase/example to run. This will pass through to the selected framework without verifying that the example actually exists. This option really only exists to work with tooling that will automatically run your tests. You shouldn't have much need for this.") do |name|
+          opts.on("-n", "--name name", "Private option: DO NOT USE") do |name|
             options[:name] = name
           end
 
