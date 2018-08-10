@@ -7,7 +7,7 @@ module TestLauncher
     module Minitest
       def self.active?
         # Do not do this outside of the shell.
-        ! Dir.glob("**/test/**/*_test.rb").empty?
+        `git ls-files '*_test.rb'`.split("\n").any?
       end
 
       def self.test_case(*a)

@@ -6,7 +6,7 @@ module TestLauncher
     module ExUnit
       def self.active?
         # Do not do this outside of the shell.
-        ! Dir.glob("**/test/**/*.exs").empty?
+        `git ls-files '*.exs'`.split("\n").any?
       end
 
       def self.test_case(*a)

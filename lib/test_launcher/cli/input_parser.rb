@@ -61,12 +61,13 @@ VERSION: #{TestLauncher::VERSION}
           elsif @options[:framework] == "generic"
             [Frameworks::Generic]
           else
-            [Frameworks::Minitest,
-            Frameworks::RSpec,
-            Frameworks::ExUnit,
-            Frameworks::Mochajs,
-            Frameworks::Generic,
-          ]
+            [
+              Frameworks::Minitest,
+              Frameworks::RSpec,
+              Frameworks::ExUnit,
+              Frameworks::Mochajs,
+              Frameworks::Generic,
+            ].select {|f| f.active?}
           end
 
         Options.new(

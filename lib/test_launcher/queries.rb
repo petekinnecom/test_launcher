@@ -343,6 +343,7 @@ module TestLauncher
       end
 
       def files_found_by_joining_terms
+        return [] unless request.search_string.include?(" ")
         joined_query = request.search_string.squeeze(" ").gsub(" ", "|")
         @files_found_by_joining_terms ||= searcher.grep(joined_query)
       end

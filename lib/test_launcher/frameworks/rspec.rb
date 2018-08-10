@@ -6,7 +6,7 @@ module TestLauncher
     module RSpec
 
       def self.active?
-        ! Dir.glob("**/*_spec.rb").empty?
+        `git ls-files '*_spec.rb'`.split("\n").any?
       end
 
       def self.test_case(*a)

@@ -6,8 +6,7 @@ module TestLauncher
     module Mochajs
 
       def self.active?
-        output = `find . -name package-lock.json -exec grep mocha {} \;`
-        !output.chomp.strip.empty?.tap {|r| puts "mochajs: #{r}"}
+        `git ls-files '*pec.js'`.split("\n").any?
       end
 
       def self.test_case(*a)
