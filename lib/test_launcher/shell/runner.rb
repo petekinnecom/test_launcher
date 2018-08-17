@@ -27,7 +27,7 @@ module TestLauncher
       def exec(cmd)
         notify cmd
         $stdout.flush
-        Bundler.clean_exec(cmd)
+        Kernel.exec cmd
       end
 
       def warn(msg)
