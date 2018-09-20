@@ -135,7 +135,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
       class TestCase < Base::TestCase
         def example_runner
           if spring_enabled?
-            "bundle exec spring rake test"
+            "bundle exec spring rails test"
           else
             "bundle exec ruby -I test"
           end
@@ -143,7 +143,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
 
         def file_runner
           if spring_enabled?
-            "bundle exec spring rake test"
+            "bundle exec spring rails test"
           else
             "bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}'"
           end
