@@ -108,7 +108,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
             end
 
           if test_case.spring_enabled?
-            %{cd #{test_case.app_root} && TESTOPTS="--name='#{name_arg}'" #{test_case.example_runner} #{test_case.relative_file}}
+            %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.relative_file} --name='#{name_arg}'}
           else
             %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name='#{name_arg}'}
           end
