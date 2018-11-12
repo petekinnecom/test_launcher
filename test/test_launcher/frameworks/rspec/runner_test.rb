@@ -15,7 +15,8 @@ module TestLauncher
           test_case = MockTestCase.new(
             example: "example_name",
             app_root: "app_root",
-            file: "file"
+            file: "file",
+            runner: "bundle exec rspec"
           )
           assert_equal "cd app_root && bundle exec rspec file --example example_name", Runner.new.single_example(test_case)
         end
@@ -24,7 +25,8 @@ module TestLauncher
           test_case = MockTestCase.new(
             example: "this is it's name :(",
             app_root: "app_root",
-            file: "file"
+            file: "file",
+            runner: "bundle exec rspec"
           )
           assert_equal "cd app_root && bundle exec rspec file --example this\\ is\\ it\\'s\\ name\\ :\\(", Runner.new.single_example(test_case)
         end
@@ -35,12 +37,14 @@ module TestLauncher
             MockTestCase.new(
               example: "example_name",
               app_root: "app_root",
-              file: "file"
+              file: "file",
+              runner: "bundle exec rspec"
             ),
             MockTestCase.new(
               example: "example_name",
               app_root: "app_root",
-              file: "file"
+              file: "file",
+              runner: "bundle exec rspec"
             )
           ]
           assert_equal "cd app_root && bundle exec rspec file --example example_name", Runner.new.multiple_examples_same_file(test_cases)
@@ -50,7 +54,8 @@ module TestLauncher
           test_case = MockTestCase.new(
             example: "example_name",
             app_root: "app_root",
-            file: "file"
+            file: "file",
+            runner: "bundle exec rspec"
           )
           assert_equal "cd app_root && bundle exec rspec file", Runner.new.single_file(test_case)
         end
@@ -60,15 +65,17 @@ module TestLauncher
             MockTestCase.new(
               example: "example_name",
               app_root: "app_root",
-              file: "file_1"
+              file: "file_1",
+              runner: "bin/rspec"
             ),
             MockTestCase.new(
               example: "example_name",
               app_root: "app_root",
-              file: "file_2"
+              file: "file_2",
+              runner: "bin/rspec"
             )
           ]
-          assert_equal "cd app_root && bundle exec rspec file_1 file_2", Runner.new.one_or_more_files(test_cases)
+          assert_equal "cd app_root && bin/rspec file_1 file_2", Runner.new.one_or_more_files(test_cases)
         end
       end
     end
