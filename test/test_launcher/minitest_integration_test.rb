@@ -31,6 +31,23 @@ module TestLauncher
       assert_equal "cd /src && bundle exec ruby -I test /src/test/class_1_test.rb --name='/n/'", shell_mock.recall_exec
     end
 
+    def test__by_example__single_method__minispec
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/class_1_test.rb"
+          f.contents <<-RB
+            class Class1Test
+              test "my test name" do
+              end
+            end
+          RB
+        end
+      end
+
+      launch("test name", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/class_1_test.rb --name='/test_name/'", shell_mock.recall_exec
+    end
+
     def test__by_example__multiple_methods__same_file
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|
@@ -615,6 +632,52 @@ module TestLauncher
 
       launch("file_1_test.rb:8", searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2?'", shell_mock.recall_exec
+    end
+
+    def test__by_line_number__spec
+      searcher = MemorySearcher.new do |searcher|
+        searcher.mock_file do |f|
+          f.path "/src/test/file_1_test.rb"
+          f.mtime Time.new(2013, 01, 01, 00, 00, 00)
+          f.contents <<-RB
+            class File1Test
+              def test_name_1
+                things
+              end
+
+              test "test name 2" do
+                things
+              end
+
+              def test_name_3
+            end
+          RB
+        end
+      end
+
+      launch("file_1_test.rb:1", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/file_1_test.rb", shell_mock.recall_exec
+
+      launch("file_1_test.rb:2", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_1'", shell_mock.recall_exec
+
+      launch("file_1_test.rb:3", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_1'", shell_mock.recall_exec
+
+      launch("file_1_test.rb:4", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_1'", shell_mock.recall_exec
+
+      launch("file_1_test.rb:5", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_1'", shell_mock.recall_exec
+
+      launch("file_1_test.rb:6", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2'", shell_mock.recall_exec
+
+      launch("file_1_test.rb:7", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2'", shell_mock.recall_exec
+
+      launch("file_1_test.rb:8", searcher: searcher)
+      assert_equal "cd /src && bundle exec ruby -I test /src/test/file_1_test.rb --name='test_name_2'", shell_mock.recall_exec
     end
 
     def test__by_line_number__multiple_files

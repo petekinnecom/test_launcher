@@ -1,4 +1,5 @@
 require "test_launcher/base_error"
+require "shellwords"
 
 module TestLauncher
   module Search
@@ -17,7 +18,7 @@ module TestLauncher
         end
 
         def grep(regex, file_pattern)
-          shell.run("git grep --line-number --untracked --extended-regexp '#{regex}' -- '#{file_pattern}'")
+          shell.run("git grep --line-number --untracked --extended-regexp #{Shellwords.escape(regex)} -- '#{file_pattern}'")
         end
 
         def root_path

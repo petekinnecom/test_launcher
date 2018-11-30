@@ -13,7 +13,7 @@ module TestLauncher
           mocks Search::Git
 
           impl :grep do |regex, file_pattern:|
-            example_name_regex = "^ *def +test_.*().*" #TODO: no bueno copying this
+            example_name_regex = "^\s*(def\s+test_|test\s+['\"]).*().*" #TODO: no bueno copying this
             case [regex, file_pattern]
             when [example_name_regex, "test/test_launcher/single_test.rb"]
               [

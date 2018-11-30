@@ -47,7 +47,7 @@ module TestLauncher
           if best_result
             [{
               file: best_result[:file],
-              example_name: best_result[:line].match(/(test_[\w\?]+)/)[1],
+              example_name: best_result[:line].match(/(def\s+(?<name>test_[\w\?]+)|test\s+['"](?<name>.*)['"]\s+do)/)[:name],
               line_number: best_result[:line_number]
             }]
           else
@@ -72,7 +72,7 @@ module TestLauncher
           if query.match(/^test_/)
             "^\s*def\s+(#{query}).*"
           else
-            "^\s*def\s+test_.*(#{query }).*"
+            "^\s*(def\s+test_|test\s+['\"]).*(#{query}).*"
           end
         end
 
@@ -163,6 +163,11 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
           ].any? {|f|
             File.exist?(File.join(app_root, f))
           }
+        end
+
+        def example
+          @memoized_example if defined?(@memoized_example)
+          @memoized_example = @example&.gsub(" ", "_")
         end
       end
     end
