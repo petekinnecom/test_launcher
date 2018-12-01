@@ -1,5 +1,3 @@
-require "pathname"
-
 module TestLauncher
   module Frameworks
     module Implementation
@@ -24,7 +22,7 @@ module TestLauncher
         def mtime
           @mtime ||= File.mtime(file)
         end
-        
+
         def relative_file
           file.sub(/^#{File.join(app_root, '/')}/, '')
         end
@@ -56,7 +54,7 @@ module TestLauncher
         end
 
         def exploded_path
-          Pathname.new(file).each_filename.to_a
+          file.split("/")
         end
       end
     end

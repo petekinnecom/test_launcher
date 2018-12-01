@@ -1,5 +1,4 @@
 require "test_launcher/shell/color"
-require "bundler"
 require "shellwords"
 
 module TestLauncher
