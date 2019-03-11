@@ -645,7 +645,7 @@ module TestLauncher
                 things
               end
 
-              test "test name 2" do
+              test "name 2" do
                 things
               end
 

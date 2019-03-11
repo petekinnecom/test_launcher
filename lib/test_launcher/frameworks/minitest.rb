@@ -45,9 +45,16 @@ module TestLauncher
               .min_by {|r| line_number - r[:line_number]}
 
           if best_result
+            example_name =
+              if match = best_result[:line].match(/def\s+(?<name>test_[\w\?]+)/)
+                match[:name]
+              elsif match = best_result[:line].match(/test\s+['"](?<name>.*)['"]\s+do/)
+                "test_#{match[:name]}"
+              end
+
             [{
               file: best_result[:file],
-              example_name: best_result[:line].match(/(def\s+(?<name>test_[\w\?]+)|test\s+['"](?<name>.*)['"]\s+do)/)[:name],
+              example_name: example_name,
               line_number: best_result[:line_number]
             }]
           else
