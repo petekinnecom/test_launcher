@@ -108,17 +108,22 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
 
         def single_example(test_case, name: test_case.example, exact_match: false)
           name_arg =
-            if exact_match
-              name
+            if exact_match && name.match(/[^\w]/)
+              Shellwords.escape(name)
+            elsif !exact_match
+              "'/#{name}/'"
             else
-              "/#{name}/"
+              name
             end
 
-          if test_case.spring_enabled?
-            %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.relative_file} --name='#{name_arg}'}
-          else
-            %{cd #{test_case.app_root} && #{test_case.example_runner} #{test_case.file} --name='#{name_arg}'}
-          end
+          file =
+            if test_case.spring_enabled?
+              test_case.relative_file
+            else
+              test_case.file
+            end
+
+          %{cd #{test_case.app_root} && #{test_case.example_runner} #{file} --name=#{name_arg}}
         end
 
         def multiple_examples_same_file(test_cases)
