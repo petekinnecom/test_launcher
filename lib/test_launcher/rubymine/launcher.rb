@@ -43,6 +43,12 @@ module TestLauncher
               example: args[-1][/--name=(.*)/, 1],
               request: request
             )
+          elsif args[-2]&.match("--name")
+            Frameworks::Minitest::TestCase.new(
+              file: args[-3],
+              example: args[-1][/\/?([^\/]*)\/?/, 1],
+              request: request
+            )
           else
             Frameworks::Minitest::TestCase.new(
               file: args[-1],
