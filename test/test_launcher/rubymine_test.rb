@@ -13,21 +13,21 @@ module TestLauncher
 
     def test_launch__run__example__spring
       args = "/Users/username/some_app/bin/spring testunit /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
-      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name='some_test_name'"
+      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
 
       assert_executes expected_command, args
     end
 
     def test_launch__run__example__no_spring
       args = "/Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
-      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name='some_test_name'"
+      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
 
       assert_executes expected_command, args
     end
 
     def test_launch__run__example__no_spring__no_disable_spring
       args = "/Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
-      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name='some_test_name'"
+      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
 
       assert_executes expected_command, args, disable_spring: false
     end
