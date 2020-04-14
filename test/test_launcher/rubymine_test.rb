@@ -60,6 +60,20 @@ module TestLauncher
       assert_executes(expected_command, args)
     end
 
+    def test_launcher__run__2020_style
+      args = "/usr/local/bin/bash -c \"env RBENV_VERSION=2.6.3 /usr/local/Cellar/rbenv/1.1.2/libexec/rbenv exec ruby -r test_launcher/rubymine -Itest /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name '/^some_test_name$/'\""
+      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name=some_test_name"
+
+      assert_executes(expected_command, args)
+    end
+
+    def test_launcher__debug__2020_style
+      args = "/bin/bash -c \"/Users/username/.rvm/bin/rvm ruby-2.6.3 do /Users/username/.rvm/rubies/ruby-2.6.3/bin/bundle exec /Users/username/.rvm/rubies/ruby-2.6.3/bin/ruby -r test_launcher/rubymine -Itest /Users/username/.rvm/gems/ruby-2.6.3/gems/ruby-debug-ide-0.8.0.beta23/bin/rdebug-ide --key-value --step-over-in-blocks --disable-int-handler --evaluation-timeout 10 --evaluation-control --time-limit 100 --memory-limit 0 --rubymine-protocol-extensions --port 51357 --host 0.0.0.0 --dispatcher-port 51358 -- /Users/username/some_app/engines/some_engine/test/does_something_test.rb --name '/^some_test_name$/'\""
+      expected_command = "cd /Users/username/some_app/engines/some_engine && #{args}"
+
+      assert_executes(expected_command, args)
+    end
+
     private
 
     def assert_executes(expected_command, args, disable_spring: true)
