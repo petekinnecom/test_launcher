@@ -287,7 +287,7 @@ module TestLauncher
       end
 
       launch("class_1_test.rb", env: {}, searcher: searcher)
-      assert_equal "cd /src && bundle exec spring rails test test/class_1_test.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bin/spring rails test test/class_1_test.rb", shell_mock.recall_exec
 
       launch("class_1_test.rb", env: {"DISABLE_SPRING" => "1"}, searcher: searcher)
       assert_equal "cd /src && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /src/test/class_1_test.rb", shell_mock.recall_exec

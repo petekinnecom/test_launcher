@@ -147,7 +147,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
       class TestCase < Base::TestCase
         def example_runner
           if spring_enabled?
-            "bundle exec spring rails test"
+            "#{spring_runner} rails test"
           else
             "bundle exec ruby -I test"
           end
@@ -155,7 +155,7 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
 
         def file_runner
           if spring_enabled?
-            "bundle exec spring rails test"
+            "#{spring_runner} rails test"
           else
             "bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}'"
           end
@@ -169,12 +169,15 @@ Open an issue on https://github.com/petekinnecom/test_launcher if this is someth
           return false if request.disable_spring?
           return true if request.force_spring?
 
-          [
-            "bin/spring",
-            "bin/testunit"
-          ].any? {|f|
-            File.exist?(File.join(app_root, f))
-          }
+          File.exist?(File.join(app_root, "bin/spring"))
+        end
+
+        def spring_runner
+          if File.exist?(File.join(app_root, "bin/spring"))
+            "bin/spring"
+          else
+            "bundle exec spring"
+          end
         end
 
         def example
