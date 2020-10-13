@@ -1,6 +1,7 @@
 require "test_helper"
 require "test_launcher/rubymine/launcher"
 require "test_launcher/rubymine/request"
+require "test_launcher/rubymine/parser"
 
 module TestLauncher
   class RubymineTest < TestCase
@@ -72,6 +73,28 @@ module TestLauncher
       expected_command = "cd /Users/username/some_app/engines/some_engine && #{args}"
 
       assert_executes(expected_command, args)
+    end
+
+    def test_launcher__run__2020_2_3_style__test_method
+      ENV["INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"] = "/path/to/app/test/my_test.rb"
+
+      args = "/usr/local/bin/bash -c \"env RBENV_VERSION=2.6.3 /usr/local/Cellar/rbenv/1.1.2/libexec/rbenv exec ruby -Itest /Applications/RubyMine.app/Contents/plugins/ruby/rb/testing/runner/minitest_runner.rb --name '/^test_method$/'\""
+
+      Rubymine::Parser.launch(shell: dummy_shell, argv: args.split(" "))
+
+      expected_command = "cd /path/to/app && bundle exec ruby -I test /path/to/app/test/my_test.rb --name=test_method"
+      assert_equal [[expected_command]], dummy_shell.recall(:exec)
+    end
+
+    def test_launcher__run__2020_2_3_style__test_file
+      ENV["INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"] = "/path/to/app/test/my_test.rb"
+
+      args = "/usr/local/bin/bash -c \"env RBENV_VERSION=2.6.3 /usr/local/Cellar/rbenv/1.1.2/libexec/rbenv exec ruby -Itest /Applications/RubyMine.app/Contents/plugins/ruby/rb/testing/runner/minitest_runner.rb\""
+
+      Rubymine::Parser.launch(shell: dummy_shell, argv: args.split(" "))
+
+      expected_command = "cd /path/to/app && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /path/to/app/test/my_test.rb"
+      assert_equal [[expected_command]], dummy_shell.recall(:exec)
     end
 
     private
