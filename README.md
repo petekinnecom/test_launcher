@@ -24,7 +24,7 @@ It was built for Minitest, but it also has basic support for RSpec and ExUnit.
 1. [Installation](#installation)
 1. [Examples](#examples)
 1. [Usage and Options](#usage-and-options)
-1. [Search Prioty](#search-priority)
+1. [Search Priority](#search-priority)
 1. [Running all changed tests](#running-all-changed-tests)
 1. [Tweaking the Command](#tweaking-the-command)
 1. [Aliases](#quit-typing-so-much)
@@ -43,6 +43,7 @@ gem install test_launcher
 ```
 
 Under the hood, it uses git to determine your project root. If you're on an app that's not using git, let me know and I can remove that dependency.
+Also, make sure that the test file you want to run is either staged or committed, otherwise it won't be found.
 
 # Examples
 
