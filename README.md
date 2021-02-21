@@ -24,7 +24,7 @@ It was built for Minitest, but it also has basic support for RSpec and ExUnit.
 1. [Installation](#installation)
 1. [Examples](#examples)
 1. [Usage and Options](#usage-and-options)
-1. [Search Prioty](#search-priority)
+1. [Search Priority](#search-priority)
 1. [Running all changed tests](#running-all-changed-tests)
 1. [Tweaking the Command](#tweaking-the-command)
 1. [Aliases](#quit-typing-so-much)
