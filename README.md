@@ -330,7 +330,7 @@ To use the RubyMine support:
 1. Click on Run -> 'Edit Configurations...'
 1. If you have any run configurations listed under 'Test::Unit/Shoulda/Minitest', use the minus button to remove them.
 1. Open the 'Defaults' and click on 'Test::Unit/Shoulda/Minitest'
-    - On some newer versions of RubyMine, instead of 'Defaults' there will be an 'Edit Configuration Templates' link in the bottom left corner instead
+    - On some newer versions of RubyMine, instead of 'Defaults' there will be an 'Edit Configuration Templates' link in the bottom left corner
 1. Under 'Ruby Arguments' change:
 
 ```
