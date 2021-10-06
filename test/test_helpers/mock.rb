@@ -3,9 +3,11 @@ class Mock
   MockingUnimplementedMethodError = Class.new(StandardError)
 
   def self.impl(method_name)
-    define_method method_name do |*args|
-      record_call(method_name, args)
-      yield(*args) if block_given?
+    define_method method_name do |*a, **o|
+      recorded_args = o.empty? ? a : a + [o]
+
+      record_call(method_name, recorded_args)
+      yield(*a, **o) if block_given?
     end
   end
 
@@ -16,14 +18,16 @@ class Mock
   end
 
   def impl(method_name)
-    define_singleton_method method_name do |*args|
-      record_call(method_name, args)
-      yield(*args) if block_given?
+    define_singleton_method method_name do |*a, **o|
+      recorded_args = o.empty? ? a : a + [o]
+
+      record_call(method_name, recorded_args)
+      yield(*a, **o) if block_given?
     end
   end
 
-  def initialize(*args)
-    @attrs = args.pop || {}
+  def initialize(*args, **o)
+    @attrs = o.merge(to_hash: nil)
     @klass = args.first if args.any?
     @calls = {}
     yield(self) if block_given?
@@ -47,6 +51,8 @@ class Mock
   end
 
   def record_call(method_name, args)
+    return if [:to_hash].include?(method_name)
+
     if !mocked_klass.method_defined?(method_name)
       raise MockingUnimplementedMethodError, "#{mocked_klass} does not implement #{method_name}"
     end

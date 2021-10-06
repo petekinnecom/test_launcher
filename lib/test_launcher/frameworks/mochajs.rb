@@ -9,16 +9,16 @@ module TestLauncher
         `git ls-files '*pec.js'`.split("\n").any?
       end
 
-      def self.test_case(*a)
-        TestCase.new(*a)
+      def self.test_case(*a, **o)
+        TestCase.new(*a, **o)
       end
 
-      def self.searcher(*a)
-        Searcher.new(*a)
+      def self.searcher(*a, **o)
+        Searcher.new(*a, **o)
       end
 
-      def self.runner(*a)
-        Runner.new(*a)
+      def self.runner(*a, **o)
+        Runner.new(*a, **o)
       end
 
       class Searcher < Base::Searcher

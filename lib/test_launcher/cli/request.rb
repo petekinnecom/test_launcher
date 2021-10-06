@@ -51,12 +51,12 @@ module TestLauncher
         framework.searcher(@searcher)
       end
 
-      def runner(*a)
-        framework.runner(*a)
+      def runner(*a, **o)
+        framework.runner(*a, **o)
       end
 
-      def test_case(*a)
-        framework.test_case(*a)
+      def test_case(*a, **o)
+        framework.test_case(*a, **o)
       end
 
       def shell

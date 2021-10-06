@@ -28,8 +28,8 @@ module TestLauncher
   class MockRequest < Mock
     mocks CLI::Request
 
-    impl :test_case do |*args|
-      Frameworks::Implementation::TestCase.new(*args)
+    impl :test_case do |*args, **o|
+      Frameworks::Implementation::TestCase.new(*args, **o)
     end
   end
 
