@@ -4,5 +4,5 @@ source 'https://rubygems.org'
 gemspec
 
 gem "minitest"
-gem "mocha", "1.6.0"
+gem "mocha", ">= 1.13.0"
 gem "pry"
