@@ -13,10 +13,10 @@ module TestLauncher
       end
 
       def test_find_files__strips_absolute_path_for_search
-        interface = mock {
-          expects(:root_path).returns("/path/to/repo")
-          expects(:ls_files).with("relative/file_test.rb").returns(["inline_gem/relative/file_test.rb"])
-        }
+        interface = mock.tap do |m|
+          m.expects(:root_path).returns("/path/to/repo")
+          m.expects(:ls_files).with("relative/file_test.rb").returns(["inline_gem/relative/file_test.rb"])
+        end
 
         searcher = Ag.new(nil, interface)
         files = searcher.find_files("/path/to/repo/relative/file_test.rb")
@@ -25,12 +25,12 @@ module TestLauncher
       end
 
       def test_grep__strips_absolute_path_of_file_pattern
-        interface = mock {
-          expects(:root_path).returns("/path/to/repo")
-          expects(:grep).with("regex", "relative/file_test.rb").returns([
+        interface = mock.tap do |m|
+          m.expects(:root_path).returns("/path/to/repo")
+          m.expects(:grep).with("regex", "relative/file_test.rb").returns([
             "relative/file_test.rb:20:    def test_regex"
           ])
-        }
+        end
 
         searcher = Ag.new(nil, interface)
         files = searcher.grep("regex", file_pattern: "/path/to/repo/relative/file_test.rb")
