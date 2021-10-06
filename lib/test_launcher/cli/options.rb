@@ -1,20 +1,39 @@
 module TestLauncher
   module CLI
-    class Options < Struct.new(
-      :search_string,
-      :frameworks,
-      :rerun,
-      :run_all,
-      :disable_spring,
-      :force_spring,
-      :example_name,
-      :shell,
-      :searcher
-    )
-      def initialize(**args)
-        raise ArgumentError.new("These keys are allowed and required: #{members}") unless args.keys.sort == members.sort
-        args.each { |k, v| self[k] = v }
+    class Options
+      attr_reader(
+        :disable_spring,
+        :example_name,
+        :force_spring,
+        :frameworks,
+        :rerun,
+        :run_all,
+        :search_string,
+        :searcher,
+        :shell
+      )
+      def initialize(
+        disable_spring:,
+        example_name:,
+        force_spring:,
+        frameworks:,
+        rerun:,
+        run_all:,
+        search_string:,
+        searcher:,
+        shell:
+      )
+        @disable_spring = disable_spring
+        @example_name = example_name
+        @force_spring = force_spring
+        @frameworks = frameworks
+        @rerun = rerun
+        @run_all = run_all
+        @search_string = search_string
+        @searcher = searcher
+        @shell = shell
       end
+
     end
   end
 end

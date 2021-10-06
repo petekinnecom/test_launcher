@@ -21,7 +21,7 @@ module TestLauncher
       end
     end
 
-    class FileMock < Struct.new(:path, :lines, :mtime)
+    class FileMock
       attr_reader :path, :lines
       def initialize(path, lines, mtime)
         @path = path

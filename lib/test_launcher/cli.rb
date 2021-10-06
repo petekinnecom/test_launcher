@@ -6,7 +6,12 @@ require "test_launcher/cli/request"
 
 module TestLauncher
   module CLI
-    class MultiFrameworkQuery < Struct.new(:cli_options)
+    class MultiFrameworkQuery
+      attr_reader :cli_options
+      def initialize(cli_options)
+        @cli_options = cli_options
+      end
+
       def command
         command = nil
         command_finders.each do |command_finder|

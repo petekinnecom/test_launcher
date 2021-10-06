@@ -3,7 +3,12 @@ require "test_launcher/frameworks/implementation/test_case"
 module TestLauncher
   module Frameworks
     module Base
-      class Searcher < Struct.new(:raw_searcher)
+      class Searcher
+        attr_reader :raw_searcher
+        def initialize(raw_searcher)
+          @raw_searcher = raw_searcher
+        end
+
         def test_files(query)
           raw_searcher
             .find_files(query)
