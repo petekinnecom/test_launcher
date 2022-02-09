@@ -5,7 +5,7 @@ module TestLauncher
     module Base
       class Searcher
         attr_reader :raw_searcher
-        def initialize(raw_searcher)
+        def initialize(raw_searcher, **)
           @raw_searcher = raw_searcher
         end
 
@@ -43,6 +43,10 @@ module TestLauncher
       end
 
       class Runner
+        def initialize(*, **)
+          super()
+        end
+
         def by_line_number(test_case)
           raise NotImplementedError
         end
