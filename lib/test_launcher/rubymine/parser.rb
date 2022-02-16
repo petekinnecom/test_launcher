@@ -29,12 +29,25 @@ module TestLauncher
         env: ENV
       )
         request = Request.new(
-          disable_spring: ENV["DISABLE_SPRING"]
+          disable_spring: env["DISABLE_SPRING"]
         )
 
         args = [$0].concat(argv).map { |arg|
-          if arg.match("minitest_runner.rb") && env.key?("INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH")
-            arg.sub(%r{/.+/minitest_runner.rb['"]?}, env.fetch("INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"))
+          if (
+            arg.match("minitest_runner.rb") &&
+              env.key?("INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH")
+            )
+            arg.sub(
+              %r{/.+/minitest_runner.rb['"]?},
+              env.fetch("INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH")
+            )
+          elsif (
+            arg.match("tunit_or_minitest_in_folder_runner.rb") &&
+              env.key?("INTELLIJ_IDEA_RUN_CONF_FOLDER_PATH"))
+            arg.sub(
+              %r{/.+/tunit_or_minitest_in_folder_runner.rb['"]?},
+              File.join(env.fetch("INTELLIJ_IDEA_RUN_CONF_FOLDER_PATH"), "**/*.rb")
+            )
           else
             arg
           end
