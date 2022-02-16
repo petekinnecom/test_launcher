@@ -84,14 +84,14 @@ module TestLauncher
         end
 
         def multiple_files_error
-          MultipleByLineMatches.new(<<-MSG)
-It looks like you are running a line number in a test file.
+          MultipleByLineMatches.new(<<~MSG)
+            It looks like you are running a line number in a test file.
 
-Multiple files have been found that match your query.
+            Multiple files have been found that match your query.
 
-This case is not supported for Minitest.
+            This case is not supported for Minitest.
 
-Open an issue on https://github.com/petekinnecom/test_launcher if this is something you have run into at least 3 times. :)
+            Open an issue on https://github.com/petekinnecom/test_launcher if this is something you have run into at least 3 times. :)
           MSG
         end
 
