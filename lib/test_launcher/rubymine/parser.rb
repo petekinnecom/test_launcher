@@ -46,7 +46,7 @@ module TestLauncher
               env.key?("INTELLIJ_IDEA_RUN_CONF_FOLDER_PATH"))
             arg.sub(
               %r{/.+/tunit_or_minitest_in_folder_runner.rb['"]?},
-              File.join(env.fetch("INTELLIJ_IDEA_RUN_CONF_FOLDER_PATH"), "**/*.rb")
+              File.join(env.fetch("INTELLIJ_IDEA_RUN_CONF_FOLDER_PATH"), "**/*_test.rb")
             )
           else
             arg
