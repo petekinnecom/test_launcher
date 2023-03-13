@@ -14,7 +14,15 @@ module TestLauncher
         end
 
         def ls_files(pattern)
-          shell.run("git ls-files '*#{pattern}*'")
+          # files in the repo and unstaged files in the status
+          shell.run("git ls-files '*#{pattern}*'") +
+            shell
+              .run("git status --porcelain=v2")
+              .map { |l|
+                type, path = l.split(" ")
+                path if type == "?" && path.match(%r{.*#{pattern}.*})
+              }
+              .compact
         end
 
         def grep(regex, file_pattern)
