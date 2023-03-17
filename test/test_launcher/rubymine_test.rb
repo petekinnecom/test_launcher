@@ -6,8 +6,20 @@ require "test_launcher/rubymine/parser"
 module TestLauncher
   class RubymineTest < TestCase
     def test_launch__run__file
-      args = "/Users/username/some_app/bin/spring testunit /Users/username/some_app/engines/some_engine/test/does_something_test.rb"
+      glob_pattern = "/Users/username/some_app/engines/some_engine/test/does_something_test.rb"
+      Dir.expects(:glob).with(glob_pattern).returns([glob_pattern])
+      args = "/Users/username/some_app/bin/spring testunit #{glob_pattern}"
       expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /Users/username/some_app/engines/some_engine/test/does_something_test.rb"
+
+      assert_executes expected_command, args
+    end
+
+    def test_launch__run__folder
+      glob_pattern = "/Users/username/some_app/engines/some_engine/test/**/*.rb"
+      glob_results = %w[/Users/username/some_app/engines/some_engine/test/some_high_level_test.rb /Users/username/some_app/engines/some_engine/test/some_module/some_module_test]
+      Dir.expects(:glob).with(glob_pattern).returns(glob_results)
+      args = "/Users/username/some_app/bin/spring testunit #{glob_pattern}"
+      expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' #{glob_results.join(' ')}"
 
       assert_executes expected_command, args
     end
@@ -55,7 +67,9 @@ module TestLauncher
     end
 
     def test_launch__debug__file
-      args = "/Users/username/.rvm/gems/ruby-2.2.3/gems/ruby-debug-ide-0.6.1.beta2/bin/rdebug-ide --disable-int-handler --evaluation-timeout 10 --rubymine-protocol-extensions --port 58930 --host 0.0.0.0 --dispatcher-port 58931 -- /Users/username/some_app/bin/spring testunit /Users/username/some_app/engines/some_engine/test/does_something_test.rb"
+      glob_pattern = "/Users/username/some_app/engines/some_engine/test/does_something_test.rb"
+      Dir.expects(:glob).with(glob_pattern).returns([glob_pattern])
+      args = "/Users/username/.rvm/gems/ruby-2.2.3/gems/ruby-debug-ide-0.6.1.beta2/bin/rdebug-ide --disable-int-handler --evaluation-timeout 10 --rubymine-protocol-extensions --port 58930 --host 0.0.0.0 --dispatcher-port 58931 -- /Users/username/some_app/bin/spring testunit #{glob_pattern}"
       expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test /Users/username/.rvm/gems/ruby-2.2.3/gems/ruby-debug-ide-0.6.1.beta2/bin/rdebug-ide --disable-int-handler --evaluation-timeout 10 --rubymine-protocol-extensions --port 58930 --host 0.0.0.0 --dispatcher-port 58931 -- /Users/username/some_app/bin/spring testunit /Users/username/some_app/engines/some_engine/test/does_something_test.rb"
 
       assert_executes(expected_command, args)
@@ -87,13 +101,15 @@ module TestLauncher
     end
 
     def test_launcher__run__2020_2_3_style__test_file
-      ENV["INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"] = "/path/to/app/test/my_test.rb"
+      glob_pattern = "/path/to/app/test/my_test.rb"
+      Dir.expects(:glob).with(glob_pattern).returns([glob_pattern])
+      ENV["INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"] = glob_pattern
 
       args = "/usr/local/bin/bash -c \"env RBENV_VERSION=2.6.3 /usr/local/Cellar/rbenv/1.1.2/libexec/rbenv exec ruby -Itest /Applications/RubyMine.app/Contents/plugins/ruby/rb/testing/runner/minitest_runner.rb\""
 
       Rubymine::Parser.launch(shell: dummy_shell, argv: args.split(" "))
 
-      expected_command = "cd /path/to/app && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /path/to/app/test/my_test.rb"
+      expected_command = "cd /path/to/app && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' #{glob_pattern}"
       assert_equal [[expected_command]], dummy_shell.recall(:exec)
     end
 

@@ -19,9 +19,9 @@ module TestLauncher
 
           debug_command = (
             if args.first.match(/bash/)
-              "cd #{test_case.app_root} && #{args.join(" ")}"
+              "cd #{test_cases.first.app_root} && #{args.join(" ")}"
             else
-              "cd #{test_case.app_root} && bundle exec ruby -I test #{args.join(" ")}"
+              "cd #{test_cases.first.app_root} && bundle exec ruby -I test #{args.join(" ")}"
             end
           )
 
@@ -38,32 +38,39 @@ module TestLauncher
       private
 
       def command
-        if test_case.is_example?
-          Frameworks::Minitest::Runner.new.single_example(test_case, exact_match: true)
+        if test_cases.count == 1 && test_cases.first.is_example?
+          Frameworks::Minitest::Runner.new.single_example(test_cases.first, exact_match: true)
         else
-          Frameworks::Minitest::Runner.new.single_file(test_case)
+          Frameworks::Minitest::Runner.new.one_or_more_files(test_cases)
         end
       end
 
-      def test_case
-        @test_case ||=
+      def test_cases
+        @test_cases ||=
           if args[-1].match("--name=")
-            Frameworks::Minitest::TestCase.new(
+            [
+              Frameworks::Minitest::TestCase.new(
               file: args[-2],
               example: args[-1][%r{--name=#{TEST_NAME_REGEX}}, 1],
               request: request
-            )
+              )
+            ]
           elsif args[-2]&.match("--name")
-            Frameworks::Minitest::TestCase.new(
-              file: args[-3],
-              example: args[-1][TEST_NAME_REGEX, 1],
-              request: request
-            )
+            [
+              Frameworks::Minitest::TestCase.new(
+                file: args[-3],
+                example: args[-1][TEST_NAME_REGEX, 1],
+                request: request
+              )
+            ]
           else
-            Frameworks::Minitest::TestCase.new(
-              file: args[-1],
-              request: request
-            )
+            recursive_test_files = Dir.glob(args[-1])
+            recursive_test_files.map{|file|
+              Frameworks::Minitest::TestCase.new(
+                file: file,
+                request: request
+              )
+            }
           end
       end
 
