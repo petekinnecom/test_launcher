@@ -11,6 +11,12 @@ module TestLauncher
       CLI.launch(query.split(" "), env, shell: shell, searcher: searcher)
     end
 
+    def recall_exec(searcher, shell: shell_mock)
+      shell
+        .recall_exec
+        &.gsub(searcher.dir, "")
+    end
+
     def test__by_example__single_method
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|
@@ -25,10 +31,10 @@ module TestLauncher
       end
 
       launch("test_name", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs:2", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs:2", recall_exec(searcher)
 
-      launch("n", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs:2", shell_mock.recall_exec
+      launch("nam", searcher: searcher)
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs:2", recall_exec(searcher)
     end
 
     def test__by_example__multiple_methods__same_file
@@ -48,7 +54,7 @@ module TestLauncher
       end
 
       launch("name_", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
     end
 
     def test__by_example__multiple_methods__different_files
@@ -81,16 +87,16 @@ module TestLauncher
       end
 
       launch("name_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_2_test.exs:1", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_2_test.exs:1", recall_exec(searcher)
 
       launch("name_2", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_2_test.exs:2", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_2_test.exs:2", recall_exec(searcher)
 
       launch("name_1 --all", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs", recall_exec(searcher)
 
       launch("name_2 --all", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", recall_exec(searcher)
     end
 
     def test__by_filename
@@ -102,25 +108,25 @@ module TestLauncher
       end
 
       launch("file_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
 
       launch("file_1_test.exs", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
 
       launch("/file_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
 
       launch(".exs", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
 
       launch("/src/test/file_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
 
       launch("src/test/file_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
 
       launch("st/file_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
     end
 
     def test__by_filename__multiple_files_found
@@ -146,13 +152,13 @@ module TestLauncher
       end
 
       launch("file_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher)
 
       launch("file", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_2_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_2_test.exs", recall_exec(searcher)
 
       launch("file --all", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", recall_exec(searcher)
     end
 
     def test__by_filename__preferred_over_regex_and_test_name_matches
@@ -177,7 +183,7 @@ module TestLauncher
       end
 
       launch("name_test", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/name_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/name_test.exs", recall_exec(searcher)
     end
 
     def test__by_multiple_filenames__multiple_files_found
@@ -207,17 +213,17 @@ module TestLauncher
       end
 
       launch("file_1 file_2", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs", recall_exec(searcher)
 
       launch("file_1 file", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", recall_exec(searcher)
 
       # If multiple queries are submitted but not all of them match,
       # then what should we do? For now, we assume that it's only
       # considered a match if each query term matches at least one
       # or more files.
       launch("file_1 gibberish", searcher: searcher)
-      assert_equal nil, shell_mock.recall_exec
+      assert_equal nil, recall_exec(searcher)
     end
 
     def test__by_regex__one_match
@@ -252,16 +258,16 @@ module TestLauncher
       end
 
       launch("regex match 1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_2_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_2_test.exs", recall_exec(searcher)
 
       launch("regex match 3", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_3_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_3_test.exs", recall_exec(searcher)
 
       launch("regex match", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_2_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_2_test.exs", recall_exec(searcher)
 
       launch("regex match --all", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs /src/test/file_3_test.exs", recall_exec(searcher)
     end
 
     def test__by_example__handles_regex_for_example_name
@@ -284,16 +290,16 @@ module TestLauncher
       end
 
       launch("test_name_1x?", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs:1", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs:1", recall_exec(searcher)
 
       launch("test_name_2|test_name_1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_2_test.exs:1", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_2_test.exs:1", recall_exec(searcher)
 
       launch('test_name_\d', searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_2_test.exs:1", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_2_test.exs:1", recall_exec(searcher)
 
       launch('test_name_\d --all', searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs", recall_exec(searcher)
     end
 
     def test__not_found
@@ -308,7 +314,7 @@ module TestLauncher
       end
 
       launch("gibberish", searcher: searcher)
-      assert_equal nil, shell_mock.recall_exec
+      assert_equal nil, recall_exec(searcher)
     end
 
     def test__different_roots
@@ -330,6 +336,10 @@ module TestLauncher
         end
 
         searcher.mock_file do |f|
+          f.path "/src/inline/project/mix.exs"
+        end
+
+        searcher.mock_file do |f|
           f.path "/src/inline/project/test/file_1_test.exs"
           f.mtime Time.new(2014, 01, 01, 00, 00, 00)
           f.contents <<-RB
@@ -339,19 +349,19 @@ module TestLauncher
       end
 
       launch("test_name_1", searcher: searcher)
-      assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs:1", shell_mock.recall_exec
+      assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs:1", recall_exec(searcher)
 
       launch("test_name_1 --all", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs; cd -;\n\ncd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs; cd -;\n\ncd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", recall_exec(searcher)
 
       launch("file --all", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs; cd -;\n\ncd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs /src/test/file_2_test.exs; cd -;\n\ncd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", recall_exec(searcher)
 
       launch("file_1", searcher: searcher)
-      assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", recall_exec(searcher)
 
       launch("file_1 --all", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs; cd -;\n\ncd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs; cd -;\n\ncd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs", recall_exec(searcher)
     end
 
     def test__by_line_number__just_passes_through_to_ex_unit
@@ -364,10 +374,10 @@ module TestLauncher
       end
 
       launch("file_1_test.exs:1", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs:1", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs:1", recall_exec(searcher)
 
       launch("file_1_test.exs:273", searcher: searcher)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs:273", shell_mock.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs:273", recall_exec(searcher)
     end
 
     def test__by_line_number__multiple_files
@@ -379,6 +389,10 @@ module TestLauncher
         end
 
         searcher.mock_file do |f|
+          f.path "/src/inline/project/mix.exs"
+        end
+
+        searcher.mock_file do |f|
           f.path "/src/inline/project/test/file_1_test.exs"
           f.mtime Time.new(2014, 01, 01, 00, 00, 00)
           f.contents ""
@@ -386,7 +400,7 @@ module TestLauncher
       end
 
       launch("file_1_test.exs:1", searcher: searcher)
-      assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs:1", shell_mock.recall_exec
+      assert_equal "cd /src/inline/project && mix test /src/inline/project/test/file_1_test.exs:1", recall_exec(searcher)
     end
 
     def test__rerun
@@ -404,10 +418,10 @@ module TestLauncher
 history_shell = Shell::HistoryRunner.new(shell: shell_mock, history_path: File.expand_path(File.join(__dir__, '../../tmp/test_history.log')))
 
       launch("file_1_test.exs", searcher: searcher, shell: history_shell)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", history_shell.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher, shell: history_shell)
 
       launch("--rerun", searcher: searcher, shell: history_shell)
-      assert_equal "cd /src && mix test /src/test/file_1_test.exs", history_shell.recall_exec
+      assert_equal "cd /src && mix test /src/test/file_1_test.exs", recall_exec(searcher, shell: history_shell)
     end
   end
 end

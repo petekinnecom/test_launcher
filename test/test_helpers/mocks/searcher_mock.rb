@@ -4,31 +4,44 @@ require "test_launcher/search/git"
 module TestLauncher
   class MemorySearcher < Mock
     class FileBuilder
-      def path(path)
-        @path = path
+
+      def initialize(dir)
+        @dir = dir
+      end
+
+      def path(path = nil)
+        return @path if path.nil?
+
+        @path = File.join(@dir, path)
       end
 
       def contents(string)
         @lines = string.split("\n")
       end
 
-      def mtime(time) # TODO: this doesn't work yet!
+      def mtime(time = nil) # TODO: this doesn't work yet!
+        return @mtime if time.nil?
+
         @mtime = time
       end
 
       def to_file_mock
-        FileMock.new(@path, @lines, @mtime)
+        tmp_path = Pathname.new(@path)
+        FileUtils.mkdir_p(tmp_path.parent)
+        FileUtils.touch(tmp_path)
+        File.stubs(:mtime).with(tmp_path.to_s).returns(@mtime)
+
+        FileMock.new(@path, @lines, @mtime, @dir)
       end
     end
 
     class FileMock
-      attr_reader :path, :lines
-      def initialize(path, lines, mtime)
+      attr_reader :path, :lines, :mtime, :dir
+      def initialize(path, lines, mtime, dir)
         @path = path
         @lines = lines
-        File.stubs(:mtime).with(path).returns(mtime)
-        File.stubs(:exist?).returns(false)
-        File.stubs(:exist?).with(path).returns(true)
+        @mtime = mtime
+        @dir = dir
       end
 
       def grep(regex)
@@ -45,11 +58,23 @@ module TestLauncher
             result[:line].match(regex)
           }
       end
+
+      def relative_path
+        Pathname.new(path).relative_path_from(Pathname.new(dir)).to_s
+      end
     end
 
     mocks Search::Git
 
-    def initialize
+    attr_reader :dir
+    def initialize(root: "/src")
+      @dir = Dir.mktmpdir
+
+      # mock the root directory
+      mock_file do |f|
+        f.path "/src/Gemfile"
+      end
+
       yield(self)
     end
 
@@ -65,7 +90,7 @@ module TestLauncher
     end
 
     def mock_file
-      file_builder = FileBuilder.new
+      file_builder = FileBuilder.new(dir)
       yield(file_builder)
       file_mocks << file_builder.to_file_mock
     end

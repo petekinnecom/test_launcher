@@ -62,4 +62,11 @@ class TestCase < Minitest::Test
   def dummy_shell
     @dummy_shell ||= DummyShell.new
   end
+
+  def stub_app_root(dir)
+    TestLauncher::Frameworks::Implementation::TestCase
+      .any_instance
+      .stubs(:app_root)
+      .returns(dir)
+  end
 end

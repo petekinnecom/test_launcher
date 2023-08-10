@@ -1,3 +1,5 @@
+require 'pathname'
+
 module TestLauncher
   module Frameworks
     module Implementation
@@ -28,21 +30,20 @@ module TestLauncher
         end
 
         def app_root
-          if exploded_path.select { |dir| dir == test_root_dir_name }.size > 1
-            candidates = exploded_path
+          test_dir_parent = nil
 
-            while !candidates.empty?
-              if candidates.last == test_root_dir_name
-                root_path = File.join("/", candidates[0..-2])
-                return root_path if Dir.entries(root_path).any? {|e| e.match /Gemfile|gemspec|mix.exs|config.ru/} # TODO: extract this
-              end
-
-              candidates.pop
+          Pathname.new(file).parent.ascend do |path|
+            if test_dir_parent.nil? && path.basename.to_s == test_root_dir_name
+              test_dir_parent = path.parent.to_s
+              next
+            elsif test_dir_parent.nil?
+              next
+            elsif path.entries.any? { |e| e.to_s.match /Gemfile|gemspec|mix.exs|config.ru/ }
+              return path.to_s
             end
           end
 
-          path = exploded_path[0...exploded_path.index(test_root_dir_name)]
-          File.join("/", path)
+          test_dir_parent || Pathname.new(file).parent.to_s
         end
 
         def test_root

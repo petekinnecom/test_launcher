@@ -62,7 +62,7 @@ module TestLauncher
       def runner
         @runner ||= MockRunner.new do |m|
           m.impl :single_file do |test_case|
-            case test_case.file
+            case test_case.file.sub(%r{#{raw_searcher.dir}/}, "")
             when "single_test.rb"
               "single_file single_test.rb"
             when "multiple_matches_1_test.rb"
@@ -75,7 +75,7 @@ module TestLauncher
           end
 
           m.impl :multiple_files do |test_cases|
-            case test_cases.map(&:file)
+            case test_cases.map {|tc| tc.file.sub(%r{#{raw_searcher.dir}/}, "") }
             when ["multiple_matches_1_test.rb", "multiple_matches_2_test.rb"]
               "multiple_files multiple_matches_1_test.rb multiple_matches_2_test.rb"
             else

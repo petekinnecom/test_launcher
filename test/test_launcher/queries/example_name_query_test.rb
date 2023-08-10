@@ -91,7 +91,7 @@ module TestLauncher
           searcher: searcher
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         assert_equal nil, command
       end
@@ -104,7 +104,7 @@ module TestLauncher
           shell: default_shell
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         assert_equal "single_example file_1_test.rb one_example", command
       end
@@ -117,7 +117,7 @@ module TestLauncher
           shell: default_shell
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         messages = [
           ["Found 1 example in 1 file."],
@@ -133,7 +133,7 @@ module TestLauncher
           shell: default_shell
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         assert_equal "multiple_examples_same_file file_1_test.rb same_file", command
       end
@@ -146,7 +146,7 @@ module TestLauncher
           shell: default_shell
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         messages = [
           ["Found 2 examples in 1 file."],
@@ -163,7 +163,7 @@ module TestLauncher
           run_all?: false
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         assert_equal "single_example file_2_test.rb different_files", command
       end
@@ -177,7 +177,7 @@ module TestLauncher
           run_all?: false
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         messages = [
           ["Found 2 examples in 2 files."],
@@ -195,7 +195,7 @@ module TestLauncher
           run_all?: true
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         assert_equal "multiple_examples file_1_test.rb file_2_test.rb", command
       end
@@ -209,7 +209,7 @@ module TestLauncher
           run_all?: true
         )
 
-        command = ExampleNameQuery.new(request, default_command_finder).command
+        command = ExampleNameQuery.new(request, default_command_finder).command&.gsub(%r{#{raw_searcher.dir}/}, "")
 
         messages = [
           ["Found 2 examples in 2 files."],

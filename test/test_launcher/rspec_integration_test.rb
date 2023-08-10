@@ -11,6 +11,12 @@ module TestLauncher
       CLI.launch(query.split(" "), env, shell: shell, searcher: searcher)
     end
 
+    def recall_exec(searcher, shell: shell_mock)
+      shell
+        .recall_exec
+        &.gsub(searcher.dir, "")
+    end
+
     def test__by_example__single_example
       searcher = MemorySearcher.new do |searcher|
         searcher.mock_file do |f|
@@ -22,13 +28,13 @@ module TestLauncher
       end
 
       launch("thing", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example thing", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example thing", recall_exec(searcher)
 
       launch("does a thing", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example does\\ a\\ thing", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example does\\ a\\ thing", recall_exec(searcher)
 
-      launch("n", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example n", shell_mock.recall_exec
+      launch("thin", searcher: searcher)
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example thin", recall_exec(searcher)
     end
 
     def test__by_example__multiple_examples__same_file
@@ -44,7 +50,7 @@ module TestLauncher
       end
 
       launch("name_", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example name_", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb --example name_", recall_exec(searcher)
     end
 
     def test__by_example__multiple_methods__different_files
@@ -77,16 +83,16 @@ module TestLauncher
       end
 
       launch("name_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_2_spec.rb --example name_1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_2_spec.rb --example name_1", recall_exec(searcher)
 
       launch("name_2", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_2_spec.rb --example name_2", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_2_spec.rb --example name_2", recall_exec(searcher)
 
       launch("name_1 --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb /src/spec/class_2_spec.rb --example name_1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb /src/spec/class_2_spec.rb --example name_1", recall_exec(searcher)
 
       launch("name_2 --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb /src/spec/class_2_spec.rb /src/spec/class_3_spec.rb --example name_2", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/class_1_spec.rb /src/spec/class_2_spec.rb /src/spec/class_3_spec.rb --example name_2", recall_exec(searcher)
     end
 
     def test__by_filename
@@ -98,25 +104,25 @@ module TestLauncher
       end
 
       launch("file_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("file_1_spec.rb", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("/file_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch(".rb", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("/src/spec/file_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("src/spec/file_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("ec/file_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
     end
 
     def test__by_filename__multiple_files_found
@@ -142,13 +148,13 @@ module TestLauncher
       end
 
       launch("file_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("file", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb", recall_exec(searcher)
 
       launch("file --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb /src/spec/file_3_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb /src/spec/file_3_spec.rb", recall_exec(searcher)
     end
 
     def test__by_filename__preferred_over_regex_and_test_name_matches
@@ -173,7 +179,7 @@ module TestLauncher
       end
 
       launch("name_spec", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/name_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/name_spec.rb", recall_exec(searcher)
     end
 
     def test__multiple_queries__generic_regex__prefers_to_keep_spaces
@@ -196,13 +202,13 @@ module TestLauncher
         end
 
         launch("this matches", searcher: searcher)
-        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
         launch("this matches --all", searcher: searcher)
-        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", shell_mock.recall_exec
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher)
 
         launch("matches this --all", searcher: searcher)
-        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb", shell_mock.recall_exec
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb", recall_exec(searcher)
       end
     end
 
@@ -225,14 +231,14 @@ module TestLauncher
         end
 
         launch("this matches", searcher: searcher)
-        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", shell_mock.recall_exec
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", recall_exec(searcher)
 
         skip "not supported in rspec yet"
         launch("this matches --all", searcher: searcher)
-        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", shell_mock.recall_exec
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", recall_exec(searcher)
 
         launch("matches this --all", searcher: searcher)
-        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", shell_mock.recall_exec
+        assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example this\\|matches", recall_exec(searcher)
       end
     end
 
@@ -263,17 +269,17 @@ module TestLauncher
       end
 
       launch("file_1 file_2", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb", recall_exec(searcher)
 
       launch("file_1 file", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb /src/spec/file_3_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb /src/spec/file_3_spec.rb", recall_exec(searcher)
 
       # If multiple queries are submitted but not all of them match,
       # then what should we do? For now, we assume that it's only
       # considered a match if each query term matches at least one
       # or more files.
       launch("file_1 gibberish", searcher: searcher)
-      assert_equal nil, shell_mock.recall_exec
+      assert_equal nil, recall_exec(searcher)
     end
 
     def test__by_regex__one_match
@@ -308,16 +314,16 @@ module TestLauncher
       end
 
       launch("regex match 1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb", recall_exec(searcher)
 
       launch("regex match 3", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_3_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_3_spec.rb", recall_exec(searcher)
 
       launch("regex match", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb", recall_exec(searcher)
 
       launch("regex match --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb /src/spec/file_3_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb /src/spec/file_3_spec.rb", recall_exec(searcher)
     end
 
     def test__by_example__preferred_over_regex
@@ -340,7 +346,7 @@ module TestLauncher
       end
 
       launch("regex_match", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example regex_match", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example regex_match", recall_exec(searcher)
     end
 
     def test__context_blocks_are_treated_as_examples
@@ -357,13 +363,13 @@ module TestLauncher
       end
 
       launch("test_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_1", recall_exec(searcher)
 
       launch("test_2", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_2", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_2", recall_exec(searcher)
 
       launch("test_3", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_3", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_3", recall_exec(searcher)
     end
 
     def test__by_example__handles_regex_for_example_name
@@ -386,16 +392,16 @@ module TestLauncher
       end
 
       launch("test_name_1x?", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1x\\?", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1x\\?", recall_exec(searcher)
 
       launch("test_name_2|test_name_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb --example test_name_2\\|test_name_1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb --example test_name_2\\|test_name_1", recall_exec(searcher)
 
       launch('test_name_\d', searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb --example test_name_\\\\d", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_2_spec.rb --example test_name_\\\\d", recall_exec(searcher)
 
       launch('test_name_\d --all', searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example test_name_\\\\d", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb --example test_name_\\\\d", recall_exec(searcher)
     end
 
     def test__not_found
@@ -410,7 +416,7 @@ module TestLauncher
       end
 
       launch("gibberish", searcher: searcher)
-      assert_equal nil, shell_mock.recall_exec
+      assert_equal nil, recall_exec(searcher)
     end
 
     def test__different_roots
@@ -432,6 +438,10 @@ module TestLauncher
         end
 
         searcher.mock_file do |f|
+          f.path "/src/inline/gem/my_gem.gemspec"
+        end
+
+        searcher.mock_file do |f|
           f.path "/src/inline/gem/spec/file_1_spec.rb"
           f.mtime Time.new(2014, 01, 01, 00, 00, 00)
           f.contents <<-RB
@@ -441,19 +451,19 @@ module TestLauncher
       end
 
       launch("test_name_1", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
+      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", recall_exec(searcher)
 
       launch("test_name_1 --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1; cd -;\n\ncd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1; cd -;\n\ncd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", recall_exec(searcher)
 
       launch("file --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb; cd -;\n\ncd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb /src/spec/file_2_spec.rb; cd -;\n\ncd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("file_1", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb", recall_exec(searcher)
 
       launch("file_1 --all", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb; cd -;\n\ncd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb; cd -;\n\ncd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb", recall_exec(searcher)
     end
 
     def test__specified_example_name__simple
@@ -467,6 +477,10 @@ module TestLauncher
         end
 
         searcher.mock_file do |f|
+          f.path "/src/inline/gem/my_gem.gemspec"
+        end
+
+        searcher.mock_file do |f|
           f.path "/src/inline/gem/spec/file_2_spec.rb"
           f.mtime Time.new(2015, 01, 01, 00, 00, 00)
           f.contents <<-RB
@@ -476,13 +490,13 @@ module TestLauncher
       end
 
       launch("file_1 --name test_name_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1", recall_exec(searcher)
 
       launch("file_2 --name test_name_2", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_2_spec.rb --example test_name_2", shell_mock.recall_exec
+      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_2_spec.rb --example test_name_2", recall_exec(searcher)
 
       launch("file_1 --example test_name_1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb --example test_name_1", recall_exec(searcher)
     end
 
     def test__specified_example_name__multiple_files_same_name
@@ -496,6 +510,10 @@ module TestLauncher
         end
 
         searcher.mock_file do |f|
+          f.path "/src/inline/gem/my_gem.gemspec"
+        end
+
+        searcher.mock_file do |f|
           f.path "/src/inline/gem/spec/file_1_spec.rb"
           f.mtime Time.new(2015, 01, 01, 00, 00, 00)
           f.contents <<-RB
@@ -505,10 +523,10 @@ module TestLauncher
       end
 
       launch("file_1_spec.rb --name test_name_1", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
+      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", recall_exec(searcher)
 
       launch("file_1 --name test_name_1", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", shell_mock.recall_exec
+      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb --example test_name_1", recall_exec(searcher)
     end
 
     def test__by_line_number__just_passes_through_to_rspec
@@ -521,13 +539,13 @@ module TestLauncher
       end
 
       launch("file_1_spec.rb:1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:1", recall_exec(searcher)
 
       launch("/src/spec/file_1_spec.rb:1", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:1", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:1", recall_exec(searcher)
 
       launch("file_1_spec.rb:273", searcher: searcher)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:273", shell_mock.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb:273", recall_exec(searcher)
     end
 
     def test__by_line_number__multiple_files
@@ -539,6 +557,10 @@ module TestLauncher
         end
 
         searcher.mock_file do |f|
+          f.path "/src/inline/gem/my_gem.gemspec"
+        end
+
+        searcher.mock_file do |f|
           f.path "/src/inline/gem/spec/file_1_spec.rb"
           f.mtime Time.new(2014, 01, 01, 00, 00, 00)
           f.contents ""
@@ -546,7 +568,7 @@ module TestLauncher
       end
 
       launch("file_1_spec.rb:1", searcher: searcher)
-      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb:1", shell_mock.recall_exec
+      assert_equal "cd /src/inline/gem && bundle exec rspec /src/inline/gem/spec/file_1_spec.rb:1", recall_exec(searcher)
     end
 
     def test__rerun
@@ -565,10 +587,10 @@ module TestLauncher
       history_shell = Shell::HistoryRunner.new(shell: shell_mock, history_path: File.expand_path(File.join(__dir__, '../../tmp/test_history.log')))
 
       launch("file_1_spec.rb", searcher: searcher, shell: history_shell)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", history_shell.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher, shell: history_shell)
 
       launch("--rerun", searcher: searcher, shell: history_shell)
-      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", history_shell.recall_exec
+      assert_equal "cd /src && bundle exec rspec /src/spec/file_1_spec.rb", recall_exec(searcher, shell: history_shell)
     end
   end
 end

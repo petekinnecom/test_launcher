@@ -5,6 +5,12 @@ require "test_launcher/rubymine/parser"
 
 module TestLauncher
   class RubymineTest < TestCase
+
+    def setup
+      super
+      stub_app_root("/Users/username/some_app/engines/some_engine")
+    end
+
     def test_launch__run__file
       args = "/Users/username/some_app/bin/spring testunit /Users/username/some_app/engines/some_engine/test/does_something_test.rb"
       expected_command = "cd /Users/username/some_app/engines/some_engine && bundle exec ruby -I test -e 'ARGV.each {|f| require(f)}' /Users/username/some_app/engines/some_engine/test/does_something_test.rb"
@@ -76,6 +82,8 @@ module TestLauncher
     end
 
     def test_launcher__run__2020_2_3_style__test_method
+      stub_app_root("/path/to/app")
+
       ENV["INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"] = "/path/to/app/test/my_test.rb"
 
       args = "/usr/local/bin/bash -c \"env RBENV_VERSION=2.6.3 /usr/local/Cellar/rbenv/1.1.2/libexec/rbenv exec ruby -Itest /Applications/RubyMine.app/Contents/plugins/ruby/rb/testing/runner/minitest_runner.rb --name '/^test_method$/'\""
@@ -87,6 +95,7 @@ module TestLauncher
     end
 
     def test_launcher__run__2020_2_3_style__test_file
+      stub_app_root("/path/to/app")
       ENV["INTELLIJ_IDEA_RUN_CONF_TEST_FILE_PATH"] = "/path/to/app/test/my_test.rb"
 
       args = "/usr/local/bin/bash -c \"env RBENV_VERSION=2.6.3 /usr/local/Cellar/rbenv/1.1.2/libexec/rbenv exec ruby -Itest /Applications/RubyMine.app/Contents/plugins/ruby/rb/testing/runner/minitest_runner.rb\""
