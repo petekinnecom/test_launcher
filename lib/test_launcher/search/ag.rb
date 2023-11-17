@@ -1,4 +1,5 @@
 require "test_launcher/base_error"
+require "shellwords"
 
 module TestLauncher
   module Search
@@ -16,15 +17,11 @@ module TestLauncher
         end
 
         def grep(regex, file_pattern)
-          shell.run("ag '#{regex}' --file-search-regex '#{pattern_to_regex(file_pattern)}'")
+          shell.run("ag #{Shellwords.escape(regex)} --file-search-regex '#{pattern_to_regex(file_pattern)}'")
         end
 
         def root_path
-          shell.run("git rev-parse --show-toplevel").first.tap do
-            if $? != 0
-              raise NotInRepoError, "test_launcher must be used in a git repository"
-            end
-          end
+          @result ||= (ENV['TEST_LAUNCHER__DIR'] || Dir.pwd)
         end
 
         def pattern_to_regex(pattern)
