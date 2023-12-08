@@ -5,8 +5,8 @@ module TestLauncher
   module Frameworks
     module RSpec
 
-      def self.active?
-        `git ls-files '*_spec.rb'`.split("\n").any?
+      def self.active?(searcher)
+        searcher.ls_files("*_spec.rb").any?
       end
 
       def self.test_case(*a, **o)

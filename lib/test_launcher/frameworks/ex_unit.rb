@@ -4,9 +4,8 @@ require "test_launcher/base_error"
 module TestLauncher
   module Frameworks
     module ExUnit
-      def self.active?
-        # Do not do this outside of the shell.
-        `git ls-files '*.exs'`.split("\n").any?
+      def self.active?(searcher)
+        searcher.ls_files("*.exs").any?
       end
 
       def self.test_case(*a, **o)

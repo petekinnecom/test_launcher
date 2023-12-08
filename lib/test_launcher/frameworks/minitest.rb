@@ -5,9 +5,8 @@ require "test_launcher/base_error"
 module TestLauncher
   module Frameworks
     module Minitest
-      def self.active?
-        # Do not do this outside of the shell.
-        `git ls-files '*_test.rb'`.split("\n").any?
+      def self.active?(searcher)
+        searcher.ls_files("*_test.rb").any?
       end
 
       def self.test_case(*a, **o)

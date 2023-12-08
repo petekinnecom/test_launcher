@@ -6,7 +6,7 @@ module TestLauncher
     NotSupportedError = Class.new(BaseError)
 
     module Generic
-      def self.active?
+      def self.active?(...)
         true
       end
 

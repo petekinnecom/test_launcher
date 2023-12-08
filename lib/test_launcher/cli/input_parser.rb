@@ -67,7 +67,7 @@ VERSION: #{TestLauncher::VERSION}
               Frameworks::ExUnit,
               Frameworks::Mochajs,
               Frameworks::Generic,
-            ].select {|f| f.active?}
+            ].select {|f| f.active?(searcher) }
           end
 
         Options.new(

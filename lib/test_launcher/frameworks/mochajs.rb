@@ -5,8 +5,10 @@ module TestLauncher
   module Frameworks
     module Mochajs
 
-      def self.active?
-        `git ls-files '*pec.js'`.split("\n").any?
+      def self.active?(searcher)
+        # just disable this cause it doesn't really work and it might
+        # help speed things up.
+        false
       end
 
       def self.test_case(*a, **o)

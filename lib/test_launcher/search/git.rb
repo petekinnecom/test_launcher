@@ -45,6 +45,10 @@ module TestLauncher
         Dir.chdir(root_path) # MOVE ME!
       end
 
+      def ls_files(pattern)
+        interface.ls_files(pattern)
+      end
+
       def find_files(pattern)
         relative_pattern = strip_system_path(pattern)
 

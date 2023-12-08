@@ -1,5 +1,6 @@
 require "test_helper"
 require "test_launcher/cli/input_parser"
+require "test_helpers/mocks"
 
 module TestLauncher
   module CLI
@@ -72,7 +73,9 @@ module TestLauncher
       private
 
       def parse(input, env)
-        InputParser.new(input.split(" "), env).parsed_options(shell: dummy_shell, searcher: nil)
+        InputParser
+          .new(input.split(" "), env)
+          .parsed_options(shell: dummy_shell, searcher: MemorySearcher.new() {})
       end
     end
   end

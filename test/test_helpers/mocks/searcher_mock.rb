@@ -78,6 +78,10 @@ module TestLauncher
       yield(self)
     end
 
+    def ls_files(glob_pattern)
+      file_mocks_for_pattern(glob_pattern).map(&:path)
+    end
+
     def find_files(glob_pattern)
       file_mocks_for_pattern(glob_pattern).map(&:path)
     end
