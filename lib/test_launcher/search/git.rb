@@ -20,8 +20,8 @@ module TestLauncher
               .run("git status --porcelain=v2")
               .map { |l|
                 type, path = l.split(" ")
-                path if type == "?" && path.match(%r{.*#{pattern}.*})
-              }
+                matcher = ".*#{pattern}.*".gsub("**", "*")
+                path if type == "?" && path.match(%r{#{matcher}})              }
               .compact
         end
 
