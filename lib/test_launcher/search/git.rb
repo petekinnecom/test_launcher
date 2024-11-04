@@ -17,7 +17,7 @@ module TestLauncher
           # files in the repo and unstaged files in the status
           shell.run("git ls-files '*#{pattern}*'") +
             shell
-              .run("git status --porcelain=v2")
+              .run("git status --untracked-files --porcelain=v2")
               .map { |l|
                 type, path = l.split(" ")
                 matcher = ".*#{pattern}.*".gsub("**", "*")
